@@ -33,13 +33,13 @@ def login():
 
 
 @app.route('/overview')
-def main():
+def overview():
     template = Template(open('templates/overview.html', 'r').read())
     return template.render()
 
 
 @app.route('/add-to-queue', methods=['GET', 'POST'])
-def addToQueue():
+def add_to_queue():
     print(request.form)
     with open('data/queue.csv', 'a') as queue:
         writer = csv.writer(queue, delimiter='\t')
@@ -49,9 +49,9 @@ def addToQueue():
 
 
 @app.route('/send-file/<path:fullPath>')
-def downloadModelData(fullPath):
-    pathPieces = fullPath.split('/')
-    return send_from_directory('/'.join(pathPieces[0:-1]), pathPieces[-1])
+def send_file(fullPath):
+    path_pieces = fullPath.split('/')
+    return send_from_directory('/'.join(path_pieces[0:-1]), path_pieces[-1])
 
 
 if __name__ == '__main__':
