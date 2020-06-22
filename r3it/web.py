@@ -1,7 +1,12 @@
-from flask import Flask, request, redirect, send_from_directory
-from jinja2 import Template
-import uuid
+import copy
 import csv
+import json
+import uuid
+
+from flask import Flask, redirect, request, send_from_directory
+from jinja2 import Template
+
+import interconnection
 
 app = Flask(__name__)
 
@@ -13,17 +18,17 @@ def hello_world():
 
 @app.route('/queue')
 def queue():
-    data = []
-    with open('data/queue.csv') as queue:
-        reader = csv.DictReader(queue, delimiter='\t')
-        next(reader, None)
+    queue_data = []
+    with open('data/queue.json') as queue:
+        data = json.load(queue)
         i = 1
-        for row in reader:
-            datarow = [i, row['datetime'], row['location'], row['status']]
-            data.append(datarow)
+        for id, value in data.items():
+            datarow = [i, value['datetime'],
+                       value['location'], value['status'], id]
+            queue_data.append(datarow)
             i = i+1
     template = Template(open('templates/queue.html', 'r').read())
-    return template.render(data=data)
+    return template.render(data=queue_data)
 
 
 @app.route('/login/engineer')
@@ -44,13 +49,25 @@ def overview():
     return template.render()
 
 
+@app.route('/report/<id>')
+def report(id):
+    template = Template(open('templates/report.html', 'r').read())
+    return template.render(id=id)
+
+
 @app.route('/add-to-queue', methods=['GET', 'POST'])
 def add_to_queue():
     print(request.form)
-    with open('data/queue.csv', 'a') as queue:
-        writer = csv.writer(queue, delimiter='\t')
-        writer.writerow([str(request.form['datetime']),
-                         str(request.form['location']), str(request.form['status'])])
+    status = interconnection.compute_status(request.form)
+    interconnection_request = {}
+    for key, value in request.form.items():
+        interconnection_request[key] = value
+    interconnection_request['status'] = status
+    with open('data/queue.json') as queue:
+        data = json.load(queue)
+    data[uuid.uuid4().hex] = interconnection_request
+    with open('data/queue.json', 'w') as queue:
+        json.dump(data, queue)
     return redirect('/queue')
 
 
@@ -59,10 +76,24 @@ def send_file(fullPath):
     path_pieces = fullPath.split('/')
     return send_from_directory('/'.join(path_pieces[0:-1]), path_pieces[-1])
 
+
 @app.route('/application')
 def application():
     template = Template(open('templates/application.html', 'r').read())
     return template.render()
+
+
+@app.route('/update-status/<id>/<status>')
+def update_status(id, status):
+    if status not in []:
+        return 'Status invalid; no update made.'
+    with open('data/queue.json') as queue:
+        data = json.load(queue)
+    data[id]['status'] = status
+    with open('data/queue.json', 'w') as queue:
+        json.dump(data, queue)
+    return 'Sucess'
+
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -10,29 +10,24 @@
 
     <p>hello i am the interconnection queue</p>
 
-
     <table style='width:100%' border='1'>
-
         <tr>
             <th>Queue</th>
             <th>Datetime</th>
             <th>Location</th>
             <th>Status</th>
-
+            <th>Report</th>
         </tr>
         {% for row in data %}
         <tr>
-            {% for item in row %}
-            <th style='font-weight: normal'>{{item}}</th>
-            {% endfor %}
-            <th>See report</th>
-
+            <th style='font-weight: normal'>{{row[0]}}</th>
+            <th style='font-weight: normal'>{{row[1]}}</th>
+            <th style='font-weight: normal'>{{row[2]}}</th>
+            <th style='font-weight: normal'>{{row[3]}}</th>
+            <th style='font-weight: normal'><a href='{{"report/" + row[4]}}'>See report</a></th>
         </tr>
         {% endfor %}
-
     </table>
-
-
 
     <p>Add fake data here for testing</p>
     <form action='/add-to-queue' method='post'>
@@ -40,8 +35,6 @@
         <input type='text' id='datetime' name='datetime'><br>
         <label for='location'>Location:</label><br>
         <input type='text' id='location' name='location'><br>
-        <label for='status'>Status:</label><br>
-        <input type='text' id='status' name='status'><br>
         <input type='submit' value='Submit'>
     </form>
 
