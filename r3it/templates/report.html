@@ -3,7 +3,39 @@
 
 <body>
 
-<p>This is the interconnection report for request {{id}}</p>
+    <ul>
+        <li><a href='/overview'>Overview</a></li>
+        <li><a href='/queue'>Queue</a></li>
+        <li><a href='/login/engineer'>Logout</a></li>
+    </ul>
+    <hr>
+
+    <p>This is the interconnection report for request {{data['id']}}.</p>
+
+    <table style='width:100%' border='1'>
+        {% for key in data %}
+        <tr>
+            <th>{{key}}</th>
+            <th style='font-weight: normal'>{{data[key]}}</th> 
+        </tr>
+        {% endfor %}
+    </table>
+
+    {% if 'Pending' in data['status'] %}
+    <form action='{{"/update-status/" + data["id"] + "/Approved"}}'>
+        <input type='submit' value='Approve request' />
+    </form>
+    <form action='{{"/update-status/" + data["id"] + "/Customer%20Options%20Meeting%20Proposed"}}'>
+        <input type='submit' value='Propose customer options meeting' />
+    </form>
+    {% endif %}
+
+    {% if 'Approved' in data['status'] %}
+    <form action='{{"/update-status/" + data["id"] + "/Interconnection%20Agreement%20Profferred"}}'>
+        <input type='submit' value='Proffer interconnection agreement' />
+    </form>
+    {% endif %}
+
 
 </body>
 

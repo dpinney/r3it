@@ -10,6 +10,9 @@ import interconnection
 
 app = Flask(__name__)
 
+statuses = ['Approved', 'Pending', 'Customer Options Meeting Proposed', 'Customer Options Meeting Scheduled', 'Interconnection Agreement Profferred', 'Interconnection Agreement Executed', 'Permission to Operate Profferred', 'Permission to Operate Executed', 'In Operation', 'Out of Service'
+            ]
+
 
 @app.route('/')
 def hello_world():
@@ -51,8 +54,11 @@ def overview():
 
 @app.route('/report/<id>')
 def report(id):
+    with open('data/queue.json') as queue:
+        report_data = json.load(queue)[id]
+    report_data['id'] = id
     template = Template(open('templates/report.html', 'r').read())
-    return template.render(id=id)
+    return template.render(data=report_data)
 
 
 @app.route('/add-to-queue', methods=['GET', 'POST'])
@@ -85,14 +91,15 @@ def application():
 
 @app.route('/update-status/<id>/<status>')
 def update_status(id, status):
-    if status not in []:
+    if status not in statuses:
         return 'Status invalid; no update made.'
     with open('data/queue.json') as queue:
         data = json.load(queue)
     data[id]['status'] = status
     with open('data/queue.json', 'w') as queue:
         json.dump(data, queue)
-    return 'Sucess'
+    print(data[id])
+    return redirect(request.referrer)
 
 
 if __name__ == '__main__':
