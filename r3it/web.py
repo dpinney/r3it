@@ -26,9 +26,15 @@ def queue():
     return template.render(data=data)
 
 
-@app.route('/login')
-def login():
-    template = Template(open('templates/login.html', 'r').read())
+@app.route('/login/engineer')
+def login_engineer():
+    template = Template(open('templates/loginEngineer.html', 'r').read())
+    return template.render()
+
+
+@app.route('/login/customer')
+def login_customer():
+    template = Template(open('templates/loginCustomer.html', 'r').read())
     return template.render()
 
 
