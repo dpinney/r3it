@@ -1,5 +1,110 @@
-{% if app_state == 'new' %}
-<p>inputs section here and it's editable</p>
-{% elif app_state == 'pending %}
-<p>show grayed out inputs and pending message</p>
-{% endif %}
+<!DOCTYPE html>
+<html>
+
+<body>
+
+    <H1>New Interconnection Application</H1>
+  
+    <form action='/add-application' method='post'>
+        <label for='applicationName'>Application Name:</label><br>
+        <input type='text' id='applicationName' name='applicationName'><br>
+        <!TODO: Make Tariff into radio button or dropdown.>
+        <label for='tariff'>Tariff:</label><br>
+        <input type='text' id='tariff' name='tariff'><br>
+        <H3>Customer</H3>
+        <label for='customer'>Customer:</label><br>
+        <input type='text' id='customer' name='customer'><br>
+        <!Is name vs. contact confusing? How to clarify? Maybe ask for Organization?>
+        <label for='contactPersonCustomer'>Contact Person:</label><br>
+        <input type='text' id='contactPersonCustomer' name='contactPersonCustomer'><br>
+        <label for='addressCustomer'>Address:</label><br>
+        <input type='text' id='addressCustomer' name='addressCustomer'><br>
+        <label for='cityCustomer'>City:</label><br>
+        <input type='text' id='cityCustomer' name='cityCustomer'><br>
+        <label for='stateCustomer'>State:</label><br>
+        <input type='text' id='stateCustomer' name='stateCustomer'><br>
+        <label for='zipCustomer'>Zip Code:</label><br>
+        <input type='text' id='zipCustomer' name='zipCustomer'><br>
+        <label for='dayTelephoneCustomer'>Telephone (Day):</label><br>
+        <input type='text' id='dayTelephoneCustomer' name='dayTelephoneCustomer'><br>
+        <label for='eveningTelephoneCustomer'>Telephone (Evening):</label><br>
+        <input type='text' id='eveningTelephoneCustomer' name='eveningTelephoneCustomer'><br>
+        <label for='emailCustomer'>Email Address:</label><br>
+        <input type='text' id='emailCustomer' name='emailCustomer'><br>
+        <!TODO: Figure out "same as above" button.>
+        <!TODO: Decide if drop-down for partnered solar installers is good idea, maybe implement?>
+        <H3>Contact</H3>
+        <label for='contact'>Contact:</label><br>
+        <input type='text' id='contact' name='contact'><br>
+        <label for='contactPersonContact'>Contact Person:</label><br>
+        <input type='text' id='contactPersonContact' name='contactPersonContact'><br>
+        <label for='addressContact'>Address:</label><br>
+        <input type='text' id='addressContact' name='addressContact'><br>
+        <label for='cityContact'>City:</label><br>
+        <input type='text' id='cityContact' name='cityContact'><br>
+        <label for='stateContact'>State:</label><br>
+        <input type='text' id='stateContact' name='stateContact'><br>
+        <label for='zipContact'>Zip Code:</label><br>
+        <input type='text' id='zipContact' name='zipContact'><br>
+        <label for='dayTelephoneContact'>Telephone (Day):</label><br>
+        <input type='text' id='dayTelephoneContact' name='dayTelephoneContact'><br>
+        <label for='eveningTelephoneContact'>Telephone (Evening):</label><br>
+        <input type='text' id='eveningTelephoneContact' name='eveningTelephoneContact'><br>
+        <label for='emailContact'>Email Address:</label><br>
+        <input type='text' id='emailContact' name='emailContact'><br>
+        <H3>Interconnection Facility Information</H3>
+        <!TODO: Figure out how to add multiple owners.>
+        <H4>Owner</H4>
+        <label for='owner'>Owner:</label><br>
+        <input type='text' id='owner' name='owner'><br>
+        <H4>Location</H4>
+        <!TODO: Figure out "same as above" button.>
+        <label for='addressFacility'>Address:</label><br>
+        <input type='text' id='addressFacility' name='addressFacility'><br>
+        <label for='cityFacility'>City:</label><br>
+        <input type='text' id='cityFacility' name='cityFacility'><br>
+        <label for='stateFacility'>State:</label><br>
+        <input type='text' id='stateFacility' name='stateFacility'><br>
+        <label for='zipFacility'>Zip Code:</label><br>
+        <input type='text' id='zipFacility' name='zipFacility'><br>
+        <H4>Facility Information</H4>        
+        <label for='utility'>Utility:</label><br>
+        <input type='text' id='utility' name='utility'><br>
+        <label for='accountNumber'>Account Number:</label><br>
+        <input type='text' id='accountNumber' name='accountNumber'><br>
+        <!TODO: Allow drop-down for pre-certified inverters? Separate application?>
+        <label for='inverterManf'>Inverter Manufacturer:</label><br>
+        <input type='text' id='inverterManf' name='inverterManf'><br>
+        <label for='inverterModel'>Inverter Model:</label><br>
+        <input type='text' id='inverterModel' name='inverterModel'><br>
+        <label for='nameplateRatingkW'>Nameplate Rating (kW):</label><br>
+        <input type='text' id='nameplateRatingkW' name='nameplateRatingkW'><br>
+        <label for='nameplateRatingkVA'>Nameplate Rating (kVA):</label><br>
+        <input type='text' id='nameplateRatingkVA' name='nameplateRatingkVA'><br>
+        <label for='nameplateRatingV'>Nameplate Rating (V):</label><br>
+        <input type='text' id='nameplateRatingV' name='nameplateRatingV'><br>
+        <!TODO: Make dropdown or radio button>
+        <label for='phases'>Single or Three Phase:</label><br>
+        <input type='text' id='phases' name='phases'><br>
+        <label for='primeMover'>Prime Mover:</label><br>
+        <input type='text' id='primeMover' name='primeMover'><br>
+        <!TODO: Make dropdown or radio button>
+        <label for='energySource'>Energy Source:</label><br>
+        <input type='text' id='energySource' name='energySource'><br>
+        <!TODO: Should be a bool>
+        <label for='ul741'>Is the equipment UL741 listed?:</label><br>
+        <input type='text' id='ul741' name='ul741'><br>
+        <!TODO: Date pickers>
+        <label for='installDateEstimated'>Estimated Install Date:</label><br>
+        <input type='text' id='installDateEstimated' name='installDateEstimated'><br>
+        <label for='inServiceDateEstimated'>Estimated In-Service Date:</label><br>
+        <input type='text' id='inServiceDateEstimated' name='inServiceDateEstimated'><br>
+        <!TODO: Table for Equipment - Certification>
+
+
+    </form>
+
+
+</body>
+
+</html>
