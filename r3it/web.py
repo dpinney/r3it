@@ -53,6 +53,10 @@ def send_file(fullPath):
     path_pieces = fullPath.split('/')
     return send_from_directory('/'.join(path_pieces[0:-1]), path_pieces[-1])
 
+@app.route('/application')
+def application():
+    template = Template(open('templates/application.html', 'r').read())
+    return template.render()
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
