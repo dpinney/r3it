@@ -2,6 +2,7 @@ import copy
 import csv
 import json
 import uuid
+import time
 
 from flask import Flask, redirect, request, send_from_directory
 from jinja2 import Template
@@ -69,6 +70,8 @@ def add_to_queue():
     for key, value in request.form.items():
         interconnection_request[key] = value
     interconnection_request['status'] = status
+    interconnection_request['datetime'] = time.asctime(time.localtime(time.time()))
+    interconnection_request['location'] = interconnection_request['addressFacility']
     with open('data/queue.json') as queue:
         data = json.load(queue)
     data[uuid.uuid4().hex] = interconnection_request
