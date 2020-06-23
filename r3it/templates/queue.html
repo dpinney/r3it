@@ -31,12 +31,14 @@
         {% endfor %}
     </table>
 
+
+    <hr>
     <p>Add fake data here for testing</p>
     <form action='/add-to-queue' method='post'>
         <label for='datetime'>Datetime:</label><br>
-        <input type='text' id='datetime' name='datetime'><br>
+        <input type='text' id='datetime' name='datetime' required><br>
         <label for='location'>Location:</label><br>
-        <input type='text' id='location' name='location'><br>
+        <input type='text' id='location' name='location' required><br>
         <input type='submit' value='Submit'>
     </form>
 
