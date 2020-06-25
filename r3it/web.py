@@ -71,7 +71,7 @@ def add_to_queue():
         interconnection_request[key] = value
     interconnection_request['status'] = status
     interconnection_request['datetime'] = time.asctime(time.localtime(time.time()))
-    interconnection_request['location'] = interconnection_request['addressFacility']
+    interconnection_request['location'] = interconnection_request['Address (Facility)']
     with open('data/queue.json') as queue:
         data = json.load(queue)
     data[uuid.uuid4().hex] = interconnection_request
