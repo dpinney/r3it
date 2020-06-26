@@ -10,13 +10,13 @@
     </ul>
     <hr>
 
-    <p>hello i am the interconnection queue</p>
+    <H1>Interconnection Queue</H1>
 
     <table style='width:100%' border='1'>
         <tr>
-            <th>Queue</th>
-            <th>Datetime</th>
-            <th>Location</th>
+            <th>Queue Position</th>
+            <th>Time of Request</th>
+            <th>Address (Facility)</th>
             <th>Status</th>
             <th>Report</th>
         </tr>
@@ -30,18 +30,6 @@
         </tr>
         {% endfor %}
     </table>
-
-
-    <hr>
-    <p>Add fake data here for testing</p>
-    <form action='/add-to-queue' method='post'>
-        <label for='datetime'>Datetime:</label><br>
-        <input type='text' id='datetime' name='datetime' required><br>
-        <label for='location'>Location:</label><br>
-        <input type='text' id='location' name='location' required><br>
-        <input type='submit' value='Submit'>
-    </form>
-
 
 </body>
 

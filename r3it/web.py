@@ -27,8 +27,8 @@ def queue():
         data = json.load(queue)
         i = 1
         for id, value in data.items():
-            datarow = [i, value['datetime'],
-                       value['location'], value['status'], id]
+            datarow = [i, value['Time of Request'],
+                       value['Address (Facility)'], value['Status'], id]
             queue_data.append(datarow)
             i = i+1
     template = Template(open('templates/queue.html', 'r').read())
@@ -69,9 +69,8 @@ def add_to_queue():
     interconnection_request = {}
     for key, value in request.form.items():
         interconnection_request[key] = value
-    interconnection_request['status'] = status
-    interconnection_request['datetime'] = time.asctime(time.localtime(time.time()))
-    interconnection_request['location'] = interconnection_request['Address (Facility)']
+    interconnection_request['Time of Request'] = time.asctime(time.localtime(time.time()))
+    interconnection_request['Status'] = status
     with open('data/queue.json') as queue:
         data = json.load(queue)
     data[uuid.uuid4().hex] = interconnection_request
@@ -98,7 +97,7 @@ def update_status(id, status):
         return 'Status invalid; no update made.'
     with open('data/queue.json') as queue:
         data = json.load(queue)
-    data[id]['status'] = status
+    data[id]['Status'] = status
     with open('data/queue.json', 'w') as queue:
         json.dump(data, queue)
     print(data[id])

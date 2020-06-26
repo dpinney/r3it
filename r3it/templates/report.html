@@ -10,18 +10,20 @@
     </ul>
     <hr>
 
-    <p>This is the interconnection report for request {{data['id']}}.</p>
+    <H1>Interconnection report for request {{data['id']}}</H1>
 
     <table style='width:100%' border='1'>
         {% for key in data %}
+        {% if 'id' != key %}
         <tr>
             <th>{{key}}</th>
             <th style='font-weight: normal'>{{data[key]}}</th> 
         </tr>
+        {% endif %}
         {% endfor %}
     </table>
 
-    {% if 'Pending' in data['status'] %}
+    {% if 'Pending' == data['Status'] %}
     <form action='{{"/update-status/" + data["id"] + "/Approved"}}'>
         <input type='submit' value='Approve request' />
     </form>
@@ -30,7 +32,7 @@
     </form>
     {% endif %}
 
-    {% if 'Approved' in data['status'] %}
+    {% if 'Approved' == data['Status'] %}
     <form action='{{"/update-status/" + data["id"] + "/Interconnection%20Agreement%20Profferred"}}'>
         <input type='submit' value='Proffer interconnection agreement' />
     </form>
