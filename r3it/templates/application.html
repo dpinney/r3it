@@ -7,30 +7,30 @@
   
     <form action='/add-to-queue' method='post'>
         <label for='applicationName'>Application Name:</label><br>
-        <input type='text' id='applicationName' name='Application Name' value='Bob Solar'><br>
+        <input type='text' id='applicationName' name='Application Name' value="{{default.label}}"><br>
         <!TODO: Make Tariff into radio button or dropdown.>
         <label for='tariff'>Tariff:</label><br>
         <input type='text' id='tariff' name='Tariff' value='Net Metering'><br>
         <H3>Customer</H3>
         <label for='customer'>Customer:</label><br>
-        <input type='text' id='customer' name='Customer' value='Fleischeman'><br>
+        <input type='text' id='customer' name='Customer' value='{{default.name}}'><br>
         <!Is name vs. contact confusing? How to clarify? Maybe ask for Organization?>
         <label for='contactPersonCustomer'>Contact Person:</label><br>
-        <input type='text' id='contactPersonCustomer' name='Contact Person (Customer)' value='Robert Fleischeman'><br>
+        <input type='text' id='contactPersonCustomer' name='Contact Person (Customer)' value='{{default.name}}'><br>
         <label for='addressCustomer'>Address:</label><br>
-        <input type='text' id='addressCustomer' name='Address (Customer)' value='456 Treetops Ln.'><br>
+        <input type='text' id='addressCustomer' name='Address (Customer)' value="{{default.address}}"><br>
         <label for='cityCustomer'>City:</label><br>
-        <input type='text' id='cityCustomer' name='City (Customer)' value='Springfield'><br>
+        <input type='text' id='cityCustomer' name='City (Customer)' value='{{default.city}}'><br>
         <label for='stateCustomer'>State:</label><br>
-        <input type='text' id='stateCustomer' name='State (Customer)' value='IL'><br>
+        <input type='text' id='stateCustomer' name='State (Customer)' value='{{default.state}}'><br>
         <label for='zipCustomer'>Zip Code:</label><br>
-        <input type='text' id='zipCustomer' name='Zip (Customer)' value='65432'><br>
+        <input type='text' id='zipCustomer' name='Zip (Customer)' value='{{default.zip}}'><br>
         <label for='dayTelephoneCustomer'>Telephone (Day):</label><br>
-        <input type='text' id='dayTelephoneCustomer' name='Telephone (Day, Customer)' value='7034724104'><br>
+        <input type='text' id='dayTelephoneCustomer' name='Telephone (Day, Customer)' value='{{default.phone}}'><br>
         <label for='eveningTelephoneCustomer'>Telephone (Evening):</label><br>
-        <input type='text' id='eveningTelephoneCustomer' name='Telephone (Evening, Customer)' value='7034724104'><br>
+        <input type='text' id='eveningTelephoneCustomer' name='Telephone (Evening, Customer)' value='{{default.phone}}'><br>
         <label for='emailCustomer'>Email Address:</label><br>
-        <input type='text' id='emailCustomer' name='Email (Customer)' value='robert.fleischeman@domain.tld'><br>
+        <input type='text' id='emailCustomer' name='Email (Customer)' value='{{default.email}}'><br>
         <!TODO: Figure out "same as above" button.>
         <!TODO: Decide if drop-down for partnered solar installers is good idea, maybe implement?>
         <H3>Contact</H3>
@@ -49,27 +49,27 @@
         <label for='dayTelephoneContact'>Telephone (Day):</label><br>
         <input type='text' id='dayTelephoneContact' name='Daytime Telephone (Contact)' value='2345678987'><br>
         <label for='eveningTelephoneContact'>Telephone (Evening):</label><br>
-        <input type='text' id='eveningTelephoneContact' name='Evening Telephone (Contact)' value='2345678987'><br>
+        <input type='text' id='eveningTelephoneContact' name='Evening Telephone (Contact)' value='(234) 567 - 8987'><br>
         <label for='emailContact'>Email Address:</label><br>
-        <input type='text' id='emailContact' name='Email (Contact)' value='installer@solerinstallerinc.tld'><br>
+        <input type='text' id='emailContact' name='Email (Contact)' value='installer@solarinstallerinc.tld'><br>
         <H3>Interconnection Facility Information</H3>
         <!TODO: Figure out how to add multiple owners.>
         <H4>Owner</H4>
         <label for='owner'>Owner:</label><br>
-        <input type='text' id='owner' name='owner' value='Robert Fleischeman'><br>
+        <input type='text' id='owner' name='owner' value='{{default.name}}'><br>
         <H4>Location</H4>
         <!TODO: Figure out "same as above" button.>
         <label for='addressFacility'>Address:</label><br>
-        <input type='text' id='addressFacility' name='Address (Facility)' value='456 Treetops Ln.'><br>
+        <input type='text' id='addressFacility' name='Address (Facility)' value='{{default.address}}'><br>
         <label for='cityFacility'>City:</label><br>
-        <input type='text' id='cityFacility' name='City (Facility)' value='Springfield'><br>
+        <input type='text' id='cityFacility' name='City (Facility)' value='{{default.city}}'><br>
         <label for='stateFacility'>State:</label><br>
-        <input type='text' id='stateFacility' name='State (Facility)' value="IL"><br>
+        <input type='text' id='stateFacility' name='State (Facility)' value="{{default.state}}"><br>
         <label for='zipFacility'>Zip Code:</label><br>
-        <input type='text' id='zipFacility' name='Zip (Facility)' value="65432"><br>
+        <input type='text' id='zipFacility' name='Zip (Facility)' value="{{default.zip}}"><br>
         <H4>Facility Information</H4>        
         <label for='utility'>Utility:</label><br>
-        <input type='text' id='utility' name='Utility' value='ACME Electric Cooperative'><br>
+        <input type='text' id='utility' name='Utility' value='Dairyland Power'><br>
         <label for='accountNumber'>Account Number:</label><br>
         <input type='text' id='accountNumber' name='Account Number' value='23456789'><br>
         <!TODO: Allow drop-down for pre-certified inverters? Separate application?>
@@ -78,11 +78,11 @@
         <label for='inverterModel'>Inverter Model:</label><br>
         <input type='text' id='inverterModel' name='Inverter Model' value="T"><br>
         <label for='nameplateRatingkW'>Nameplate Rating (kW):</label><br>
-        <input type='text' id='nameplateRatingkW' name='Nameplate Rating (kW)' value="10"><br>
+        <input type='text' id='nameplateRatingkW' name='Nameplate Rating (kW)' value="{{default.size}}"><br>
         <label for='nameplateRatingkVA'>Nameplate Rating (kVA):</label><br>
-        <input type='text' id='nameplateRatingkVA' name='Nameplate Rating (kVA)' value='12'><br>
+        <input type='text' id='nameplateRatingkVA' name='Nameplate Rating (kVA)' value='{{default.size}}'><br>
         <label for='nameplateRatingV'>Nameplate Rating (V):</label><br>
-        <input type='text' id='nameplateRatingV' name='Nameplate Rating (V)' value='240'><br>
+        <input type='text' id='nameplateRatingV' name='Nameplate Rating (V)' value='{{default.voltage}}'><br>
         <!TODO: Make dropdown or radio button>
         <label for='phases'>Single or Three Phase:</label><br>
         <input type='text' id='phases' name='Phases' value='3'><br>
