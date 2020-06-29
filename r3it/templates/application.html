@@ -9,8 +9,12 @@
         <label for='applicationName'>Application Name:</label><br>
         <input type='text' id='applicationName' name='Application Name' value="{{default.label}}"><br>
         <!TODO: Make Tariff into radio button or dropdown.>
-        <label for='tariff'>Tariff:</label><br>
-        <input type='text' id='tariff' name='Tariff' value='Net Metering'><br>
+        <H3>Tarriff</H3>
+        <input type="radio" id="Net Metering" name="Tariff" value="Net Metering" checked="checked">
+        <label for="Net Metering">Net Metering</label><br>
+        <input type="radio" id="Value of Solar" name="Tariff" value="Value of Solar">
+        <label for="Value of Solar">Value of Solar</label><br>
+
         <H3>Customer</H3>
         <label for='customer'>Customer:</label><br>
         <input type='text' id='customer' name='Customer' value='{{default.name}}'><br>
