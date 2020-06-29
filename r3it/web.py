@@ -57,6 +57,10 @@ def customerLanding():
     template = Template(open('templates/customerLanding.html', 'r').read())
     return template.render()
 
+@app.route('/thankyou')
+def thankyou():
+    template = Template(open('templates/applicationSubmitted.html', 'r').read())
+    return template.render()
 
 @app.route('/report/<id>')
 def report(id):
@@ -81,7 +85,7 @@ def add_to_queue():
     data[uuid.uuid4().hex] = interconnection_request
     with open('data/queue.json', 'w') as queue:
         json.dump(data, queue)
-    return redirect('/customerLanding')
+    return redirect('/thankyou')
 
 
 @app.route('/send-file/<path:fullPath>')
