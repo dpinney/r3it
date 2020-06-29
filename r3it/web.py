@@ -53,6 +53,12 @@ def overview():
     return template.render()
 
 
+@app.route('/customerLanding')
+def customer_landing():
+    template = Template(open('templates/customerLanding.html', 'r').read())
+    return template.render()
+
+
 @app.route('/report/<id>')
 def report(id):
     with open('data/queue.json') as queue:
