@@ -3,6 +3,7 @@ import csv
 import json
 import uuid
 import time
+from random import choice as pick
 
 from flask import Flask, redirect, request, send_from_directory
 from jinja2 import Template
@@ -11,8 +12,7 @@ import interconnection
 
 app = Flask(__name__)
 
-statuses = ['Approved', 'Pending', 'Customer Options Meeting Proposed', 'Customer Options Meeting Scheduled', 'Interconnection Agreement Profferred', 'Interconnection Agreement Executed', 'Permission to Operate Profferred', 'Permission to Operate Executed', 'In Operation', 'Out of Service'
-            ]
+statuses = ['Approved', 'Pending', 'Customer Options Meeting Proposed', 'Customer Options Meeting Scheduled', 'Interconnection Agreement Profferred', 'Interconnection Agreement Executed', 'Permission to Operate Profferred', 'Permission to Operate Executed', 'In Operation', 'Out of Service']
 
 
 @app.route('/')
@@ -87,8 +87,34 @@ def send_file(fullPath):
 
 @app.route('/application')
 def application():
+    firstNames = ['James', 'John', 'Robert', 'Michael', 'William', 'David', 'Richard', 'Charles', 'Mary', 'Patricia', 'Linda', 'Barbara', 'Elizabeth', 'Jennifer', 'Maria', 'Susan', 'Margaret']
+    lastNames = ['Smith', 'Jones', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis']
+    trees = ['Oak', 'Birch', 'Cypress', 'Maple', 'Pine', 'Hickory', 'Ash', 'Aspen', 'Elder Berry']
+    suffixes = ['Ave.', 'Ln.', 'St.', 'Way', 'Blvd']
+    zips = range(54601, 54650)
+
+
+    phases = ['One', 'Three']
+    sizes = range(1,20)
+    voltages = ['110', '220', '600']
+
+    firstname, lastname = pick(firstNames), pick(lastNames)
+
+    default = {
+    'label' : '{} {}\'s Solar Project'.format(firstname, lastname),
+    'name' : '{} {}'.format(firstname, lastname),
+    'address' : "{} {} {}".format(str(pick(range(9999))), pick(trees), pick(suffixes)),
+    'zip' : '{}'.format(pick(zips)),
+    'city': 'LaCrosse',
+    'state' : 'WI',
+    'phone' : '({}{}) {}{} - {}'.format(pick(range(2,9)), pick(range(10,99)), pick(range(2,9)), pick(range(10,99)), pick(range(1000,9999))),
+    'size' : '{}'.format(pick(sizes)),
+    'voltage' : '{}'.format(pick(voltages)),
+    'email' : '{}.{}@gmail.com'.format(firstname, lastname)
+    }
+    
     template = Template(open('templates/application.html', 'r').read())
-    return template.render()
+    return template.render(default = default)
 
 
 @app.route('/update-status/<id>/<status>')
