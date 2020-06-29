@@ -76,7 +76,7 @@ def add_to_queue():
     data[uuid.uuid4().hex] = interconnection_request
     with open('data/queue.json', 'w') as queue:
         json.dump(data, queue)
-    return redirect('/queue')
+    return redirect('/customerLanding')
 
 
 @app.route('/send-file/<path:fullPath>')
