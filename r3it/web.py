@@ -52,6 +52,11 @@ def overview():
     template = Template(open('templates/overview.html', 'r').read())
     return template.render()
 
+@app.route('/customerLanding')
+def customerLanding():
+    template = Template(open('templates/customerLanding.html', 'r').read())
+    return template.render()
+
 
 @app.route('/report/<id>')
 def report(id):
