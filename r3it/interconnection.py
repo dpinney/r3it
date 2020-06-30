@@ -26,7 +26,7 @@ def compute_status(interconnection_form):
     return random.choice(['Approved', 'Pending'])
 
 def _tests():
-    print(derInterconnection.runForeground('./data/403f41aa58474ed6a3633ac22a4cd97b'))
+    print(derInterconnection.runForeground('./data/test'))
 
 
 if __name__ == '__main__':
