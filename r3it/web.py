@@ -1,7 +1,6 @@
 import copy
 import csv
 import json
-import uuid
 import time
 from random import choice as pick
 
@@ -25,12 +24,10 @@ def queue():
     queue_data = []
     with open('data/queue.json') as queue:
         data = json.load(queue)
-        i = 1
         for id, value in data.items():
-            datarow = [i, value['Time of Request'],
-                       value['Address (Facility)'], value['Status'], id]
+            datarow = [id, value['Time of Request'],
+                       value['Address (Facility)'], value['Status']]
             queue_data.append(datarow)
-            i = i+1
     template = Template(open('templates/queue.html', 'r').read())
     return template.render(data=queue_data)
 
@@ -98,7 +95,7 @@ def add_to_queue():
     interconnection_request['Status'] = status
     with open('data/queue.json') as queue:
         data = json.load(queue)
-    data[uuid.uuid4().hex] = interconnection_request
+    data[len(data) + 1] = interconnection_request
     with open('data/queue.json', 'w') as queue:
         json.dump(data, queue)
     return redirect('/thankyou')
