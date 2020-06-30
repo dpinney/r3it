@@ -80,8 +80,10 @@ def report(id):
     with open('data/queue.json') as queue:
         report_data = json.load(queue)[id]
     report_data['id'] = id
+    with open('data/sample/allOutputData.json') as data:
+        sample_data = json.load(data)
     template = Template(open('templates/report.html', 'r').read())
-    return template.render(data=report_data)
+    return template.render(data=report_data, sample_data=sample_data)
 
 
 @app.route('/add-to-queue', methods=['GET', 'POST'])

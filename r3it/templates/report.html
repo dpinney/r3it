@@ -1,6 +1,38 @@
 <!DOCTYPE html>
 <html>
 
+<head>
+
+    <style>
+        table {
+            width: 100%;
+            border-spacing: 2px;
+            table-layout: fixed;
+        }
+
+        td,
+        th {
+            border: 1px;
+            border-style: solid;
+            border-color: black;
+            text-align: center;
+            vertical-align: center;
+            overflow-wrap: break-word
+        }
+
+        .tableContainer {
+            max-height: 80%;
+            overflow-y: auto;
+        }
+    </style>
+
+    <!-- Library Imports -->
+    <script>sampleData = {{ sample_data | tojson }}</script>
+
+
+</head>
+
+
 <body>
 
     <ul>
@@ -13,14 +45,12 @@
     <H1>Interconnection report for request {{data['id']}}</H1>
 
     <table style='width:100%' border='1'>
-        {% for key in data %}
-        {% if 'id' != key %}
+        {% for key in data %} {% if 'id' != key %}
         <tr>
             <th>{{key}}</th>
-            <th style='font-weight: normal'>{{data[key]}}</th> 
+            <th style='font-weight: normal'>{{data[key]}}</th>
         </tr>
-        {% endif %}
-        {% endfor %}
+        {% endif %} {% endfor %}
     </table>
 
     {% if 'Pending' == data['Status'] %}
@@ -30,13 +60,425 @@
     <form action='{{"/update-status/" + data["id"] + "/Customer%20Options%20Meeting%20Proposed"}}'>
         <input type='submit' value='Propose customer options meeting' />
     </form>
-    {% endif %}
-
-    {% if 'Approved' == data['Status'] %}
+    {% endif %} {% if 'Approved' == data['Status'] %}
     <form action='{{"/update-status/" + data["id"] + "/Interconnection%20Agreement%20Profferred"}}'>
         <input type='submit' value='Proffer interconnection agreement' />
     </form>
     {% endif %}
+
+    <hr>
+
+    <H2>Sample tables below.</H2>
+    <!-- Tables -->
+    <p class="reportTitle" style="page-break-before:always">Maximum and Minimum Voltages</p>
+    <div class="content tableContainer">
+        <table id="minMaxVolts">
+            <tr>
+                <th rowspan="2">DER Status</th>
+                <th rowspan="2">Load Condition</th>
+                <th colspan="2">Max Voltage</th>
+                <th colspan="2">Min Voltage</th>
+            </tr>
+            <tr>
+                <th>V</th>
+                <th>Location</th>
+                <th>V</th>
+                <th>Location</th>
+            </tr>
+            <tr>
+                <td>On</td>
+                <td>Peak</td>
+                <td id="derOnMaxVoltValPeak"></td>
+                <script type="text/javascript">
+                    document.getElementById("derOnMaxVoltValPeak").innerHTML = sampleData['maxVoltsPeakDerOn'][1]
+                </script>
+                <td id="derOnMaxVoltLocPeak"></td>
+                <script type="text/javascript">
+                    document.getElementById("derOnMaxVoltLocPeak").innerHTML = sampleData['maxVoltsPeakDerOn'][0]
+                </script>
+                <td id="derOnMinVoltValPeak"></td>
+                <script type="text/javascript">
+                    document.getElementById("derOnMinVoltValPeak").innerHTML = sampleData['minVoltsPeakDerOn'][1]
+                </script>
+                <td id="derOnMinVoltLocPeak"></td>
+                <script type="text/javascript">
+                    document.getElementById("derOnMinVoltLocPeak").innerHTML = sampleData['minVoltsPeakDerOn'][0]
+                </script>
+            </tr>
+            <tr>
+                <td>On</td>
+                <td>Min</td>
+                <td id="derOnMaxVoltValMin"></td>
+                <script type="text/javascript">
+                    document.getElementById("derOnMaxVoltValMin").innerHTML = sampleData['maxVoltsMinDerOn'][1]
+                </script>
+                <td id="derOnMaxVoltLocMin"></td>
+                <script type="text/javascript">
+                    document.getElementById("derOnMaxVoltLocMin").innerHTML = sampleData['maxVoltsMinDerOn'][0]
+                </script>
+                <td id="derOnMinVoltValMin"></td>
+                <script type="text/javascript">
+                    document.getElementById("derOnMinVoltValMin").innerHTML = sampleData['minVoltsMinDerOn'][1]
+                </script>
+                <td id="derOnMinVoltLocMin"></td>
+                <script type="text/javascript">
+                    document.getElementById("derOnMinVoltLocMin").innerHTML = sampleData['minVoltsMinDerOn'][0]
+                </script>
+            </tr>
+            <tr>
+                <td>Off</td>
+                <td>Peak</td>
+                <td id="derOffMaxVoltValPeak"></td>
+                <script type="text/javascript">
+                    document.getElementById("derOffMaxVoltValPeak").innerHTML = sampleData['maxVoltsPeakDerOff'][1]
+                </script>
+                <td id="derOffMaxVoltLocPeak"></td>
+                <script type="text/javascript">
+                    document.getElementById("derOffMaxVoltLocPeak").innerHTML = sampleData['maxVoltsPeakDerOff'][0]
+                </script>
+                <td id="derOffMinVoltValPeak"></td>
+                <script type="text/javascript">
+                    document.getElementById("derOffMinVoltValPeak").innerHTML = sampleData['minVoltsPeakDerOff'][1]
+                </script>
+                <td id="derOffMinVoltLocPeak"></td>
+                <script type="text/javascript">
+                    document.getElementById("derOffMinVoltLocPeak").innerHTML = sampleData['minVoltsPeakDerOff'][0]
+                </script>
+            </tr>
+            <tr>
+                <td>Off</td>
+                <td>Min</td>
+                <td id="derOffMaxVoltValMin"></td>
+                <script type="text/javascript">
+                    document.getElementById("derOffMaxVoltValMin").innerHTML = sampleData['maxVoltsMinDerOff'][1]
+                </script>
+                <td id="derOffMaxVoltLocMin"></td>
+                <script type="text/javascript">
+                    document.getElementById("derOffMaxVoltLocMin").innerHTML = sampleData['maxVoltsMinDerOff'][0]
+                </script>
+                <td id="derOffMinVoltValMin"></td>
+                <script type="text/javascript">
+                    document.getElementById("derOffMinVoltValMin").innerHTML = sampleData['minVoltsMinDerOff'][1]
+                </script>
+                <td id="derOffMinVoltLocMin"></td>
+                <script type="text/javascript">
+                    document.getElementById("derOffMinVoltLocMin").innerHTML = sampleData['minVoltsMinDerOff'][0]
+                </script>
+            </tr>
+        </table>
+    </div>
+
+    <p class="reportTitle" style="page-break-before:always">Maximum Voltage Flicker when DER is turned off</p>
+    <div class="content tableContainer">
+        <table id="maxVoltFlicker">
+            <tr>
+                <th>Load Condition</th>
+                <th>&percnt;</th>
+                <th>Location</th>
+            </tr>
+            <tr>
+                <td>Peak</td>
+                <td id="flickerValPeak"></td>
+                <script type="text/javascript">
+                    document.getElementById("flickerValPeak").innerHTML = sampleData['maxFlickerPeak'][1].toFixed(2)
+                </script>
+                <td id="flickerLocPeak"></td>
+                <script type="text/javascript">
+                    document.getElementById("flickerLocPeak").innerHTML = sampleData['maxFlickerPeak'][0]
+                </script>
+            </tr>
+            <tr>
+                <td>Min</td>
+                <td id="flickerValMin"></td>
+                <script type="text/javascript">
+                    document.getElementById("flickerValMin").innerHTML = sampleData['maxFlickerMin'][1].toFixed(2)
+                </script>
+                <td id="flickerLocMin"></td>
+                <script type="text/javascript">
+                    document.getElementById("flickerLocMin").innerHTML = sampleData['maxFlickerMin'][0]
+                </script>
+            </tr>
+        </table>
+    </div>
+
+    <p class="reportTitle" style="page-break-before:always">Voltage Values</p>
+    <div class="content tableContainer">
+        <table class="sortable" id="voltageViolations">
+            <thead>
+                <tr>
+                    <th>Location</th>
+                    <th>Nominal Voltage</th>
+                    <th>Voltage Value</th>
+                    <th>&percnt; Change</th>
+                    <th>DER Status</th>
+                </tr>
+            </thead>
+        </table>
+        <script type="text/javascript">
+            var voltageViolations = sampleData['voltageViolations'];
+            var content = ''; var totalContent = '';
+
+            for (var i = 0; i < voltageViolations.length; i++) {
+                content = '<td>' + voltageViolations[i][0] + '</td><td>' +
+                    voltageViolations[i][1].toFixed(2) + '</td><td>' +
+                    voltageViolations[i][2].toFixed(2) + '</td><td>' +
+                    voltageViolations[i][3].toFixed(2) + '&percnt;</td><td>' +
+                    voltageViolations[i][4] + '</td>';
+                if (voltageViolations[i][5] == true)
+                    content = '<tr style=\"color: red\">' + content + '</tr>';
+                else content = '<tr>' + content + '</tr>';
+                totalContent += content
+            }
+            document.getElementById("voltageViolations").innerHTML += totalContent;
+        </script>
+
+        <span style="color: red">Voltage values non-compliant with ANSI C84.1 Range A Service voltages are displayed in red</span>
+    </div>
+
+    <p class="reportTitle" style="page-break-before:always">Voltage Flicker when DER is turned off</p>
+    <div class="content tableContainer">
+        <table class="sortable" id="flickerViolations">
+            <thead>
+                <tr>
+                    <th>Location</th>
+                    <th>Voltage Flicker</th>
+                    <th>Load Condition</th>
+                </tr>
+            </thead>
+        </table>
+        <script type="text/javascript">
+            var flickerViolations = sampleData['flickerViolations'];
+            var content = ''; var totalContent = '';
+            for (var i = 0; i < flickerViolations.length; i++) {
+                content = '<td>' + flickerViolations[i][0] + '</td><td>' + flickerViolations[i][1].toFixed(2) + '&percnt;</td><td>' + flickerViolations[i][2] + '</td>';
+                if (flickerViolations[i][3] == true)
+                    content = '<tr style=\"color: red\">' + content + '</tr>';
+                else content = '<tr>' + content + '</tr>';
+                totalContent += content
+            }
+            document.getElementById("flickerViolations").innerHTML += totalContent;
+        </script>
+        <span style="color: red">Voltage flicker values greater or equal to the input flicker threshold are displayed in
+            red
+        </span>
+    </div>
+
+    <p class="reportTitle" style="page-break-before:always">Line Loading</p>
+    <div class="content tableContainer">
+        <table class="sortable" id="thermalViolations">
+            <thead>
+                <tr>
+                    <th>Location</th>
+                    <th>Line Load (&percnt; rating)</th>
+                    <th>DER Status</th>
+                </tr>
+            </thead>
+        </table>
+        <script type="text/javascript">
+            var thermalViolations = sampleData['thermalViolations'];
+            var content = ''; var totalContent = '';
+            for (var i = 0; i < thermalViolations.length; i++) {
+                content = '<td>' + thermalViolations[i][0] + '</td><td>' + thermalViolations[i][1].toFixed(2) + '&percnt;</td><td>' + thermalViolations[i][2] + '</td>';
+                if (thermalViolations[i][3] == true)
+                    content = '<tr style=\"color: red\">' + content + '</tr>';
+                else content = '<tr>' + content + '</tr>';
+                totalContent += content
+            }
+            document.getElementById("thermalViolations").innerHTML += totalContent;
+        </script>
+        <span style="color: red">Line loading values greater or equal to the input threshold are displayed in red</span>
+    </div>
+
+    <p class="reportTitle" style="page-break-before:always">Regulator Power Flow</p>
+    <div class="content tableContainer">
+        <table class="sortable" id="reversePowerFlow">
+            <thead>
+                <tr>
+                    <th>Location</th>
+                    <th>Power</th>
+                    <th>DER Status</th>
+                </tr>
+            </thead>
+        </table>
+        <script type="text/javascript">
+            var reversePowerFlow = sampleData['reversePowerFlow'];
+            var content = ''; var totalContent = '';
+            for (var i = 0; i < reversePowerFlow.length; i++) {
+                content = '<td>' + reversePowerFlow[i][0] + '</td><td>' +
+                    reversePowerFlow[i][1].toFixed(2) + '</td><td>' +
+                    reversePowerFlow[i][2] + '</td>';
+                if (reversePowerFlow[i][3] == true)
+                    content = '<tr style=\"color: red\">' + content + '</tr>';
+                else content = '<tr>' + content + '</tr>';
+                totalContent += content
+            }
+            document.getElementById("reversePowerFlow").innerHTML += totalContent;
+        </script>
+        <span style="color: red">Reverse power flow violations displayed in red</span>
+    </div>
+
+    <p class="reportTitle" style="page-break-before:always">Tap Changes</p>
+    <div class="content tableContainer">
+        <table class="sortable" id="tapChanges">
+            <thead>
+                <tr>
+                    <th>Load Condition</th>
+                    <th>Location</th>
+                    <th>Tap Position DER On</th>
+                    <th>Tap Position DER Off</th>
+                    <th>Difference</th>
+                </tr>
+            </thead>
+        </table>
+        <script type="text/javascript">
+            var tapViolations = sampleData['tapViolations'];
+            var content = ''; var totalContent = '';
+            for (var i = 0; i < tapViolations.length; i++) {
+                content = '<td>' + tapViolations[i][0] + '</td><td>' + tapViolations[i][1] +
+                    '</td><td>' + tapViolations[i][2] + '</td><td>' + tapViolations[i][3] +
+                    '</td><td>' + tapViolations[i][4] + '</td>';
+                if (tapViolations[i][5] == true)
+                    content = '<tr style=\"color: red\">' + content + '</tr>';
+                else content = '<tr>' + content + '</tr>';
+                totalContent += content;
+            }
+            document.getElementById("tapChanges").innerHTML += totalContent;
+        </script>
+        <span style="color: red">Tap change differences greater or equal to the input max tap change difference are displayed
+            in red</span>
+    </div>
+
+    <p class="reportTitle" style="page-break-before:always">Short Circuit Analysis</p>
+    <div class="content tableContainer">
+
+        <p>DER Breaker Fault Current</p>
+        <table class="sortable" id="faultBreaker">
+            <thead>
+                <tr>
+                    <th>Load Condition</th>
+                    <th>Fault Type</th>
+                    <th>DER On</th>
+                    <th>DER Off</th>
+                    <th>Difference</th>
+                </tr>
+            </thead>
+        </table>
+        <script type="text/javascript">
+            var faultBreaker = sampleData['faultBreaker'];
+            var content = ''; var totalContent = '';
+            for (var i = 0; i < faultBreaker.length; i++) {
+                content = '<td>' + faultBreaker[i][0] + '</td><td>' +
+                    faultBreaker[i][1] + '</td><td>' + faultBreaker[i][2].toFixed(2) +
+                    '</td><td>' + faultBreaker[i][3].toFixed(2) + '</td><td>' +
+                    faultBreaker[i][4].toFixed(2) + '</td>';
+                content = '<tr>' + content + '</tr>';
+                totalContent += content;
+            }
+            document.getElementById("faultBreaker").innerHTML += totalContent;
+        </script>
+    </div>
+    <div class="content tableContainer">
+        <p>DER Transformer Fault Current</p>
+        <table class="sortable" id="faultStepUp">
+            <thead>
+                <tr>
+                    <th>Load Condition</th>
+                    <th>Fault Type</th>
+                    <th>DER On</th>
+                    <th>DER Off</th>
+                    <th>Difference</th>
+                </tr>
+            </thead>
+        </table>
+        <script type="text/javascript">
+            var faultStepUp = sampleData['faultStepUp'];
+            var content = ''; var totalContent = '';
+            for (var i = 0; i < faultStepUp.length; i++) {
+                content = '<td>' + faultStepUp[i][0] + '</td><td>' +
+                    faultStepUp[i][1] + '</td><td>' + faultStepUp[i][2].toFixed(2) +
+                    '</td><td>' + faultStepUp[i][3].toFixed(2) + '</td><td>' +
+                    faultStepUp[i][4].toFixed(2) + '</td>';
+                content = '<tr>' + content + '</tr>';
+                totalContent += content;
+            }
+            document.getElementById("faultStepUp").innerHTML += totalContent;
+        </script>
+    </div>
+
+    <p class="reportTitle" style="page-break-before:always">Fault Current Violations with DER On</p>
+    <div class="content tableContainer">
+        <table class="sortable" id="faultCurrentViolations">
+            <thead>
+                <tr>
+                    <th>Load Condition</th>
+                    <th>Fault Location</th>
+                    <th>Fault Type</th>
+                    <th>Measurement Location</th>
+                    <th>Pre-fault Current</th>
+                    <th>Post-fault Current</th>
+                    <th>&percnt; Change</th>
+                </tr>
+            </thead>
+        </table>
+        <script type="text/javascript">
+            var faultCurrentViolations = sampleData['faultCurrentViolations'];
+            var content = ''; var totalContent = '';
+            for (var i = 0; i < faultCurrentViolations.length; i++) {
+                content = '<td>' + faultCurrentViolations[i][0] + '</td><td>' +
+                    faultCurrentViolations[i][1] + '</td><td>' +
+                    faultCurrentViolations[i][2] + '</td><td>' +
+                    faultCurrentViolations[i][3] + '</td><td>' +
+                    faultCurrentViolations[i][4].toFixed(2) + '</td><td>' +
+                    faultCurrentViolations[i][5].toFixed(2) + '</td><td>' +
+                    faultCurrentViolations[i][6].toFixed(2) + '</td>';
+                if (faultCurrentViolations[i][7] == true)
+                    content = '<tr style=\"color: red\">' + content + '</tr>';
+                else content = '<tr>' + content + '</tr>';
+                totalContent += content;
+            }
+            document.getElementById("faultCurrentViolations").innerHTML += totalContent;
+        </script>
+        <span style="color: red">Fault current differences as a percent of the pre-fault current that are greater than or
+            equal to the input threshold are displayed in red</span>
+    </div>
+
+    <p class="reportTitle" style="page-break-before:always">Effective Grounding Screening</p>
+    <div class="content tableContainer">
+        <p>Line to Ground Fault at the POI</p>
+        <table class="sortable" id="faultPOIVolts">
+            <thead>
+                <tr>
+                    <th>DER Status</th>
+                    <th>Fault Location</th>
+                    <th>Fault Type</th>
+                    <th>Pre-fault Voltage</th>
+                    <th>Post-fault Voltage</th>
+                    <th>Post-fault Percent</th>
+                </tr>
+            </thead>
+        </table>
+        <script type="text/javascript">
+            var faultPOIVolts = sampleData['faultPOIVolts'];
+            var content = ''; var totalContent = '';
+            for (var i = 0; i < faultPOIVolts.length; i++) {
+                content = '<td>' + faultPOIVolts[i][0] + '</td><td>' +
+                    faultPOIVolts[i][1] + '</td><td>' +
+                    faultPOIVolts[i][2] + '</td><td>' +
+                    faultPOIVolts[i][3].toFixed(2) + '</td><td>' +
+                    faultPOIVolts[i][4].toFixed(2) + '</td><td>' +
+                    faultPOIVolts[i][5].toFixed(2) + '</td>';
+                if (faultPOIVolts[i][6] == true)
+                    content = '<tr style=\"color: red\">' + content + '</tr>';
+                else content = '<tr>' + content + '</tr>';
+                totalContent += content;
+            }
+            document.getElementById("faultPOIVolts").innerHTML += totalContent;
+        </script>
+        <span style="color: red">Post-fault voltage values as a percent of the pre-fault voltage that are greater than or
+            equal to the input threshold are displayed in red</span>
+    </div>
+
+    </div>
 
 
 </body>
