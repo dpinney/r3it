@@ -57,6 +57,16 @@ def customerLanding():
     template = Template(open('templates/customerLanding.html', 'r').read())
     return template.render()
 
+@app.route('/customerLanding2')
+def customerLanding2():
+    template = Template(open('templates/customerLanding2.html', 'r').read())
+    return template.render()
+
+@app.route('/customerreport')
+def customerReport():
+    template = Template(open('templates/customerReport.html', 'r').read())
+    return template.render()
+
 @app.route('/thankyou')
 def thankyou():
     template = Template(open('templates/applicationSubmitted.html', 'r').read())
