@@ -3,12 +3,17 @@
 
 <body>
 
+    <ul>
+    <li><a href='/customerLanding'>Interconnection Home</a></li>
+    <li><a href='/application'>New Interconnection Application</a></li>
+    <li><a href='/login/customer'>Logout</a></li>
+    </ul>
+
     <H1>New Interconnection Application</H1>
   
     <form action='/add-to-queue' method='post'>
         <label for='applicationName'>Application Name:</label><br>
         <input type='text' id='applicationName' name='Application Name' value="{{default.label}}"><br>
-        <!TODO: Make Tariff into radio button or dropdown.>
         <H3>Tarriff</H3>
         <input type="radio" id="Net Metering" name="Tariff" value="Net Metering" checked="checked">
         <label for="Net Metering">Net Metering</label><br>

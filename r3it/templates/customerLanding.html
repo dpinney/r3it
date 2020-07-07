@@ -15,14 +15,22 @@
 
     <H3>My interconnection applications</H3>
     <table style='width:100%' border='1'>
-    <tr>
-        <th>Place in Line</th>
-        <th>Time of Request</th>
-        <th>Address (Facility)</th>
-        <th>Status</th>
-        <th>Details</th>
-    </tr>
-    <!-- Replace hard-coded line with customer's requests when we have a user login system-->
+        <tr>
+            <th>Queue Position</th>
+            <th>Time of Request</th>
+            <th>Address (Facility)</th>
+            <th>Status</th>
+            <th>Report</th>
+        </tr>
+        {% for row in data %}
+        <tr>
+            <th style='font-weight: normal'>{{row[0]}}</th>
+            <th style='font-weight: normal'>{{row[1]}}</th>
+            <th style='font-weight: normal'>{{row[2]}}</th>
+            <th style='font-weight: normal'>{{row[3]}}</th>
+            <th style='font-weight: normal'><a href='{{"report/" + row[0]}}'>See report</a></th>
+        </tr>
+        {% endfor %}
     </table>
 
 
