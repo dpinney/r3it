@@ -6,7 +6,32 @@
 </head>
 
 <body>
-	<img src="/static/TouchstoneEnergy.png" alt="Jo-Carroll Energy" width="100%">
+	<img src="/static/TouchstoneEnergy.png" alt="Touchstone Energy" width="95%">
+
+{% if current_user.is_authenticated and current_user.type == 'customer' %}
+
+	<ul>
+        <li><a href='/customerLanding'>Interconnection Home</a></li>
+        <li><a href='/application'>New Interconnection Application</a></li>
+        <li><a href='/logout'>Logout</a></li>
+    </ul>
+
+{% elif current_user.is_authenticated and current_user.type == 'engineer' %}
+
+    <ul>
+        <li><a href='/overview'>Overview</a></li>
+        <li><a href='/queue'>Queue</a></li>
+        <li><a href='/logout'>Logout</a></li>
+    </ul>
+
+{% else  %}
+
+<p> {{current_user.id}} </p>
+
+{% endif %}
+
+    <hr>
+
 	{% block content %} {% endblock %}
 
 	<div id="footer">

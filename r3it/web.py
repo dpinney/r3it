@@ -14,7 +14,7 @@ import interconnection
 app = Flask(__name__)
 r3itDir = os.path.dirname(os.path.abspath(__file__))
 
-users = {'george@cooperativetactics.com': {'password': 'secret', 'type': 'customer'}}
+users = {'me@c.coop': {'password': 'secret', 'type': 'engineer'}, 'me@gmail.com': {'password': 'secret', 'type': 'customer'}}
 
 def cryptoRandomString():
     ''' Generate a cryptographically secure random string for signing/encrypting cookies. '''
@@ -37,6 +37,7 @@ def load_user(email):
 
     user = User()
     user.id = email
+    user.type = users[email]['type']
     return user
 
 @login_manager.request_loader
@@ -103,9 +104,9 @@ def login():
 
 @app.route('/logout')
 def logout():
-    logout_user()
-    return redirect('/login/{}'.format(users[flask_login.current_user.id]['type']))
-
+    userType = users[flask_login.current_user.id]['type']
+    flask_login.logout_user()
+    return redirect('/login/{}'.format(userType))
 
 @app.route('/thankyou')
 def thankyou():
@@ -119,7 +120,6 @@ def report(id):
     with open('data/sample/allOutputData.json') as data:
         sample_data = json.load(data)
     return render_template('report.html', data=report_data, sample_data=sample_data)
-
 
 @app.route('/add-to-queue', methods=['GET', 'POST'])
 def add_to_queue():
