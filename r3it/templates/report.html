@@ -1,7 +1,6 @@
-<!DOCTYPE html>
-<html>
+{% extends "base.html" %}
 
-<head>
+{% block head %}
 
     <style>
         table {
@@ -30,10 +29,9 @@
     <script>sampleData = {{ sample_data | tojson }}</script>
 
 
-</head>
+{% endblock %}
 
-
-<body>
+{% block content %}
 
     <ul>
         <li><a href='/overview'>Overview</a></li>
@@ -480,7 +478,4 @@
 
     </div>
 
-
-</body>
-
-</html>
+{% endblock %}

@@ -7,8 +7,7 @@ import flask_wtf
 import os, hashlib, random
 from random import choice as pick
 
-from flask import Flask, redirect, request, send_from_directory
-from jinja2 import Template
+from flask import Flask, redirect, request, send_from_directory, render_template
 
 import interconnection
 
@@ -54,20 +53,18 @@ def request_loader(request):
 
 @app.route('/login/engineer', methods=['GET', 'POST'])
 def login_engineer():
-    template = Template(open('templates/loginEngineer.html', 'r').read())
-    return template.render()
-
+    return render_template('loginEngineer.html')
 
 @app.route('/login/customer', methods=['GET', 'POST'])
 def login_customer():
-    template = Template(open('templates/loginCustomer.html', 'r').read())
-    return template.render()
+    return render_template('loginCustomer.html')
 
 
 statuses = ['Approved', 'Pending', 'Customer Options Meeting Proposed', 'Customer Options Meeting Scheduled', 'Interconnection Agreement Profferred', 'Interconnection Agreement Executed', 'Permission to Operate Profferred', 'Permission to Operate Executed', 'In Operation', 'Out of Service']
 
 @app.route('/')
-def hello_world(): return 'Hello, World!'
+def hello_world(): 
+    return render_template('base.html')
 
 @app.route('/queue')
 def queue():
@@ -78,13 +75,11 @@ def queue():
             datarow = [id, value['Time of Request'],
                        value['Address (Facility)'], value['Status']]
             queue_data.append(datarow)
-    template = Template(open('templates/queue.html', 'r').read())
-    return template.render(data=queue_data)
+    return render_template('queue.html', data=queue_data)
 
 @app.route('/overview')
 def overview():
-    template = Template(open('templates/overview.html', 'r').read())
-    return template.render()
+    return render_template('overview.html')
 
 @app.route('/customerLanding')
 def customerLanding():
@@ -97,9 +92,7 @@ def customerLanding():
                        value['Address (Facility)'], value['Status']]
                 queue_data.append(datarow)
                 
-
-    template = Template(open('templates/customerLanding.html', 'r').read())
-    return template.render(data=queue_data)
+    return render_template('customerLanding.html', data=queue_data)
 
 @app.route('/login')
 def login():
@@ -114,21 +107,9 @@ def logout():
     return redirect('/login/{}'.format(users[flask_login.current_user.id]['type']))
 
 
-@app.route('/customerLanding2')
-def customerLanding2():
-    template = Template(open('templates/customerLanding2.html', 'r').read())
-    return template.render()
-
-@app.route('/customerreport')
-def customerReport():
-    template = Template(open('templates/customerReport.html', 'r').read())
-    return template.render()
-
 @app.route('/thankyou')
 def thankyou():
-    template = Template(open('templates/applicationSubmitted.html', 'r').read())
-    return template.render()
-
+    return render_template('applicationSubmitted.html')
 
 @app.route('/report/<id>')
 def report(id):
@@ -137,8 +118,7 @@ def report(id):
     report_data['id'] = id
     with open('data/sample/allOutputData.json') as data:
         sample_data = json.load(data)
-    template = Template(open('templates/report.html', 'r').read())
-    return template.render(data=report_data, sample_data=sample_data)
+    return render_template('report.html', data=report_data, sample_data=sample_data)
 
 
 @app.route('/add-to-queue', methods=['GET', 'POST'])
@@ -192,8 +172,7 @@ def application():
     'email' : str(flask_login.current_user.id)
     }
     
-    template = Template(open('templates/application.html', 'r').read())
-    return template.render(default = default)
+    return render_template('application.html', default = default)
 
 
 @app.route('/update-status/<id>/<status>')
