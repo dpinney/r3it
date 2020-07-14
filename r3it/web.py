@@ -38,19 +38,9 @@ def load_user(email):
     user = User()
     user.id = email
     user.type = users[email]['type']
-    return user
-
-@login_manager.request_loader
-def request_loader(request):
-    email = request.form.get('email')
-    if email not in users:
-        return
-    user = User()
-    user.id = email
-    user.is_authenticated = request.form['password'] == users[email]['password']
+#    user.is_authenticated = request.form['password'] == users[email]['password']
 
     return user
-
 
 @app.route('/login/engineer', methods=['GET', 'POST'])
 def login_engineer():
@@ -104,15 +94,17 @@ def login():
 
 @app.route('/logout')
 def logout():
-    userType = users[flask_login.current_user.id]['type']
+    userType = users[flask_login.current_user.get_id()]['type']
     flask_login.logout_user()
     return redirect('/login/{}'.format(userType))
 
 @app.route('/thankyou')
+@flask_login.login_required
 def thankyou():
     return render_template('applicationSubmitted.html')
 
 @app.route('/report/<id>')
+@flask_login.login_required
 def report(id):
     with open('data/queue.json') as queue:
         report_data = json.load(queue)[id]
@@ -122,6 +114,7 @@ def report(id):
     return render_template('report.html', data=report_data, sample_data=sample_data)
 
 @app.route('/add-to-queue', methods=['GET', 'POST'])
+@flask_login.login_required
 def add_to_queue():
     status = interconnection.compute_status(request.form)
     interconnection_request = {}
@@ -138,6 +131,7 @@ def add_to_queue():
 
 
 @app.route('/send-file/<path:fullPath>')
+@flask_login.login_required
 def send_file(fullPath):
     path_pieces = fullPath.split('/')
     return send_from_directory('/'.join(path_pieces[0:-1]), path_pieces[-1])
@@ -176,6 +170,7 @@ def application():
 
 
 @app.route('/update-status/<id>/<status>')
+@flask_login.login_required
 def update_status(id, status):
     if status not in statuses:
         return 'Status invalid; no update made.'
