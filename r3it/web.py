@@ -14,7 +14,7 @@ import interconnection
 app = Flask(__name__)
 r3itDir = os.path.dirname(os.path.abspath(__file__))
 
-users = {'me@c.coop': {'password': 'secret', 'type': 'engineer'}, 'me@gmail.com': {'password': 'secret', 'type': 'customer'}}
+users = {'me@coop.coop': {'password': 'secret', 'type': 'engineer'}, 'me@gmail.com': {'password': 'secret', 'type': 'customer'}}
 
 def cryptoRandomString():
     ''' Generate a cryptographically secure random string for signing/encrypting cookies. '''
@@ -25,78 +25,57 @@ def cryptoRandomString():
 
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
+login_manager.login_view = '/'
 app.secret_key = cryptoRandomString()
 
 class User(flask_login.UserMixin):
-    pass
+    def __init__(self, email, userType):
+        self.id = email
+        self.type = userType
+
+class Anon(flask_login.AnonymousUserMixin):
+    def __init__(self):
+        self.id = 'anonymous'
+        self.type = 'anonymous'
 
 @login_manager.user_loader
 def load_user(email):
-    if email not in users:
-        return
-
-    user = User()
-    user.id = email
-    user.type = users[email]['type']
-#    user.is_authenticated = request.form['password'] == users[email]['password']
-
-    return user
-
-@app.route('/login/engineer', methods=['GET', 'POST'])
-def login_engineer():
-    return render_template('loginEngineer.html')
-
-@app.route('/login/customer', methods=['GET', 'POST'])
-def login_customer():
-    return render_template('loginCustomer.html')
-
+    if email in users:
+        return User(email, users.get(email, {}).get('type'))
+    else:
+        return Anon()
 
 statuses = ['Approved', 'Pending', 'Customer Options Meeting Proposed', 'Customer Options Meeting Scheduled', 'Interconnection Agreement Profferred', 'Interconnection Agreement Executed', 'Permission to Operate Profferred', 'Permission to Operate Executed', 'In Operation', 'Out of Service']
 
 @app.route('/')
-def hello_world(): 
-    return render_template('base.html')
-
-@app.route('/queue')
-def queue():
-    queue_data = []
-    with open('data/queue.json') as queue:
-        data = json.load(queue)
-        for id, value in data.items():
-            datarow = [id, value['Time of Request'],
-                       value['Address (Facility)'], value['Status']]
-            queue_data.append(datarow)
-    return render_template('queue.html', data=queue_data)
-
-@app.route('/overview')
-def overview():
-    return render_template('overview.html')
-
-@app.route('/customerLanding')
-def customerLanding():
-    queue_data = []
-    with open('data/queue.json') as queue:
-        data = json.load(queue)
-        for id, value in data.items():
-            if value["Email (Customer)"] == flask_login.current_user.id:
-                datarow = [id, value['Time of Request'],
-                       value['Address (Facility)'], value['Status']]
-                queue_data.append(datarow)
-                
-    return render_template('customerLanding.html', data=queue_data)
+def index(): 
+    data = []
+    if flask_login.current_user.is_anonymous():
+        pass
+    elif flask_login.current_user.type == 'engineer':
+        for id, value in json.load(open('data/queue.json')).items():
+            data.append([id, value['Time of Request'], value['Address (Facility)'], value['Status']])
+    elif flask_login.current_user.type == 'customer':
+        for id, value in json.load(open('data/queue.json')).items():
+            if value["Email (Customer)"] == flask_login.current_user.get_id():
+                data.append([id, value['Time of Request'], value['Address (Facility)'], value['Status']])
+    return render_template('index.html', data=data)
 
 @app.route('/login')
 def login():
-    user = load_user(request.args['username'])
-    flask_login.login_user(user)
-    nextUrl = request.args['next']
-    return redirect(nextUrl)
+    email, passwordAttempt = request.args['username'], request.args['password']
+    password = users.get(email, {}).get('password')
+    if email in users and password == passwordAttempt:
+        print('loading ', email)
+        flask_login.login_user(load_user(email))
+        return redirect('/')
+    else:
+        return redirect('/')
 
 @app.route('/logout')
 def logout():
-    userType = users[flask_login.current_user.get_id()]['type']
     flask_login.logout_user()
-    return redirect('/login/{}'.format(userType))
+    return redirect('/')
 
 @app.route('/thankyou')
 @flask_login.login_required
@@ -145,7 +124,6 @@ def application():
     trees = ['Oak', 'Birch', 'Cypress', 'Maple', 'Pine', 'Hickory', 'Ash', 'Aspen', 'Elder Berry']
     suffixes = ['Ave.', 'Ln.', 'St.', 'Way', 'Blvd']
     zips = range(54601, 54650)
-
 
     phases = ['One', 'Three']
     sizes = range(1,20)

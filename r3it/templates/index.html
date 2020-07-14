@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block engineer %}
+	<H1>Interconnection Queue</H1>
+	{{ interconnectionTable()}}
+	<H1>System Overview</H1>
+	<figure>
+        <img src='send-file/data/sample/voltage-feeder.png' style='width:100%'>
+        <figcaption>Voltage feeder diagram.</figcaption>
+    </figure>
+{% endblock %}
+
+{% block customer %}
+	<H1>Interconnecting Distributed Generation</H1>
+	<p>Welcome to NRECA's Interconnection tool! To learn more about...</p>
+	<H1>My interconnection applications</H1>
+	<a href='/application'>Apply for Interconnection</a>
+	<p></p>
+	{{ interconnectionTable()}}
+{% endblock %}
+
+{% block anonymous %}
+    <form action='/login'>
+        <label for='username'>Username:</label><br>
+        <input type='text' id='username' name='username' required><br>
+        <label for='password'>Password:</label><br>
+        <input type='password' id='password' name='password' required><br><br>
+        <input type='submit' value='Submit'>
+    </form>
+{% endblock %}
+
+{% macro interconnectionTable() %}
+	<table style='width:100%' border='1'>
+	    <tr>
+	        <th>Queue Position</th>
+	        <th>Time of Request</th>
+	        <th>Address (Facility)</th>
+	        <th>Status</th>
+	        <th>Report</th>
+	    </tr>
+	    {% for row in data %}
+	    <tr>
+	        <th style='font-weight: normal'>{{row[0]}}</th>
+	        <th style='font-weight: normal'>{{row[1]}}</th>
+	        <th style='font-weight: normal'>{{row[2]}}</th>
+	        <th style='font-weight: normal'>{{row[3]}}</th>
+	        <th style='font-weight: normal'><a href='{{"report/" + row[0]}}'>See report</a></th>
+	    </tr>
+	    {% endfor %}
+	</table>
+{% endmacro %}
