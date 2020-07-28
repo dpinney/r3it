@@ -136,7 +136,7 @@ def add_to_queue():
     data[len(data) + 1] = interconnection_request
     with open('data/queue.json', 'w') as queue:
         json.dump(data, queue)
-    return redirect('/thankyou')
+    return redirect('/?notification=Application%20submitted%2E')
 
 
 @app.route('/send-file/<path:fullPath>')

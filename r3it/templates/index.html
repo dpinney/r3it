@@ -30,7 +30,7 @@
 {% endblock %}
 
 {% macro interconnectionTable(header, passedData) %}
-{% if passedData is defined %}
+{% if passedData %}
 	<H1>{{ header }}</H1>
 	<table style='width:100%' border='1'>
 	    <tr>
