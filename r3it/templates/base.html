@@ -3,7 +3,9 @@
 <head>{% block head %} {% endblock %}</head>
 <body>
 	<img src={{ logo }} alt={{ utilityName }} width="95%">
+
 	{% if current_user.is_authenticated() %}
+		<a href='/'>Home</a>
 		<a href='/logout'>Logout</a>
 	{% endif %}
 	<hr>
