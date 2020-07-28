@@ -1,4 +1,5 @@
 import config
+import base64
 import copy
 import csv
 import json
@@ -18,9 +19,6 @@ def inject_config():
 
 r3itDir = os.path.dirname(os.path.abspath(__file__))
 
-with open('data/Users/users.json') as userJson:
-    users = json.load(userJson)
-
 def cryptoRandomString():
     ''' Generate a cryptographically secure random string for signing/encrypting cookies. '''
     if 'COOKIE_KEY' in globals():
@@ -34,7 +32,7 @@ login_manager.login_view = '/'
 app.secret_key = cryptoRandomString()
 
 class User(flask_login.UserMixin):
-    def __init__(self, email, userType):
+    def __init__(self, email):
         self.id = email
         if self.id in config.engineers:
             self.type = 'engineer'
@@ -50,8 +48,10 @@ class Anon(flask_login.AnonymousUserMixin):
 
 @login_manager.user_loader
 def load_user(email):
+    with open('data/Users/users.json') as userJson:
+        users = json.load(userJson)
     if email in users:
-        return User(email, users.get(email, {}).get('type'))
+        return User(email)
     else:
         return Anon()
 
@@ -103,15 +103,30 @@ def index():
     else:
         return render_template('index.html', notification=notification)
 
+def pwHash(username, password): return str(base64.b64encode(hashlib.pbkdf2_hmac('sha256', b'{password}', b'{username}', 100000)))
+
 @app.route('/login')
 def login():
-    email, passwordAttempt = request.args['username'], request.args['password']
+    with open('data/Users/users.json') as userJson:
+        users = json.load(userJson)
+    email, passwordAttempt = request.args['username'], pwHash(request.args['username'],request.args['password'])
     password = users.get(email, {}).get('password')
     if email in users and password == passwordAttempt:
         flask_login.login_user(load_user(email))
         return redirect('/')
     else:
         return redirect('/?notification=Username%20or%20password%20does%20not%20match%20our%20records%2E')
+
+@app.route('/register')
+def register():
+    email, password = request.args['username'], pwHash(request.args['username'],request.args['password'])
+    user = {email : {'password' : password}}
+    with open('data/Users/users.json') as users:
+        data = json.load(users)
+    data.update(user)
+    with open('data/Users/users.json', 'w') as userFile:
+        json.dump(data, userFile)
+    return redirect('/?notification=Registration%20successful%2E')
 
 @app.route('/logout')
 def logout():
