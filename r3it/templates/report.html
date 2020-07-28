@@ -55,9 +55,9 @@
     <form action='{{"/update-status/" + data["id"] + "/Customer%20Options%20Meeting%20Proposed"}}'>
         <input type='submit' value='Propose customer options meeting' />
     </form>
-    {% endif %} {% if 'Approved' == data['Status'] %}
-    <form action='{{"/update-status/" + data["id"] + "/Interconnection%20Agreement%20Profferred"}}'>
-        <input type='submit' value='Proffer interconnection agreement' />
+    {% endif %} {% if 'Engineering Review' == data['Status'] %}
+    <form action='{{"/update-status/" + data["id"] + "/Interconnection%20Agreement%20Proffered"}}'>
+        <input type='submit' value='Proffer Interconnection Agreement'/>
     </form>
     {% endif %}
 
