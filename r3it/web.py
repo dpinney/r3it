@@ -18,7 +18,8 @@ def inject_config():
 
 r3itDir = os.path.dirname(os.path.abspath(__file__))
 
-users = {'engineer@electric.coop': {'password': 'secret', 'type': 'engineer'}, 'consumer@gmail.com': {'password': 'secret', 'type': 'customer'}}
+with open('data/Users/users.json') as userJson:
+    users = json.load(userJson)
 
 def cryptoRandomString():
     ''' Generate a cryptographically secure random string for signing/encrypting cookies. '''
