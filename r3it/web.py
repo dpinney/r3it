@@ -107,11 +107,6 @@ def logout():
     flask_login.logout_user()
     return redirect('/')
 
-@app.route('/thankyou')
-@flask_login.login_required
-def thankyou():
-    return render_template('applicationSubmitted.html')
-
 @app.route('/report/<id>')
 @flask_login.login_required
 def report(id):
