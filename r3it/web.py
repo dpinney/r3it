@@ -11,13 +11,47 @@ from random import choice as pick
 from flask import Flask, redirect, request, send_from_directory, render_template, flash, url_for
 import interconnection
 
-app = Flask(__name__)
+# Global static variables.
+r3itDir = os.path.dirname(os.path.abspath(__file__))
+statuses = (
+    'Application Submitted', # Attn: Member services, upon submission.
+    'Engineering Review', # Attn: Engineering, if above size threshold
+    'Customer Options Meeting Required', # Attn: Member Services, if engineering says so
+    'Customer Options Meeting Proposed', # Attn: Consumer, when proposed by member services.
+    'Customer Options Meeting Scheduled', # Attn: ???, 
+    'Interconnection Agreement Proffered', # Attn: Customer
+    'Interconnection Agreement Executed', # Attn: Customer
+    'Permission to Operate Proffered', # Attn: Customer
+    'Commissioning Test Needed', # Attn: Engineering, Customer
+    'Commissioned', 
+    'Out of Service'
+)
+engineerActionItems = (
+    'Engineering Review', 'Commissioning Test Needed'
+)
+customerActionItems = (
+    'Customer Options Meeting Proposed', 
+    'Interconnection Agreement Proffered', 
+    'Interconnection Agreement Executed',
+    'Permission to Operate Proffered',
+    'Commissioning Test Needed'
+)
+msActionItems = (
+    'Application Submitted',
+    'Customer Options Meeting Required'
+)
 
+# Inject global template variables.
 @app.context_processor
 def inject_config():
     return dict(logo=config.logo, sizeThreshold=config.sizeThreshold, utilityName=config.utilityName)
 
-r3itDir = os.path.dirname(os.path.abspath(__file__))
+# Initiate authentication system.
+app = Flask(__name__)
+login_manager = flask_login.LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = '/'
+app.secret_key = cryptoRandomString()
 
 def cryptoRandomString():
     ''' Generate a cryptographically secure random string for signing/encrypting cookies. '''
@@ -26,10 +60,7 @@ def cryptoRandomString():
     else:
         return hashlib.md5(str(random.random()).encode('utf-8') + str(time.time()).encode('utf-8')).hexdigest()
 
-login_manager = flask_login.LoginManager()
-login_manager.init_app(app)
-login_manager.login_view = '/'
-app.secret_key = cryptoRandomString()
+def pwHash(username, password): return str(base64.b64encode(hashlib.pbkdf2_hmac('sha256', b'{password}', b'{username}', 100000)))
 
 class User(flask_login.UserMixin):
     def __init__(self, email):
@@ -54,26 +85,6 @@ def load_user(email):
         return User(email)
     else:
         return Anon()
-
-statuses = ['Application Submitted', # Attn: Member services, upon submission.
-            'Engineering Review', # Attn: Engineering, if above size threshold
-            'Customer Options Meeting Required', # Attn: Member Services, if engineering says so
-            'Customer Options Meeting Proposed', # Attn: Consumer, when proposed by member services.
-            'Customer Options Meeting Scheduled', # Attn: ???, 
-            'Interconnection Agreement Proffered', # Attn: Customer
-            'Interconnection Agreement Executed', # Attn: Customer
-            'Permission to Operate Proffered', # Attn: Customer
-            'Commissioning Test Needed', # Attn: Engineering, Customer
-            'Commissioned', 
-            'Out of Service']
-engineerActionItems = ['Engineering Review', 'Commissioning Test Needed']
-customerActionItems = ['Customer Options Meeting Proposed', 
-                        'Interconnection Agreement Proffered', 
-                        'Interconnection Agreement Executed',
-                        'Permission to Operate Proffered',
-                        'Commissioning Test Needed']
-msActionItems = ['Application Submitted',
-                'Customer Options Meeting Required']
 
 @app.route('/')
 def index():
@@ -103,11 +114,9 @@ def index():
     else:
         return render_template('index.html', notification=notification)
 
-def pwHash(username, password): return str(base64.b64encode(hashlib.pbkdf2_hmac('sha256', b'{password}', b'{username}', 100000)))
-
 @app.route('/login')
 def login():
-    with open('data/Users/users.json') as userJson:
+    with open('data/Users/users.json', 'r') as userJson:
         users = json.load(userJson)
     email, passwordAttempt = request.args['username'], pwHash(request.args['username'],request.args['password'])
     password = users.get(email, {}).get('password')
@@ -159,13 +168,11 @@ def add_to_queue():
         json.dump(data, queue)
     return redirect('/?notification=Application%20submitted%2E')
 
-
 @app.route('/send-file/<path:fullPath>')
 @flask_login.login_required
 def send_file(fullPath):
     path_pieces = fullPath.split('/')
     return send_from_directory('/'.join(path_pieces[0:-1]), path_pieces[-1])
-
 
 @app.route('/application')
 @flask_login.login_required
@@ -175,28 +182,23 @@ def application():
     trees = ['Oak', 'Birch', 'Cypress', 'Maple', 'Pine', 'Hickory', 'Ash', 'Aspen', 'Elder Berry']
     suffixes = ['Ave.', 'Ln.', 'St.', 'Way', 'Blvd']
     zips = range(54601, 54650)
-
     phases = ['One', 'Three']
     sizes = range(1,20)
     voltages = ['110', '220', '600']
-
     firstname, lastname = pick(firstNames), pick(lastNames)
-
     default = {
-    'label' : '{} {}\'s Solar Project'.format(firstname, lastname),
-    'name' : '{} {}'.format(firstname, lastname),
-    'address' : "{} {} {}".format(str(pick(range(9999))), pick(trees), pick(suffixes)),
-    'zip' : '{}'.format(pick(zips)),
-    'city': 'LaCrosse',
-    'state' : 'WI',
-    'phone' : '({}{}) {}{} - {}'.format(pick(range(2,9)), pick(range(10,99)), pick(range(2,9)), pick(range(10,99)), pick(range(1000,9999))),
-    'size' : '{}'.format(pick(sizes)),
-    'voltage' : '{}'.format(pick(voltages)),
-    'email' : str(flask_login.current_user.id)
+        'label' : '{} {}\'s Solar Project'.format(firstname, lastname),
+        'name' : '{} {}'.format(firstname, lastname),
+        'address' : "{} {} {}".format(str(pick(range(9999))), pick(trees), pick(suffixes)),
+        'zip' : '{}'.format(pick(zips)),
+        'city': 'LaCrosse',
+        'state' : 'WI',
+        'phone' : '({}{}) {}{} - {}'.format(pick(range(2,9)), pick(range(10,99)), pick(range(2,9)), pick(range(10,99)), pick(range(1000,9999))),
+        'size' : '{}'.format(pick(sizes)),
+        'voltage' : '{}'.format(pick(voltages)),
+        'email' : str(flask_login.current_user.id)
     }
-    
     return render_template('application.html', default = default)
-
 
 @app.route('/update-status/<id>/<status>')
 @flask_login.login_required
@@ -210,7 +212,6 @@ def update_status(id, status):
         json.dump(data, queue)
     print(data[id])
     return redirect(request.referrer)
-
 
 if __name__ == '__main__':
     app.run(debug=True)
