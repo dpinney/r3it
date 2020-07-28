@@ -26,7 +26,7 @@ def compute_status(interconnection_form):
     if int(interconnection_form['Nameplate Rating (kW)']) <= config.sizeThreshold:
     	return 'Interconnection Agreement Proffered'
     else:
-    	return 'Engineering Review Needed'
+    	return 'Engineering Review'
 
 def _tests():
     print(derInterconnection.runForeground('./data/test'))

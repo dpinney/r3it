@@ -88,7 +88,7 @@ def index():
             if value['Status'] in customerActionItems:
                 priorities.append([id, value['Time of Request'], value['Address (Facility)'], value['Status']])
     if data:
-        return render_template('index.html', data=data, notification=notification)
+        return render_template('index.html', data=data, priorities=priorities, notification=notification)
     else:
         return render_template('index.html', notification=notification)
 
