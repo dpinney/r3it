@@ -7,6 +7,9 @@
 		<a href='/logout'>Logout</a>
 	{% endif %}
 	<hr>
+	{% if notification%}
+	<H3> {{ notification }} </H3>
+	{% endif %}
 	{% block content %} {% endblock %}
 	{% if current_user.type == 'engineer' %} {% block engineer %}{% endblock %}
 	{% elif current_user.type == 'customer' %} {% block customer %}{% endblock %}

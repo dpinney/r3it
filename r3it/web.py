@@ -7,7 +7,7 @@ import flask_login
 import flask_wtf
 import os, hashlib, random
 from random import choice as pick
-from flask import Flask, redirect, request, send_from_directory, render_template
+from flask import Flask, redirect, request, send_from_directory, render_template, flash, url_for
 import interconnection
 
 app = Flask(__name__)
@@ -70,8 +70,10 @@ customerActionItems = ['Customer Options Meeting Proposed',
 
 @app.route('/')
 def index(): 
+    print(flask_login.current_user.is_authenticated())
     data = []
     priorities = []
+    notification = request.args.get('notification', None)
     if flask_login.current_user.is_anonymous():
         pass
     elif flask_login.current_user.type == 'engineer':
@@ -86,20 +88,19 @@ def index():
             if value['Status'] in customerActionItems:
                 priorities.append([id, value['Time of Request'], value['Address (Facility)'], value['Status']])
     if data:
-        return render_template('index.html', data=data)
+        return render_template('index.html', data=data, notification=notification)
     else:
-        return render_template('index.html')
+        return render_template('index.html', notification=notification)
 
 @app.route('/login')
 def login():
     email, passwordAttempt = request.args['username'], request.args['password']
     password = users.get(email, {}).get('password')
     if email in users and password == passwordAttempt:
-        print('loading ', email)
         flask_login.login_user(load_user(email))
         return redirect('/')
     else:
-        return redirect('/')
+        return redirect('/?notification=Username%20or%20password%20does%20not%20match%20our%20records%2E')
 
 @app.route('/logout')
 def logout():
