@@ -10,6 +10,11 @@
     </figure>
 {% endblock %}
 
+{% block ms %}
+	{{ interconnectionTable('Action Needed', priorities)}}
+	{{ interconnectionTable('Interconnection Queue', data)}}
+{% endblock %}
+
 {% block customer %}
 	<H1>Interconnecting Distributed Generation</H1>
 	<p>Welcome to NRECA's Interconnection tool! To learn more about...</p>

@@ -44,21 +44,14 @@
         {% endif %} {% endfor %}
     </table>
 
-    {% endblock %}
+{% endblock %}
 
-    {% block engineer %}
-
-    {% if 'Pending' == data['Status'] %}
-    <form action='{{"/update-status/" + data["id"] + "/Approved"}}'>
-        <input type='submit' value='Approve request' />
-    </form>
-    <form action='{{"/update-status/" + data["id"] + "/Customer%20Options%20Meeting%20Proposed"}}'>
-        <input type='submit' value='Propose customer options meeting' />
-    </form>
-    {% endif %} {% if 'Engineering Review' == data['Status'] %}
-    <form action='{{"/update-status/" + data["id"] + "/Interconnection%20Agreement%20Proffered"}}'>
+{% block engineer %}
+    <hr>
+    {% if 'Engineering Review' == data['Status'] %}
+        <form action='{{"/update-status/" + data["id"] + "/Interconnection%20Agreement%20Proffered"}}'>
         <input type='submit' value='Proffer Interconnection Agreement'/>
-    </form>
+        </form>
     {% endif %}
 
     <hr>

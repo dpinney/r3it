@@ -72,6 +72,8 @@ customerActionItems = ['Customer Options Meeting Proposed',
                         'Interconnection Agreement Executed',
                         'Permission to Operate Proffered',
                         'Commissioning Test Needed']
+msActionItems = ['Application Submitted',
+                'Customer Options Meeting Required']
 
 @app.route('/')
 def index():
@@ -84,6 +86,11 @@ def index():
         for id, value in json.load(open('data/queue.json')).items():
             data.append([id, value['Time of Request'], value['Address (Facility)'], value['Status']])
             if value['Status'] in engineerActionItems:
+                priorities.append([id, value['Time of Request'], value['Address (Facility)'], value['Status']])
+    elif flask_login.current_user.type == 'memberServices':
+        for id, value in json.load(open('data/queue.json')).items():
+            data.append([id, value['Time of Request'], value['Address (Facility)'], value['Status']])
+            if value['Status'] in msActionItems:
                 priorities.append([id, value['Time of Request'], value['Address (Facility)'], value['Status']])
     elif flask_login.current_user.type == 'customer':
         for id, value in json.load(open('data/queue.json')).items():

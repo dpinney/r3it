@@ -14,6 +14,7 @@
 	{% endif %}
 	{% block content %} {% endblock %}
 	{% if current_user.type == 'engineer' %} {% block engineer %}{% endblock %}
+	{% elif current_user.type == 'memberServices' %} {% block ms %}{% endblock %}
 	{% elif current_user.type == 'customer' %} {% block customer %}{% endblock %}
 	{% else %} {% block anonymous %}{% endblock %} {% endif %}
 	<hr>
