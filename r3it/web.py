@@ -36,7 +36,12 @@ app.secret_key = cryptoRandomString()
 class User(flask_login.UserMixin):
     def __init__(self, email, userType):
         self.id = email
-        self.type = userType
+        if self.id in config.engineers:
+            self.type = 'engineer'
+        elif self.id in config.memberServices:
+            self.type = 'memberServices'
+        else: 
+            self.type = 'customer'
 
 class Anon(flask_login.AnonymousUserMixin):
     def __init__(self):
@@ -69,8 +74,7 @@ customerActionItems = ['Customer Options Meeting Proposed',
                         'Commissioning Test Needed']
 
 @app.route('/')
-def index(): 
-    print(flask_login.current_user.is_authenticated())
+def index():
     data = []
     priorities = []
     notification = request.args.get('notification', None)

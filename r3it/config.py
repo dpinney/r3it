@@ -1,5 +1,7 @@
 # config.py
 
-utilityName = 'Touchstone Electric Cooperative'
+utilityName = 'Touchstone Energy'
 sizeThreshold = 10
 logo = '/static/TouchstoneEnergy.png'
+engineers = ['engineer@electric.coop']
+memberServices = ['ms@electric.coop']
