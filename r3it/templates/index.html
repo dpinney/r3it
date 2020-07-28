@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
 
 {% block engineer %}
-	<H1>Interconnection Queue</H1>
-	{{ interconnectionTable()}}
+	{{ interconnectionTable('Action Needed', priorities)}}
+	{{ interconnectionTable('Interconnection Queue', data)}}
 	<H1>System Overview</H1>
 	<figure>
         <img src='send-file/data/sample/voltage-feeder.png' style='width:100%'>
@@ -13,10 +13,10 @@
 {% block customer %}
 	<H1>Interconnecting Distributed Generation</H1>
 	<p>Welcome to NRECA's Interconnection tool! To learn more about...</p>
-	<H1>My interconnection applications</H1>
 	<a href='/application'>Apply for Interconnection</a>
 	<p></p>
-	{{ interconnectionTable()}}
+	{{ interconnectionTable('Action Needed', priorities)}}
+	{{ interconnectionTable('My Interconnection Applications', data)}}
 {% endblock %}
 
 {% block anonymous %}
@@ -29,7 +29,9 @@
     </form>
 {% endblock %}
 
-{% macro interconnectionTable() %}
+{% macro interconnectionTable(header, passedData) %}
+{% if passedData is defined %}
+	<H1>{{ header }}</H1>
 	<table style='width:100%' border='1'>
 	    <tr>
 	        <th>Queue Position</th>
@@ -38,7 +40,7 @@
 	        <th>Status</th>
 	        <th>Report</th>
 	    </tr>
-	    {% for row in data %}
+	    {% for row in passedData %}
 	    <tr>
 	        <th style='font-weight: normal'>{{row[0]}}</th>
 	        <th style='font-weight: normal'>{{row[1]}}</th>
@@ -48,4 +50,5 @@
 	    </tr>
 	    {% endfor %}
 	</table>
+{% endif %}
 {% endmacro %}

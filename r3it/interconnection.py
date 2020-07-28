@@ -1,6 +1,6 @@
 import random
 import inspect
-
+import config
 from omf.models import derInterconnection
 
 FEEDER_PATH1 = '/static/feeder1.omd'
@@ -23,7 +23,10 @@ def withdrawal(id):
 def compute_status(interconnection_form):
     # TODO: do all the computations on an interconnection request.
     # For now, randomize 'Approved' vs. 'Pending'
-    return random.choice(['Approved', 'Pending'])
+    if int(interconnection_form['Nameplate Rating (kW)']) <= config.sizeThreshold:
+    	return 'Interconnection Agreement Proffered'
+    else:
+    	return 'Engineering Review Needed'
 
 def _tests():
     print(derInterconnection.runForeground('./data/test'))

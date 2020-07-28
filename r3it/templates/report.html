@@ -44,6 +44,10 @@
         {% endif %} {% endfor %}
     </table>
 
+    {% endblock %}
+
+    {% block engineer %}
+
     {% if 'Pending' == data['Status'] %}
     <form action='{{"/update-status/" + data["id"] + "/Approved"}}'>
         <input type='submit' value='Approve request' />

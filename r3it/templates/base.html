@@ -2,7 +2,7 @@
 <html>
 <head>{% block head %} {% endblock %}</head>
 <body>
-	<img src="/static/TouchstoneEnergy.png" alt="Touchstone Energy" width="95%">
+	<img src={{ logo }} alt={{ utilityName }} width="95%">
 	{% if current_user.type == 'engineer' or current_user.type == 'customer' %}
 		<a href='/logout'>Logout</a>
 	{% endif %}

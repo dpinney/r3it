@@ -1,3 +1,4 @@
+import config
 import copy
 import csv
 import json
@@ -6,15 +7,18 @@ import flask_login
 import flask_wtf
 import os, hashlib, random
 from random import choice as pick
-
 from flask import Flask, redirect, request, send_from_directory, render_template
-
 import interconnection
 
 app = Flask(__name__)
+
+@app.context_processor
+def inject_config():
+    return dict(logo=config.logo, sizeThreshold=config.sizeThreshold, utilityName=config.utilityName)
+
 r3itDir = os.path.dirname(os.path.abspath(__file__))
 
-users = {'me@coop.coop': {'password': 'secret', 'type': 'engineer'}, 'me@gmail.com': {'password': 'secret', 'type': 'customer'}}
+users = {'engineer@electric.coop': {'password': 'secret', 'type': 'engineer'}, 'consumer@gmail.com': {'password': 'secret', 'type': 'customer'}}
 
 def cryptoRandomString():
     ''' Generate a cryptographically secure random string for signing/encrypting cookies. '''
@@ -45,21 +49,45 @@ def load_user(email):
     else:
         return Anon()
 
-statuses = ['Approved', 'Pending', 'Customer Options Meeting Proposed', 'Customer Options Meeting Scheduled', 'Interconnection Agreement Profferred', 'Interconnection Agreement Executed', 'Permission to Operate Profferred', 'Permission to Operate Executed', 'In Operation', 'Out of Service']
+statuses = ['Application Submitted', # Attn: Member services, upon submission.
+            'Engineering Review', # Attn: Engineering, if above size threshold
+            'Customer Options Meeting Required', # Attn: Member Services, if engineering says so
+            'Customer Options Meeting Proposed', # Attn: Consumer, when proposed by member services.
+            'Customer Options Meeting Scheduled', # Attn: ???, 
+            'Interconnection Agreement Proffered', # Attn: Customer
+            'Interconnection Agreement Executed', # Attn: Customer
+            'Permission to Operate Proffered', # Attn: Customer
+            'Commissioning Test Needed', # Attn: Engineering, Customer
+            'Commissioned', 
+            'Out of Service']
+engineerActionItems = ['Engineering Review', 'Commissioning Test Needed']
+customerActionItems = ['Customer Options Meeting Proposed', 
+                        'Interconnection Agreement Proffered', 
+                        'Interconnection Agreement Executed',
+                        'Permission to Operate Proffered',
+                        'Commissioning Test Needed']
 
 @app.route('/')
 def index(): 
     data = []
+    priorities = []
     if flask_login.current_user.is_anonymous():
         pass
     elif flask_login.current_user.type == 'engineer':
         for id, value in json.load(open('data/queue.json')).items():
             data.append([id, value['Time of Request'], value['Address (Facility)'], value['Status']])
+            if value['Status'] in engineerActionItems:
+                priorities.append([id, value['Time of Request'], value['Address (Facility)'], value['Status']])
     elif flask_login.current_user.type == 'customer':
         for id, value in json.load(open('data/queue.json')).items():
             if value["Email (Customer)"] == flask_login.current_user.get_id():
                 data.append([id, value['Time of Request'], value['Address (Facility)'], value['Status']])
-    return render_template('index.html', data=data)
+            if value['Status'] in customerActionItems:
+                priorities.append([id, value['Time of Request'], value['Address (Facility)'], value['Status']])
+    if data:
+        return render_template('index.html', data=data)
+    else:
+        return render_template('index.html')
 
 @app.route('/login')
 def login():
