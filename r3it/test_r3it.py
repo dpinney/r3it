@@ -1,0 +1,3 @@
+def nullTest:
+	return True
+	
