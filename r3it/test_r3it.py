@@ -1,3 +1,2 @@
-def nullTest:
+def nullTest():
 	return True
-	
