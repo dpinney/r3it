@@ -41,24 +41,19 @@ msActionItems = (
     'Customer Options Meeting Required'
 )
 
+# Instantiate app
+app = Flask(__name__)
+app.secret_key = config.COOKIE_KEY
+
 # Inject global template variables.
 @app.context_processor
 def inject_config():
     return dict(logo=config.logo, sizeThreshold=config.sizeThreshold, utilityName=config.utilityName)
 
 # Initiate authentication system.
-app = Flask(__name__)
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = '/'
-app.secret_key = cryptoRandomString()
-
-def cryptoRandomString():
-    ''' Generate a cryptographically secure random string for signing/encrypting cookies. '''
-    if 'COOKIE_KEY' in globals():
-        return COOKIE_KEY
-    else:
-        return hashlib.md5(str(random.random()).encode('utf-8') + str(time.time()).encode('utf-8')).hexdigest()
 
 def pwHash(username, password): return str(base64.b64encode(hashlib.pbkdf2_hmac('sha256', b'{password}', b'{username}', 100000)))
 
