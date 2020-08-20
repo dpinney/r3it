@@ -46,6 +46,19 @@
 
 {% endblock %}
 
+{% block customer %}
+    <hr>
+    {% if 'Interconnection Agreement Executed' == data['Status'] %}
+    <form method=post enctype=multipart/form-data>
+        <input type=file name=file>
+        <input type=submit value=Upload>
+    </form>
+    {% endif %}
+    <hr>
+
+
+{% endblock %}
+
 {% block engineer %}
     <hr>
     {% if 'Engineering Review' == data['Status'] %}

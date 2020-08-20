@@ -7,6 +7,9 @@
 	{% if current_user.is_authenticated() %}
 		<a href='/'>Home</a>
 		<a href='/logout'>Logout</a>
+	{% else %}
+		<a href='/login'>Login</a>
+		<a href='/register'>Register</a>
 	{% endif %}
 	<hr>
 	{% if notification%}

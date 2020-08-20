@@ -6,7 +6,15 @@ import json
 import time
 import flask_login
 import flask_wtf
-import os, hashlib, random
+from flask_wtf import FlaskForm
+from flask_wtf.file import FileField, FileRequired
+from werkzeug.utils import secure_filename
+import os, hashlib, random, logging, uuid, cachelib
+import uuid
+import logging
+from flask_sessionstore import Session
+from flask_session_captcha import FlaskSessionCaptcha
+
 from random import choice as pick
 from flask import Flask, redirect, request, send_from_directory, render_template, flash, url_for
 import interconnection
@@ -44,6 +52,14 @@ msActionItems = (
 # Instantiate app
 app = Flask(__name__)
 app.secret_key = config.COOKIE_KEY
+app.config['CAPTCHA_ENABLE'] = True
+app.config['CAPTCHA_LENGTH'] = 5
+app.config['CAPTCHA_WIDTH'] = 160
+app.config['CAPTCHA_HEIGHT'] = 60
+app.config['SESSION_TYPE'] = 'filesystem'
+Session(app)
+captcha = FlaskSessionCaptcha(app)
+
 
 # Inject global template variables.
 @app.context_processor
@@ -71,6 +87,22 @@ class Anon(flask_login.AnonymousUserMixin):
     def __init__(self):
         self.id = 'anonymous'
         self.type = 'anonymous'
+
+class docUpload(FlaskForm):
+    doc = FileField(validators=[FileRequired()])
+
+@app.route('/upload', methods=['GET', 'POST'])
+def upload():
+    form = docUpload()
+    if form.validate_on_submit():
+        f = form.doc.data
+        filename = secure_filename(f.filename)
+        f.save(os.path.join(
+            app.instance_path, 'uploads', filename
+        ))
+        return redirect(url_for('index'))
+
+    return render_template('upload.html', form=form)
 
 @login_manager.user_loader
 def load_user(email):
@@ -109,43 +141,64 @@ def index():
     else:
         return render_template('index.html', notification=notification)
 
-@app.route('/login')
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    with open('data/Users/users.json', 'r') as userJson:
-        users = json.load(userJson)
-    email, passwordAttempt = request.args['username'], pwHash(request.args['username'],request.args['password'])
-    password = users.get(email, {}).get('password')
-    if email in users and password == passwordAttempt:
-        flask_login.login_user(load_user(email))
-        return redirect('/')
-    else:
-        return redirect('/?notification=Username%20or%20password%20does%20not%20match%20our%20records%2E')
+    notification = request.args.get('notification', None)
+    if request.method == "GET":
+        return render_template("login.html", notification=notification)
+    if request.method == "POST":
+        with open('data/Users/users.json', 'r') as userJson:
+            users = json.load(userJson)
+        email, passwordAttempt = request.form['username'], pwHash(request.form['username'],request.form['password'])
+        password = users.get(email, {}).get('password')
+        if email in users and password == passwordAttempt:
+            flask_login.login_user(load_user(email))
+            return redirect('/')
+        else:
+            return redirect('/login?notification=Username%20or%20password%20does%20not%20match%20our%20records%2E')
 
-@app.route('/register')
+@app.route('/register', methods=['GET', 'POST'])
 def register():
-    email, password = request.args['username'], pwHash(request.args['username'],request.args['password'])
-    user = {email : {'password' : password}}
-    with open('data/Users/users.json') as users:
-        data = json.load(users)
-    data.update(user)
-    with open('data/Users/users.json', 'w') as userFile:
-        json.dump(data, userFile)
-    return redirect('/?notification=Registration%20successful%2E')
+    notification = request.args.get('notification', None)
+    if request.method == "GET":
+        return render_template("register.html", notification=notification)
+    if request.method == "POST":
+        email, password = request.form['username'], pwHash(request.form['username'],request.form['password'])
+        user = {email : {'password' : password}}
+        with open('data/Users/users.json') as users:
+            data = json.load(users)
+        data.update(user)
+        with open('data/Users/users.json', 'w') as userFile:
+            json.dump(data, userFile)
+        if captcha.validate():
+            return redirect('/login?notification=Registration%20successful%2E')
+        else:
+            return redirect('/register?notification=CAPTCHA%20error%2E')
 
 @app.route('/logout')
 def logout():
     flask_login.logout_user()
     return redirect('/')
 
-@app.route('/report/<id>')
+@app.route('/report/<id>', methods=['GET','POST'])
 @flask_login.login_required
 def report(id):
-    with open('data/queue.json') as queue:
-        report_data = json.load(queue)[id]
-    report_data['id'] = id
-    with open('data/sample/allOutputData.json') as data:
-        sample_data = json.load(data)
-    return render_template('report.html', data=report_data, sample_data=sample_data)
+    if request.method == "POST": 
+        form = docUpload()
+        if form.validate_on_submit():
+            f = form.doc.data
+            filename = secure_filename(f.filename)
+            f.save(os.path.join(
+                app.instance_path, 'photos', filename
+            ))
+            return redirect(url_for('index'))
+    else:
+        with open('data/queue.json') as queue:
+            report_data = json.load(queue)[id]
+        report_data['id'] = id
+        with open('data/sample/allOutputData.json') as data:
+            sample_data = json.load(data)
+        return render_template('report.html', data=report_data, sample_data=sample_data)
 
 @app.route('/add-to-queue', methods=['GET', 'POST'])
 @flask_login.login_required
@@ -198,14 +251,14 @@ def application():
 @app.route('/update-status/<id>/<status>')
 @flask_login.login_required
 def update_status(id, status):
-    if status not in statuses:
-        return 'Status invalid; no update made.'
     with open('data/queue.json') as queue:
         data = json.load(queue)
+    status = interconnection.compute_status(data[id])
+    if status not in statuses:
+        return 'Status invalid; no update made.'
     data[id]['Status'] = status
     with open('data/queue.json', 'w') as queue:
         json.dump(data, queue)
-    print(data[id])
     return redirect(request.referrer)
 
 if __name__ == '__main__':
