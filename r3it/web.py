@@ -150,17 +150,23 @@ def report(id):
 @app.route('/add-to-queue', methods=['GET', 'POST'])
 @flask_login.login_required
 def add_to_queue():
-    status = interconnection.compute_status(request.form)
+    
+    with open('data/queue.json') as queue:
+        data = json.load(queue)
+    queue_position = str( len(data)+1 )
+    
     interconnection_request = {}
     for key, value in request.form.items():
         interconnection_request[key] = value
+
+    interconnection_request['Position'] = queue_position
     interconnection_request['Time of Request'] = time.asctime(time.localtime(time.time()))
-    interconnection_request['Status'] = status
-    with open('data/queue.json') as queue:
-        data = json.load(queue)
-    data[len(data) + 1] = interconnection_request
+    interconnection_request['Status'] = interconnection.submitApplication(interconnection_request)
+    data[queue_position] = interconnection_request
     with open('data/queue.json', 'w') as queue:
         json.dump(data, queue)
+
+    # interconnection.processQueue()
     return redirect('/?notification=Application%20submitted%2E')
 
 @app.route('/send-file/<path:fullPath>')
