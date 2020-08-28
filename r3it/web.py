@@ -161,8 +161,11 @@ def login():
         return render_template("login.html", notification=notification)
     if request.method == "POST":
         email, passwordAttempt = request.form['username'], pwHash(request.form['username'],request.form['password'])
-        with open(os.path.join(app.root_path, 'data', 'Users', email, 'user.json'), 'r') as userJson:
-            users = json.load(userJson)
+        try: 
+            with open(os.path.join(app.root_path, 'data', 'Users', email, 'user.json'), 'r') as userJson:
+                users = json.load(userJson)
+        except:
+            users = {}
         password = users.get(email, {}).get('password')
         if email in users and password == passwordAttempt:
             flask_login.login_user(load_user(email))
@@ -198,14 +201,7 @@ def logout():
 @flask_login.login_required
 def report(id):
     if request.method == "POST": 
-        form = docUpload()
-        if form.validate_on_submit():
-            f = form.doc.data
-            filename = secure_filename(f.filename)
-            f.save(os.path.join(
-                app.instance_path, 'photos', filename
-            ))
-            return redirect(url_for('index'))
+        pass
     else:
         with open('data/queue.json') as queue:
             report_data = json.load(queue)[id]
@@ -214,25 +210,27 @@ def report(id):
             sample_data = json.load(data)
         return render_template('report.html', data=report_data, sample_data=sample_data)
 
+#def listIC():
+#    for users in 
+
 @app.route('/add-to-queue', methods=['GET', 'POST'])
 @flask_login.login_required
 def add_to_queue():
-    
-    with open('data/queue.json') as queue:
-        data = json.load(queue)
-    queue_position = str( len(data)+1 )
-    
+
+#    queue_position = str( len(data)+1 )
     interconnection_request = {}
     for key, value in request.form.items():
         interconnection_request[key] = value
-
-    interconnection_request['Position'] = queue_position
+#    interconnection_request['Position'] = queue_position
     interconnection_request['Time of Request'] = time.asctime(time.localtime(time.time()))
     interconnection_request['Status'] = interconnection.submitApplication(interconnection_request)
     data[queue_position] = interconnection_request
-    with open('data/queue.json', 'w') as queue:
+    try:
+        os.makedirs(app.root_path, 'data','Users',flask_login.current_user.id, interconnection_request['Time of Request'])
+    except OSError:
+        pass
+    with open(os.path.join(app.root_path, 'data','Users',flask_login.current_user.id, interconnection_request['Time of Request'], 'application.json'), 'w') as queue:
         json.dump(data, queue)
-
     # interconnection.processQueue()
     return redirect('/?notification=Application%20submitted%2E')
 
