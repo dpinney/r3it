@@ -210,27 +210,38 @@ def report(id):
             sample_data = json.load(data)
         return render_template('report.html', data=report_data, sample_data=sample_data)
 
-#def listIC():
-#    for users in 
+def listIC():
+    icList = []
+    (_, users, _) = next(os.walk(os.path.join(app.root_path, 'data', 'Users')), (None, None, []))
+    for user in users:
+        (_, applications, _) = next(os.walk(os.path.join(app.root_path, 'data', 'Users', user, "applications")), (None, None, []))
+        if applications: 
+            icList.extend(applications)
+    return icList
+
+def absQueuePosition(requestTime, region = 0):
+    return len(listIC())
+
+# def headPosition(region = 0):
+
 
 @app.route('/add-to-queue', methods=['GET', 'POST'])
 @flask_login.login_required
 def add_to_queue():
 
-#    queue_position = str( len(data)+1 )
     interconnection_request = {}
     for key, value in request.form.items():
         interconnection_request[key] = value
-#    interconnection_request['Position'] = queue_position
     interconnection_request['Time of Request'] = time.asctime(time.localtime(time.time()))
+    queue_position = str(absQueuePosition(interconnection_request['Time of Request']))
+    interconnection_request['Position'] = queue_position
     interconnection_request['Status'] = interconnection.submitApplication(interconnection_request)
-    data[queue_position] = interconnection_request
     try:
-        os.makedirs(app.root_path, 'data','Users',flask_login.current_user.id, interconnection_request['Time of Request'])
+        os.makedirs(os.path.join(app.root_path, 'data','Users',flask_login.current_user.id, "applications", interconnection_request['Time of Request']))
     except OSError:
         pass
-    with open(os.path.join(app.root_path, 'data','Users',flask_login.current_user.id, interconnection_request['Time of Request'], 'application.json'), 'w') as queue:
-        json.dump(data, queue)
+    with open(os.path.join(app.root_path, 'data','Users',flask_login.current_user.id, "applications", interconnection_request['Time of Request'], 'application.json'), 'w') as queue:
+        json.dump(interconnection_request, queue)
     # interconnection.processQueue()
     return redirect('/?notification=Application%20submitted%2E')
 
