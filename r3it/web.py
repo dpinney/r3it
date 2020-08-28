@@ -5,8 +5,8 @@ import csv
 import json
 import time
 import flask_login
-import flask_wtf
-from flask_wtf import FlaskForm
+# import flask_wtf
+# from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileRequired
 from werkzeug.utils import secure_filename
 import os, hashlib, random, logging, uuid, cachelib
@@ -88,26 +88,39 @@ class Anon(flask_login.AnonymousUserMixin):
         self.id = 'anonymous'
         self.type = 'anonymous'
 
-class docUpload(FlaskForm):
-    doc = FileField(validators=[FileRequired()])
+## class docUpload(FlaskForm):
+##     doc = FileField(validators=[FileRequired()])
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ['txt', 'pdf', 'doc', 'docx']
 
 @app.route('/upload', methods=['GET', 'POST'])
-def upload():
-    form = docUpload()
-    if form.validate_on_submit():
-        f = form.doc.data
-        filename = secure_filename(f.filename)
-        f.save(os.path.join(
-            app.instance_path, 'uploads', filename
-        ))
-        return redirect(url_for('index'))
-
-    return render_template('upload.html', form=form)
+@flask_login.login_required
+def upload_file():
+    notification = request.args.get('notification', None)
+    if request.method == 'POST':
+        # check if the post request has the file part
+        if 'file' not in request.files:
+            return redirect('/upload?notification=No%20file%20part%2E')
+        file = request.files['file']
+        # if user does not select file, browser also
+        # submit an empty part without filename
+        if file.filename == '':
+            return redirect('/upload?notification=No%20file%20selected%2E')
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+        try:
+            os.makedirs(os.path.join(app.root_path, "data", flask_login.current_user.id, "uploads"))
+        except OSError:
+            pass
+        file.save(os.path.join(app.root_path, "data", flask_login.current_user.id, "uploads", filename))
+        return redirect(url_for('upload_file') + '?notification=Upload%20successful%2E')
+    return render_template('upload.html', notification=notification)
 
 @login_manager.user_loader
 def load_user(email):
-    with open('data/Users/users.json') as userJson:
-        users = json.load(userJson)
+    (_, users, _) = next(os.walk(os.path.join(app.root_path, 'data', 'Users')), (None, None, []))
     if email in users:
         return User(email)
     else:
@@ -147,9 +160,9 @@ def login():
     if request.method == "GET":
         return render_template("login.html", notification=notification)
     if request.method == "POST":
-        with open('data/Users/users.json', 'r') as userJson:
-            users = json.load(userJson)
         email, passwordAttempt = request.form['username'], pwHash(request.form['username'],request.form['password'])
+        with open(os.path.join(app.root_path, 'data', 'Users', email, 'user.json'), 'r') as userJson:
+            users = json.load(userJson)
         password = users.get(email, {}).get('password')
         if email in users and password == passwordAttempt:
             flask_login.login_user(load_user(email))
@@ -165,12 +178,13 @@ def register():
     if request.method == "POST":
         email, password = request.form['username'], pwHash(request.form['username'],request.form['password'])
         user = {email : {'password' : password}}
-        with open('data/Users/users.json') as users:
-            data = json.load(users)
-        data.update(user)
-        with open('data/Users/users.json', 'w') as userFile:
-            json.dump(data, userFile)
+        try:
+            os.makedirs(os.path.join(app.root_path, "data", "Users", email))
+        except OSError:
+            pass
         if captcha.validate():
+            with open(os.path.join(app.root_path, 'data', 'Users', email, 'user.json'), 'w') as userFile:
+                json.dump(user, userFile)
             return redirect('/login?notification=Registration%20successful%2E')
         else:
             return redirect('/register?notification=CAPTCHA%20error%2E')
