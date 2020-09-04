@@ -58,17 +58,13 @@ GRIDLABD_DIR = 'gridlabd/'
 def submitApplication(interconnectionForm):
  
     # create folder for request
-<<<<<<< HEAD
     requestDir = REQUEST_DIR_PREFIX+str(interconnectionForm['Position'])+'/'
-    os.mkdir( requestDir )
-    os.mkdir( requestDir+GRIDLABD_DIR )
-=======
-    requestDir = DATA_DIR+'after_request_'+str(interconnectionForm['Position'])+'/'
     try: 
         os.mkdir( requestDir )
+        os.mkdir( requestDir+GRIDLABD_DIR )
     except: 
         pass
->>>>>>> 52c1e5a1bc04e37d7f1ce307c6cab4483e26d2ce
+
     
     # save request info in the corresponding directory 
     interconnectionForm['Status'] = 'Application Submitted'

@@ -229,6 +229,7 @@ def absQueuePosition(requestTime, region = 0):
 @app.route('/add-to-queue', methods=['GET', 'POST'])
 @flask_login.login_required
 def add_to_queue():
+    
     interconnection_request = {}
     for key, value in request.form.items():
         interconnection_request[key] = value
