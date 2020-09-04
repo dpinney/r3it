@@ -55,7 +55,10 @@ def submitApplication(interconnectionForm):
 
     # create folder for request
     requestDir = DATA_DIR+'after_request_'+str(interconnectionForm['Position'])+'/'
-    os.mkdir( requestDir )
+    try: 
+        os.mkdir( requestDir )
+    except: 
+        pass
     
     # save request info in the corresponding directory 
     interconnectionForm['Status'] = 'Application Submitted'

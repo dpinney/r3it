@@ -128,28 +128,41 @@ def load_user(email):
 
 @app.route('/')
 def index():
+    print(listIC())
     data = []
     priorities = []
     notification = request.args.get('notification', None)
     if flask_login.current_user.is_anonymous():
         pass
     elif flask_login.current_user.type == 'engineer':
-        for id, value in json.load(open('data/queue.json')).items():
-            data.append([id, value['Time of Request'], value['Address (Facility)'], value['Status']])
-            if value['Status'] in engineerActionItems:
-                priorities.append([id, value['Time of Request'], value['Address (Facility)'], value['Status']])
-    elif flask_login.current_user.type == 'memberServices':
-        for id, value in json.load(open('data/queue.json')).items():
-            data.append([id, value['Time of Request'], value['Address (Facility)'], value['Status']])
-            if value['Status'] in msActionItems:
-                priorities.append([id, value['Time of Request'], value['Address (Facility)'], value['Status']])
-    elif flask_login.current_user.type == 'customer':
-        for id, value in json.load(open('data/queue.json')).items():
-            if value["Email (Customer)"] == flask_login.current_user.get_id():
+        try:
+            for id, value in iter(listIC()):
                 data.append([id, value['Time of Request'], value['Address (Facility)'], value['Status']])
-            if value['Status'] in customerActionItems:
-                priorities.append([id, value['Time of Request'], value['Address (Facility)'], value['Status']])
+                if value['Status'] in engineerActionItems:
+                    priorities.append([id, value['Time of Request'], value['Address (Facility)'], value['Status']])
+        except:
+            pass
+    elif flask_login.current_user.type == 'memberServices':
+        try:
+            for i in listIC():
+                for id, value in i:
+                    data.append([id, value['Time of Request'], value['Address (Facility)'], value['Status']])
+                    if value['Status'] in msActionItems:
+                        priorities.append([id, value['Time of Request'], value['Address (Facility)'], value['Status']])
+        except: pass
+    elif flask_login.current_user.type == 'customer':
+        print("Customer")
+        try:
+            for i in listIC():
+                for id, value in i:
+                    if value["Email (Customer)"] == flask_login.current_user.get_id():
+                        data.append([id, value['Time of Request'], value['Address (Facility)'], value['Status']])
+                        if value['Status'] in customerActionItems:
+                           priorities.append([id, value['Time of Request'], value['Address (Facility)'], value['Status']])
+        except: 
+            pass
     if data:
+        print('data')
         return render_template('index.html', data=data, priorities=priorities, notification=notification)
     else:
         return render_template('index.html', notification=notification)
@@ -203,10 +216,9 @@ def report(id):
     if request.method == "POST": 
         pass
     else:
-        with open('data/queue.json') as queue:
-            report_data = json.load(queue)[id]
+        report_data = listIC()[int(id)-1]
         report_data['id'] = id
-        with open('data/sample/allOutputData.json') as data:
+        with open('../sample/allOutputData.json') as data:
             sample_data = json.load(data)
         return render_template('report.html', data=report_data, sample_data=sample_data)
 
@@ -215,20 +227,39 @@ def listIC():
     (_, users, _) = next(os.walk(os.path.join(app.root_path, 'data', 'Users')), (None, None, []))
     for user in users:
         (_, applications, _) = next(os.walk(os.path.join(app.root_path, 'data', 'Users', user, "applications")), (None, None, []))
-        if applications: 
-            icList.extend(applications)
-    return icList
+        if applications:
+            for application in applications:
+                with open(os.path.join(app.root_path, 'data', 'Users', user, "applications", application, 'application.json')) as appJSON:
+                    appData = json.load(appJSON)
+                    icList.append(appData)
+    if icList:
+        icList.sort(key=lambda x: int(x['Position']))
+        return icList
+    else:
+        print('false')
+        return [{}]
 
 def absQueuePosition(requestTime, region = 0):
-    return len(listIC())
+    if listIC():
+        return len(listIC())
+    else:
+        return 1
 
 # def headPosition(region = 0):
+
+#def queueBuilder():
+    icDict = {}
+    (_, users, _) = next(os.walk(os.path.join(app.root_path, 'data', 'Users')), (None, None, []))
+    for user in users:
+        (_, applications, _) = next(os.walk(os.path.join(app.root_path, 'data', 'Users', user, "applications")), (None, None, []))
+        for app in applications: 
+            icList.extend(applications)
+    return icList
 
 
 @app.route('/add-to-queue', methods=['GET', 'POST'])
 @flask_login.login_required
 def add_to_queue():
-
     interconnection_request = {}
     for key, value in request.form.items():
         interconnection_request[key] = value
@@ -279,15 +310,14 @@ def application():
 
 @app.route('/update-status/<id>/<status>')
 @flask_login.login_required
-def update_status(id, status):
-    with open('data/queue.json') as queue:
-        data = json.load(queue)
-    status = interconnection.compute_status(data[id])
+def update_status(position, status):
+    data = listIC()
+    status = interconnection.compute_status(data[position])
     if status not in statuses:
         return 'Status invalid; no update made.'
     data[id]['Status'] = status
-    with open('data/queue.json', 'w') as queue:
-        json.dump(data, queue)
+#    with open('data/queue.json', 'w') as queue:
+#        json.dump(data, queue)
     return redirect(request.referrer)
 
 if __name__ == '__main__':
