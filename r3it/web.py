@@ -206,7 +206,7 @@ def report(id):
         pass
     else:
         report_data = listIC()[int(id)-1]
-        report_data['id'] = id
+        report_data['id'] = report_data['Position']
         with open('../sample/allOutputData.json') as data:
             sample_data = json.load(data)
         return render_template('report.html', data=report_data, sample_data=sample_data)
@@ -221,30 +221,10 @@ def listIC():
                 with open(os.path.join(app.root_path, 'data', 'Users', user, "applications", application, 'application.json')) as appJSON:
                     appData = json.load(appJSON)
                     icList.append(appData)
-    if icList:
-        icList.sort(key=lambda x: int(x['Position']))
-        return icList
-    else:
-        print('false')
-        return [{}]
-
-def absQueuePosition(requestTime, region = 0):
-    if listIC():
-        return len(listIC())
-    else:
-        return 0
-
-# def headPosition(region = 0):
-
-#def queueBuilder():
-    icDict = {}
-    (_, users, _) = next(os.walk(os.path.join(app.root_path, 'data', 'Users')), (None, None, []))
-    for user in users:
-        (_, applications, _) = next(os.walk(os.path.join(app.root_path, 'data', 'Users', user, "applications")), (None, None, []))
-        for app in applications: 
-            icList.extend(applications)
     return icList
 
+def absQueuePosition(requestTime, region = 0):
+    return len(listIC())+1
 
 @app.route('/add-to-queue', methods=['GET', 'POST'])
 @flask_login.login_required
