@@ -134,18 +134,17 @@ def index():
     if flask_login.current_user.is_anonymous():
         pass
     elif flask_login.current_user.type == 'engineer':
-        for value in iter(listIC()):
+        for value in listIC():
             data.append([id, value['Time of Request'], value['Address (Facility)'], value['Status']])
             if value['Status'] in engineerActionItems:
                 priorities.append([value['Position'], value['Time of Request'], value['Address (Facility)'], value['Status']])
     elif flask_login.current_user.type == 'memberServices':
         for value in listIC():
-            for id, value in i:
+            for value in i:
                 data.append([value['Position'], value['Time of Request'], value['Address (Facility)'], value['Status']])
                 if value['Status'] in msActionItems:
                     priorities.append([value['Position'], value['Time of Request'], value['Address (Facility)'], value['Status']])
     elif flask_login.current_user.type == 'customer':
-        print("Customer")
         for i in listIC():
             if i.get("Email (Customer)") == flask_login.current_user.get_id():
                 data.append([i['Position'], i['Time of Request'], i['Address (Facility)'], i['Status']])
@@ -221,6 +220,7 @@ def listIC():
                 with open(os.path.join(app.root_path, 'data', 'Users', user, "applications", application, 'application.json')) as appJSON:
                     appData = json.load(appJSON)
                     icList.append(appData)
+    icList.sort(key=lambda x: int(x.get('Position')))
     return icList
 
 def absQueuePosition(requestTime, region = 0):
