@@ -134,33 +134,24 @@ def index():
     if flask_login.current_user.is_anonymous():
         pass
     elif flask_login.current_user.type == 'engineer':
-        try:
-            for id, value in iter(listIC()):
-                data.append([id, value['Time of Request'], value['Address (Facility)'], value['Status']])
-                if value['Status'] in engineerActionItems:
-                    priorities.append([id, value['Time of Request'], value['Address (Facility)'], value['Status']])
-        except:
-            pass
+        for value in iter(listIC()):
+            data.append([id, value['Time of Request'], value['Address (Facility)'], value['Status']])
+            if value['Status'] in engineerActionItems:
+                priorities.append([value['Position'], value['Time of Request'], value['Address (Facility)'], value['Status']])
     elif flask_login.current_user.type == 'memberServices':
-        try:
-            for i in listIC():
-                for id, value in i:
-                    data.append([id, value['Time of Request'], value['Address (Facility)'], value['Status']])
-                    if value['Status'] in msActionItems:
-                        priorities.append([id, value['Time of Request'], value['Address (Facility)'], value['Status']])
-        except: pass
+        for value in listIC():
+            for id, value in i:
+                data.append([value['Position'], value['Time of Request'], value['Address (Facility)'], value['Status']])
+                if value['Status'] in msActionItems:
+                    priorities.append([value['Position'], value['Time of Request'], value['Address (Facility)'], value['Status']])
     elif flask_login.current_user.type == 'customer':
         print("Customer")
         for i in listIC():
-            print('i in listIC')
-            print('listIC: ', type(listIC()))
-            print('i: ', type(i))
             if i.get("Email (Customer)") == flask_login.current_user.get_id():
                 data.append([i['Position'], i['Time of Request'], i['Address (Facility)'], i['Status']])
                 if i['Status'] in customerActionItems:
                     priorities.append([i['Position'], i['Time of Request'], i['Address (Facility)'], i['Status']])
     if data:
-        print('data')
         return render_template('index.html', data=data, priorities=priorities, notification=notification)
     else:
         return render_template('index.html', notification=notification)
@@ -241,7 +232,7 @@ def absQueuePosition(requestTime, region = 0):
     if listIC():
         return len(listIC())
     else:
-        return 1
+        return 0
 
 # def headPosition(region = 0):
 
