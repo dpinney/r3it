@@ -17,6 +17,7 @@ from flask_session_captcha import FlaskSessionCaptcha
 
 from random import choice as pick
 from flask import Flask, redirect, request, send_from_directory, render_template, flash, url_for
+from multiprocessing import Process
 import interconnection
 
 # Global static variables.
@@ -228,6 +229,7 @@ def absQueuePosition(requestTime, region = 0):
 @app.route('/add-to-queue', methods=['GET', 'POST'])
 @flask_login.login_required
 def add_to_queue():
+    
     interconnection_request = {}
     for key, value in request.form.items():
         interconnection_request[key] = value
@@ -235,13 +237,18 @@ def add_to_queue():
     queue_position = str(absQueuePosition(interconnection_request['Time of Request']))
     interconnection_request['Position'] = queue_position
     interconnection_request['Status'] = interconnection.submitApplication(interconnection_request)
+
     try:
         os.makedirs(os.path.join(app.root_path, 'data','Users',flask_login.current_user.id, "applications", interconnection_request['Time of Request']))
     except OSError:
         pass
     with open(os.path.join(app.root_path, 'data','Users',flask_login.current_user.id, "applications", interconnection_request['Time of Request'], 'application.json'), 'w') as queue:
         json.dump(interconnection_request, queue)
-    # interconnection.processQueue()
+
+    # run analysis on the queue as a separate process
+    p = Process(target=interconnection.processQueue)
+    p.start()
+
     return redirect('/?notification=Application%20submitted%2E')
 
 @app.route('/send-file/<path:fullPath>')
