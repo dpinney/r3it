@@ -128,7 +128,6 @@ def load_user(email):
 
 @app.route('/')
 def index():
-    print(listIC())
     data = []
     priorities = []
     notification = request.args.get('notification', None)
@@ -152,15 +151,14 @@ def index():
         except: pass
     elif flask_login.current_user.type == 'customer':
         print("Customer")
-        try:
-            for i in listIC():
-                for id, value in i:
-                    if value["Email (Customer)"] == flask_login.current_user.get_id():
-                        data.append([id, value['Time of Request'], value['Address (Facility)'], value['Status']])
-                        if value['Status'] in customerActionItems:
-                           priorities.append([id, value['Time of Request'], value['Address (Facility)'], value['Status']])
-        except: 
-            pass
+        for i in listIC():
+            print('i in listIC')
+            print('listIC: ', type(listIC()))
+            print('i: ', type(i))
+            if i.get("Email (Customer)") == flask_login.current_user.get_id():
+                data.append([i['Position'], i['Time of Request'], i['Address (Facility)'], i['Status']])
+                if i['Status'] in customerActionItems:
+                    priorities.append([i['Position'], i['Time of Request'], i['Address (Facility)'], i['Status']])
     if data:
         print('data')
         return render_template('index.html', data=data, priorities=priorities, notification=notification)
