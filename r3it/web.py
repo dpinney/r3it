@@ -135,15 +135,14 @@ def index():
         pass
     elif flask_login.current_user.type == 'engineer':
         for value in listIC():
-            data.append([id, value['Time of Request'], value['Address (Facility)'], value['Status']])
+            data.append([value['Position'], value['Time of Request'], value['Address (Facility)'], value['Status']])
             if value['Status'] in engineerActionItems:
                 priorities.append([value['Position'], value['Time of Request'], value['Address (Facility)'], value['Status']])
     elif flask_login.current_user.type == 'memberServices':
         for value in listIC():
-            for value in i:
-                data.append([value['Position'], value['Time of Request'], value['Address (Facility)'], value['Status']])
-                if value['Status'] in msActionItems:
-                    priorities.append([value['Position'], value['Time of Request'], value['Address (Facility)'], value['Status']])
+            data.append([value['Position'], value['Time of Request'], value['Address (Facility)'], value['Status']])
+            if value['Status'] in msActionItems:
+                priorities.append([value['Position'], value['Time of Request'], value['Address (Facility)'], value['Status']])
     elif flask_login.current_user.type == 'customer':
         for i in listIC():
             if i.get("Email (Customer)") == flask_login.current_user.get_id():
