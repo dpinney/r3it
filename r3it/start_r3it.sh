@@ -1,1 +1,1 @@
-gunicorn <insert startup options here>
+gunicorn 'wsgi:app'
