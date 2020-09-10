@@ -19,36 +19,6 @@ from multiprocessing import Process
 
 # Global static variables.
 r3itDir = os.path.dirname(os.path.abspath(__file__))
-statuses = (
-    'Application Submitted', # Attn: Member services, upon submission.
-    'Engineering Review', # Attn: Engineering, if above size threshold
-    'Customer Options Meeting Required', # Attn: Member Services, if engineering says so
-    'Customer Options Meeting Proposed', # Attn: Consumer, when proposed by member services.
-    'Customer Options Meeting Scheduled', # Attn: ???,
-    'Interconnection Agreement Proffered', # Attn: Customer
-    'Interconnection Agreement Executed', # Attn: Customer
-    'Permission to Operate Proffered', # Attn: Customer
-    'Commissioning Test Needed', # Attn: Engineering, Customer
-    'Commissioned',
-    'Out of Service'
-)
-actionItems = {
-    'engineer': (
-        'Engineering Review',
-        'Commissioning Test Needed'
-    ),
-    'customer': (
-        'Customer Options Meeting Proposed',
-        'Interconnection Agreement Proffered',
-        'Interconnection Agreement Executed',
-        'Permission to Operate Proffered',
-        'Commissioning Test Needed'
-    ),
-    'memberServices': (
-        'Application Submitted',
-        'Customer Options Meeting Required'
-    )
-}
 
 # Instantiate app
 app = Flask(__name__)
@@ -71,8 +41,6 @@ login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = '/'
 
-def pwHash(username, password): return str(base64.b64encode(hashlib.pbkdf2_hmac('sha256', b'{password}', b'{username}', 100000)))
-
 class User(flask_login.UserMixin):
     def __init__(self, email):
         self.id = email
@@ -87,78 +55,6 @@ class Anon(flask_login.AnonymousUserMixin):
     def __init__(self):
         self.id = 'anonymous'
         self.type = 'anonymous'
-
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ['txt', 'pdf', 'doc', 'docx']
-
-@app.route('/upload', methods=['GET', 'POST'])
-@flask_login.login_required
-def upload_file():
-    notification = request.args.get('notification', None)
-    if request.method == 'POST':
-        # check if the post request has the file part
-        if 'file' not in request.files:
-            return redirect('/upload?notification=No%20file%20part%2E')
-        file = request.files['file']
-        # if user does not select file, browser also
-        # submit an empty part without filename
-        if file.filename == '':
-            return redirect('/upload?notification=No%20file%20selected%2E')
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-        try:
-            os.makedirs(os.path.join(app.root_path, "data", flask_login.current_user.id, "uploads"))
-        except OSError:
-            pass
-        file.save(os.path.join(app.root_path, "data", flask_login.current_user.id, "uploads", filename))
-        return redirect(url_for('upload_file') + '?notification=Upload%20successful%2E')
-    return render_template('upload.html', notification=notification)
-
-@login_manager.user_loader
-def load_user(email):
-    if email in listUsers():
-        return User(email)
-    else:
-        return Anon()
-
-def authorized(ic):
-    '''Is the user authorized to see this application?'''
-    authed = flask_login.current_user.is_authenticated()
-    employee = authed and not flask_login.current_user.id == 'customer'
-    applicant = authed and flask_login.current_user.id == ic.get('Email (Customer)')
-    return employee or applicant
-
-@app.route('/')
-def index():
-    notification = request.args.get('notification', None)
-    data = [
-            [str(key+1), # queue position
-            ic.get('Time of Request'),
-            ic.get('Address (Facility)'),
-            ic.get('Status')] for key, ic in enumerate(listIC()) if authorized(ic)
-        ]
-    priorities = [row for row in data if row[3] in actionItems.get(flask_login.current_user.type)]
-    return render_template('index.html', data=data, priorities=priorities, notification=notification)
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    notification = request.args.get('notification', None)
-    if request.method == "GET":
-        return render_template("login.html", notification=notification)
-    if request.method == "POST":
-        email, passwordAttempt = request.form['username'], pwHash(request.form['username'],request.form['password'])
-        try:
-            with open(os.path.join(app.root_path, 'data', 'Users', email, 'user.json'), 'r') as userJson:
-                user = json.load(userJson)
-        except:
-            user = {}
-        password = user.get(email, {}).get('password')
-        if email in user and password == passwordAttempt:
-            flask_login.login_user(load_user(email))
-            return redirect('/')
-        else:
-            return redirect('/login?notification=Username%20or%20password%20does%20not%20match%20our%20records%2E')
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -179,10 +75,56 @@ def register():
         else:
             return redirect('/register?notification=CAPTCHA%20error%2E')
 
+@login_manager.user_loader
+def load_user(email):
+    if email in users():
+        return User(email)
+    else:
+        return Anon()
+
+def authorized(ic):
+    '''Is the user authorized to see this application?'''
+    authed = flask_login.current_user.is_authenticated()
+    employee = authed and not flask_login.current_user.id == 'customer'
+    applicant = authed and flask_login.current_user.id == ic.get('Email (Customer)')
+    return employee or applicant
 @app.route('/logout')
 def logout():
     flask_login.logout_user()
     return redirect('/')
+
+@app.route('/')
+def index():
+    notification = request.args.get('notification', None)
+    data = [
+            [str(key+1), # queue position
+            ic.get('Time of Request'),
+            ic.get('Address (Facility)'),
+            ic.get('Status')] for key, ic in enumerate(listIC()) if authorized(ic)
+        ]
+    priorities = [row for row in data if row[3] in config.actionItems.get(flask_login.current_user.type)]
+    return render_template('index.html', data=data, priorities=priorities, notification=notification)
+
+def pwHash(username, password): return str(base64.b64encode(hashlib.pbkdf2_hmac('sha256', b'{password}', b'{username}', 100000)))
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    notification = request.args.get('notification', None)
+    if request.method == "GET":
+        return render_template("login.html", notification=notification)
+    if request.method == "POST":
+        email, passwordAttempt = request.form['email'], pwHash(request.form['email'],request.form['password'])
+        try:
+            with open(os.path.join(app.root_path, 'data', 'Users', email, 'user.json'), 'r') as userJson:
+                user = json.load(userJson)
+        except:
+            user = {}
+        password = user.get(email, {}).get('password')
+        if email in user and password == passwordAttempt:
+            flask_login.login_user(load_user(email))
+            return redirect('/')
+        else:
+            return redirect('/login?notification=Username%20or%20password%20does%20not%20match%20our%20records%2E')
 
 @app.route('/report/<id>')
 @flask_login.login_required
@@ -192,22 +134,18 @@ def report(id):
         sample_data = json.load(data)
     return render_template('report.html', data=report_data, sample_data=sample_data)
 
-def listUsers():
+def users():
     (_, users, _) = next(os.walk(os.path.join(app.root_path, 'data', 'Users')), (None, [], None))
     return users
 
-# def listAppPaths():
-
-def uType(id):
-    '''Returns user type'''
-    a = flask_login.current_user.is_authenticated() * flask_login.current_user.type
-    b = not(flask_login.current_user.is_authenticated()) * 'anonymous'
-    return a + b
+def applications(user):
+    (_, applications, _) = next(os.walk(os.path.join(app.root_path, 'data', 'Users', user, "applications")), (None, [], None))
+    return applications
 
 def listIC():
     icList = []
     # Restrict customers from seeing all interconnection applications
-    for user in listUsers():
+    for user in users():
         (_, applications, _) = next(os.walk(os.path.join(app.root_path, 'data', 'Users', user, "applications")), (None, None, []))
         if applications:
             for application in applications:
@@ -216,9 +154,6 @@ def listIC():
                     icList.append(appData)
     icList.sort(key=lambda x: float(x.get('Time of Request')))
     return icList
-
-def absQueuePosition(requestTime, region = 0):
-    return len(listIC())+1
 
 @app.route('/add-to-queue', methods=['GET', 'POST'])
 @flask_login.login_required
@@ -276,12 +211,39 @@ def application():
 def update_status(position, status):
     data = listIC()
 #    status = interconnection.compute_status(data[position])
-    if status not in statuses:
+    if status not in config.statuses:
         return 'Status invalid; no update made.'
     data[id]['Status'] = status
 #    with open('data/queue.json', 'w') as queue:
 #        json.dump(data, queue)
     return redirect(request.referrer)
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ['txt', 'pdf', 'doc', 'docx']
+
+@app.route('/upload', methods=['GET', 'POST'])
+@flask_login.login_required
+def upload_file():
+    notification = request.args.get('notification', None)
+    if request.method == 'POST':
+        # check if the post request has the file part
+        if 'file' not in request.files:
+            return redirect('/upload?notification=No%20file%20part%2E')
+        file = request.files['file']
+        # if user does not select file, browser also
+        # submit an empty part without filename
+        if file.filename == '':
+            return redirect('/upload?notification=No%20file%20selected%2E')
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+        try:
+            os.makedirs(os.path.join(app.root_path, "data", flask_login.current_user.id, "uploads"))
+        except OSError:
+            pass
+        file.save(os.path.join(app.root_path, "data", flask_login.current_user.id, "uploads", filename))
+        return redirect(url_for('upload_file') + '?notification=Upload%20successful%2E')
+    return render_template('upload.html', notification=notification)
 
 if __name__ == '__main__':
     app.run(debug=True)
