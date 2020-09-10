@@ -27,20 +27,20 @@ statuses = (
     'Engineering Review', # Attn: Engineering, if above size threshold
     'Customer Options Meeting Required', # Attn: Member Services, if engineering says so
     'Customer Options Meeting Proposed', # Attn: Consumer, when proposed by member services.
-    'Customer Options Meeting Scheduled', # Attn: ???, 
+    'Customer Options Meeting Scheduled', # Attn: ???,
     'Interconnection Agreement Proffered', # Attn: Customer
     'Interconnection Agreement Executed', # Attn: Customer
     'Permission to Operate Proffered', # Attn: Customer
     'Commissioning Test Needed', # Attn: Engineering, Customer
-    'Commissioned', 
+    'Commissioned',
     'Out of Service'
 )
 engineerActionItems = (
     'Engineering Review', 'Commissioning Test Needed'
 )
 customerActionItems = (
-    'Customer Options Meeting Proposed', 
-    'Interconnection Agreement Proffered', 
+    'Customer Options Meeting Proposed',
+    'Interconnection Agreement Proffered',
     'Interconnection Agreement Executed',
     'Permission to Operate Proffered',
     'Commissioning Test Needed'
@@ -81,16 +81,13 @@ class User(flask_login.UserMixin):
             self.type = 'engineer'
         elif self.id in config.memberServices:
             self.type = 'memberServices'
-        else: 
+        else:
             self.type = 'customer'
 
 class Anon(flask_login.AnonymousUserMixin):
     def __init__(self):
         self.id = 'anonymous'
         self.type = 'anonymous'
-
-## class docUpload(FlaskForm):
-##     doc = FileField(validators=[FileRequired()])
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -135,21 +132,21 @@ def index():
     if flask_login.current_user.is_anonymous():
         pass
     elif flask_login.current_user.type == 'engineer':
-        for value in listIC():
-            data.append([value['Position'], value['Time of Request'], value['Address (Facility)'], value['Status']])
-            if value['Status'] in engineerActionItems:
-                priorities.append([value['Position'], value['Time of Request'], value['Address (Facility)'], value['Status']])
+        for ic in listIC():
+            data.append([ic['Position'], ic['Time of Request'], ic['Address (Facility)'], ic['Status']])
+            if ic['Status'] in engineerActionItems:
+                priorities.append([ic['Position'], ic['Time of Request'], ic['Address (Facility)'], ic['Status']])
     elif flask_login.current_user.type == 'memberServices':
-        for value in listIC():
-            data.append([value['Position'], value['Time of Request'], value['Address (Facility)'], value['Status']])
-            if value['Status'] in msActionItems:
-                priorities.append([value['Position'], value['Time of Request'], value['Address (Facility)'], value['Status']])
+        for ic in listIC():
+            data.append([ic['Position'], ic['Time of Request'], ic['Address (Facility)'], ic['Status']])
+            if ic['Status'] in msActionItems:
+                priorities.append([ic['Position'], ic['Time of Request'], ic['Address (Facility)'], ic['Status']])
     elif flask_login.current_user.type == 'customer':
-        for i in listIC():
-            if i.get("Email (Customer)") == flask_login.current_user.get_id():
-                data.append([i['Position'], i['Time of Request'], i['Address (Facility)'], i['Status']])
-                if i['Status'] in customerActionItems:
-                    priorities.append([i['Position'], i['Time of Request'], i['Address (Facility)'], i['Status']])
+        for ic in listIC():
+            if ic.get("Email (Customer)") == flask_login.current_user.get_id():
+                data.append([ic['Position'], ic['Time of Request'], ic['Address (Facility)'], ic['Status']])
+                if ic['Status'] in customerActionItems:
+                    priorities.append([ic['Position'], ic['Time of Request'], ic['Address (Facility)'], ic['Status']])
     if data:
         return render_template('index.html', data=data, priorities=priorities, notification=notification)
     else:
@@ -162,7 +159,7 @@ def login():
         return render_template("login.html", notification=notification)
     if request.method == "POST":
         email, passwordAttempt = request.form['username'], pwHash(request.form['username'],request.form['password'])
-        try: 
+        try:
             with open(os.path.join(app.root_path, 'data', 'Users', email, 'user.json'), 'r') as userJson:
                 users = json.load(userJson)
         except:
@@ -201,7 +198,7 @@ def logout():
 @app.route('/report/<id>', methods=['GET','POST'])
 @flask_login.login_required
 def report(id):
-    if request.method == "POST": 
+    if request.method == "POST":
         pass
     else:
         report_data = listIC()[int(id)-1]
@@ -229,10 +226,10 @@ def absQueuePosition(requestTime, region = 0):
 @app.route('/add-to-queue', methods=['GET', 'POST'])
 @flask_login.login_required
 def add_to_queue():
-    
+
     interconnection_request = {}
-    for key, value in request.form.items():
-        interconnection_request[key] = value
+    for key, item in request.form.items():
+        interconnection_request[key] = item
     interconnection_request['Time of Request'] = time.asctime(time.localtime(time.time()))
     queue_position = str(absQueuePosition(interconnection_request['Time of Request']))
     interconnection_request['Position'] = queue_position
