@@ -130,3 +130,6 @@ dmypy.json
 
 # VSCode
 .vscode
+
+r3it/flask_sessionstore/
+r3it/data/Users
