@@ -3,7 +3,7 @@ import base64
 import copy
 import csv
 import json
-import time
+from datetime import datetime
 import flask_login
 from flask_wtf.file import FileField, FileRequired
 from werkzeug.utils import secure_filename
@@ -12,7 +12,6 @@ import uuid
 import logging
 from flask_sessionstore import Session
 from flask_session_captcha import FlaskSessionCaptcha
-
 from random import choice as pick
 from flask import Flask, redirect, request, send_from_directory, render_template, flash, url_for
 from multiprocessing import Process
@@ -61,7 +60,6 @@ app.config['CAPTCHA_HEIGHT'] = 60
 app.config['SESSION_TYPE'] = 'filesystem'
 Session(app)
 captcha = FlaskSessionCaptcha(app)
-
 
 # Inject global template variables.
 @app.context_processor
@@ -119,28 +117,29 @@ def upload_file():
 
 @login_manager.user_loader
 def load_user(email):
-    (_, users, _) = next(os.walk(os.path.join(app.root_path, 'data', 'Users')), (None, None, []))
-    if email in users:
+    if email in listUsers():
         return User(email)
     else:
         return Anon()
 
+def authorized(ic):
+    '''Is the user authorized to see this application?'''
+    authed = flask_login.current_user.is_authenticated()
+    employee = authed and not flask_login.current_user.id == 'customer'
+    applicant = authed and flask_login.current_user.id == ic.get('Email (Customer)')
+    return employee or applicant
+
 @app.route('/')
 def index():
-    data = []
-    priorities = []
     notification = request.args.get('notification', None)
-    if flask_login.current_user.is_anonymous():
-        pass
-    else:
-        for ic in listIC():
-            data.append([ic['Position'], ic['Time of Request'], ic['Address (Facility)'], ic['Status']])
-            if ic['Status'] in actionItems.get(flask_login.current_user.type):
-                priorities.append([ic['Position'], ic['Time of Request'], ic['Address (Facility)'], ic['Status']])
-    if data:
-        return render_template('index.html', data=data, priorities=priorities, notification=notification)
-    else:
-        return render_template('index.html', notification=notification)
+    data = [
+            [str(key+1), # queue position
+            ic.get('Time of Request'),
+            ic.get('Address (Facility)'),
+            ic.get('Status')] for key, ic in enumerate(listIC()) if authorized(ic)
+        ]
+    priorities = [row for row in data if row[3] in actionItems.get(flask_login.current_user.type)]
+    return render_template('index.html', data=data, priorities=priorities, notification=notification)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -151,11 +150,11 @@ def login():
         email, passwordAttempt = request.form['username'], pwHash(request.form['username'],request.form['password'])
         try:
             with open(os.path.join(app.root_path, 'data', 'Users', email, 'user.json'), 'r') as userJson:
-                users = json.load(userJson)
+                user = json.load(userJson)
         except:
-            users = {}
-        password = users.get(email, {}).get('password')
-        if email in users and password == passwordAttempt:
+            user = {}
+        password = user.get(email, {}).get('password')
+        if email in user and password == passwordAttempt:
             flask_login.login_user(load_user(email))
             return redirect('/')
         else:
@@ -185,32 +184,37 @@ def logout():
     flask_login.logout_user()
     return redirect('/')
 
-@app.route('/report/<id>', methods=['GET','POST'])
+@app.route('/report/<id>')
 @flask_login.login_required
 def report(id):
-    if request.method == "POST":
-        pass
-    else:
-        report_data = listIC()[int(id)-1]
-        report_data['id'] = report_data['Position']
-        with open(app.root_path + '/../sample/allOutputData.json') as data:
-            sample_data = json.load(data)
-        return render_template('report.html', data=report_data, sample_data=sample_data)
+    report_data = listIC()[int(id)-1]
+    with open(app.root_path + '/../sample/allOutputData.json') as data:
+        sample_data = json.load(data)
+    return render_template('report.html', data=report_data, sample_data=sample_data)
+
+def listUsers():
+    (_, users, _) = next(os.walk(os.path.join(app.root_path, 'data', 'Users')), (None, [], None))
+    return users
+
+# def listAppPaths():
+
+def uType(id):
+    '''Returns user type'''
+    a = flask_login.current_user.is_authenticated() * flask_login.current_user.type
+    b = not(flask_login.current_user.is_authenticated()) * 'anonymous'
+    return a + b
 
 def listIC():
     icList = []
-    if flask_login.current_user.type == 'customer':
-        users = [flask_login.current_user.id]
-    else:
-        (_, users, _) = next(os.walk(os.path.join(app.root_path, 'data', 'Users')), (None, None, []))
-    for user in users:
+    # Restrict customers from seeing all interconnection applications
+    for user in listUsers():
         (_, applications, _) = next(os.walk(os.path.join(app.root_path, 'data', 'Users', user, "applications")), (None, None, []))
         if applications:
             for application in applications:
                 with open(os.path.join(app.root_path, 'data', 'Users', user, "applications", application, 'application.json')) as appJSON:
                     appData = json.load(appJSON)
                     icList.append(appData)
-    icList.sort(key=lambda x: int(x.get('Position')))
+    icList.sort(key=lambda x: float(x.get('Time of Request')))
     return icList
 
 def absQueuePosition(requestTime, region = 0):
@@ -219,13 +223,10 @@ def absQueuePosition(requestTime, region = 0):
 @app.route('/add-to-queue', methods=['GET', 'POST'])
 @flask_login.login_required
 def add_to_queue():
-
     interconnection_request = {}
     for key, item in request.form.items():
         interconnection_request[key] = item
-    interconnection_request['Time of Request'] = time.asctime(time.localtime(time.time()))
-    queue_position = str(absQueuePosition(interconnection_request['Time of Request']))
-    interconnection_request['Position'] = queue_position
+    interconnection_request['Time of Request'] = str(datetime.timestamp(datetime.now()))
 #   TODO: Re-add interconnection.py when OMF is unbroken.
 #   interconnection_request['Status'] = interconnection.submitApplication(interconnection_request)
     interconnection_request['Status'] = 'Submitted'
@@ -242,12 +243,6 @@ def add_to_queue():
 #    p.start()
 
     return redirect('/?notification=Application%20submitted%2E')
-
-@app.route('/send-file/<path:fullPath>')
-@flask_login.login_required
-def send_file(fullPath):
-    path_pieces = fullPath.split('/')
-    return send_from_directory('/'.join(path_pieces[0:-1]), path_pieces[-1])
 
 @app.route('/application')
 @flask_login.login_required
@@ -271,10 +266,11 @@ def application():
         'phone' : '({}{}) {}{} - {}'.format(pick(range(2,9)), pick(range(10,99)), pick(range(2,9)), pick(range(10,99)), pick(range(1000,9999))),
         'size' : '{}'.format(pick(sizes)),
         'voltage' : '{}'.format(pick(voltages)),
-        'email' : str(flask_login.current_user.id)
+        'email' : flask_login.current_user.id
     }
     return render_template('application.html', default = default)
 
+#TODO: Fix update status
 @app.route('/update-status/<id>/<status>')
 @flask_login.login_required
 def update_status(position, status):
