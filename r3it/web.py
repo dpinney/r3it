@@ -193,7 +193,7 @@ def report(id):
     else:
         report_data = listIC()[int(id)-1]
         report_data['id'] = report_data['Position']
-        with open('app.root_path/sample/allOutputData.json') as data:
+        with open('app.root_path/../sample/allOutputData.json') as data:
             sample_data = json.load(data)
         return render_template('report.html', data=report_data, sample_data=sample_data)
 
