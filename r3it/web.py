@@ -33,21 +33,23 @@ statuses = (
     'Commissioned',
     'Out of Service'
 )
-engineerActionItems = (
-    'Engineering Review', 'Commissioning Test Needed'
-)
-customerActionItems = (
-    'Customer Options Meeting Proposed',
-    'Interconnection Agreement Proffered',
-    'Interconnection Agreement Executed',
-    'Permission to Operate Proffered',
-    'Commissioning Test Needed'
-)
-msActionItems = (
-    'Application Submitted',
-    'Customer Options Meeting Required'
-)
-
+actionItems = {
+    'engineer': (
+        'Engineering Review',
+        'Commissioning Test Needed'
+    ),
+    'customer': (
+        'Customer Options Meeting Proposed',
+        'Interconnection Agreement Proffered',
+        'Interconnection Agreement Executed',
+        'Permission to Operate Proffered',
+        'Commissioning Test Needed'
+    ),
+    'memberServices': (
+        'Application Submitted',
+        'Customer Options Meeting Required'
+    )
+}
 # Instantiate app
 app = Flask(__name__)
 app.secret_key = config.COOKIE_KEY
@@ -129,22 +131,11 @@ def index():
     notification = request.args.get('notification', None)
     if flask_login.current_user.is_anonymous():
         pass
-    elif flask_login.current_user.type == 'engineer':
+    else:
         for ic in listIC():
             data.append([ic['Position'], ic['Time of Request'], ic['Address (Facility)'], ic['Status']])
-            if ic['Status'] in engineerActionItems:
+            if ic['Status'] in actionItems.get(flask_login.current_user.type):
                 priorities.append([ic['Position'], ic['Time of Request'], ic['Address (Facility)'], ic['Status']])
-    elif flask_login.current_user.type == 'memberServices':
-        for ic in listIC():
-            data.append([ic['Position'], ic['Time of Request'], ic['Address (Facility)'], ic['Status']])
-            if ic['Status'] in msActionItems:
-                priorities.append([ic['Position'], ic['Time of Request'], ic['Address (Facility)'], ic['Status']])
-    elif flask_login.current_user.type == 'customer':
-        for ic in listIC():
-            if ic.get("Email (Customer)") == flask_login.current_user.get_id():
-                data.append([ic['Position'], ic['Time of Request'], ic['Address (Facility)'], ic['Status']])
-                if ic['Status'] in customerActionItems:
-                    priorities.append([ic['Position'], ic['Time of Request'], ic['Address (Facility)'], ic['Status']])
     if data:
         return render_template('index.html', data=data, priorities=priorities, notification=notification)
     else:
@@ -209,7 +200,10 @@ def report(id):
 
 def listIC():
     icList = []
-    (_, users, _) = next(os.walk(os.path.join(app.root_path, 'data', 'Users')), (None, None, []))
+    if flask_login.current_user.type() == 'customer':
+        users = [flask_login.current_user.id()]
+    else:
+        (_, users, _) = next(os.walk(os.path.join(app.root_path, 'data', 'Users')), (None, None, []))
     for user in users:
         (_, applications, _) = next(os.walk(os.path.join(app.root_path, 'data', 'Users', user, "applications")), (None, None, []))
         if applications:
@@ -217,6 +211,7 @@ def listIC():
                 with open(os.path.join(app.root_path, 'data', 'Users', user, "applications", application, 'application.json')) as appJSON:
                     appData = json.load(appJSON)
                     icList.append(appData)
+
     icList.sort(key=lambda x: int(x.get('Position')))
     return icList
 
