@@ -5,8 +5,6 @@ import csv
 import json
 import time
 import flask_login
-# import flask_wtf
-# from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileRequired
 from werkzeug.utils import secure_filename
 import os, hashlib, random, logging, uuid, cachelib
@@ -18,7 +16,7 @@ from flask_session_captcha import FlaskSessionCaptcha
 from random import choice as pick
 from flask import Flask, redirect, request, send_from_directory, render_template, flash, url_for
 from multiprocessing import Process
-import interconnection
+# import interconnection
 
 # Global static variables.
 r3itDir = os.path.dirname(os.path.abspath(__file__))
@@ -203,6 +201,8 @@ def report(id):
     else:
         report_data = listIC()[int(id)-1]
         report_data['id'] = report_data['Position']
+        file = open('../sample/allOutputData.json')
+        print(type(file))
         with open('../sample/allOutputData.json') as data:
             sample_data = json.load(data)
         return render_template('report.html', data=report_data, sample_data=sample_data)
@@ -233,8 +233,9 @@ def add_to_queue():
     interconnection_request['Time of Request'] = time.asctime(time.localtime(time.time()))
     queue_position = str(absQueuePosition(interconnection_request['Time of Request']))
     interconnection_request['Position'] = queue_position
-    interconnection_request['Status'] = interconnection.submitApplication(interconnection_request)
-
+#   TODO: Re-add interconnection.py when OMF is unbroken.
+#   interconnection_request['Status'] = interconnection.submitApplication(interconnection_request)
+    interconnection_request['Status'] = 'Submitted'
     try:
         os.makedirs(os.path.join(app.root_path, 'data','Users',flask_login.current_user.id, "applications", interconnection_request['Time of Request']))
     except OSError:
@@ -243,8 +244,9 @@ def add_to_queue():
         json.dump(interconnection_request, queue)
 
     # run analysis on the queue as a separate process
-    p = Process(target=interconnection.processQueue)
-    p.start()
+#   TODO: Re-add interconnection.py when OMF is unbroken.
+#    p = Process(target=interconnection.processQueue)
+#    p.start()
 
     return redirect('/?notification=Application%20submitted%2E')
 
@@ -284,7 +286,7 @@ def application():
 @flask_login.login_required
 def update_status(position, status):
     data = listIC()
-    status = interconnection.compute_status(data[position])
+#    status = interconnection.compute_status(data[position])
     if status not in statuses:
         return 'Status invalid; no update made.'
     data[id]['Status'] = status
