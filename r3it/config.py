@@ -14,7 +14,6 @@ APPLICATIONS_DIR = 'applications/'
 # TODO: non-hardcoded meter
 METER_NAME = 'node62474211556T62474211583'
 COOKIE_KEY = "topsecretvalue"
-USERS_DIR = '/data/Users'
 
 # Utility parameters.
 

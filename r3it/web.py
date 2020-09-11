@@ -105,13 +105,13 @@ def index():
         app.get('Time of Request'),
         app.get('Address (Facility)'),
         app.get('Status')] for key, app in enumerate(queue()) \
-                                        if authorizedToView(email, app)
+                                        if authorizedToView(currentUser(), app)
     ],
     [
         [str(key+1),
         app.get('Time of Request'),
         app.get('Address (Facility)'),
-        app.get('Status')] for key, app in enumerate(queue) \
+        app.get('Status')] for key, app in enumerate(queue()) \
                                     if requiresUsersAction(currentUser(),app)
     ]
     return render_template('index.html', data=data, \

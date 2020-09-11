@@ -1,9 +1,11 @@
 # user.py
 # Functions returning information about users and their files.
-import glob, config
+import glob, config, os
 
-def users(): return glob.glob(config.USERS_DIR+'/*')
-'''Returns list of users, identified by email address.'''
+def users():
+    '''Returns list of users, identified by email address.'''
+    userPaths = glob.glob(config.USERS_DIR+'/*')
+    return [path.rsplit('/', 1)[1].lower() for path in userPaths]
 
 def privilegedUsers():
     '''Returns dict 'email':[roles] for users with elevated permissions.'''
@@ -30,7 +32,7 @@ def userHasRole(email, role): return role in userRoles(email)
 def userHasUtilityRole(email): return email in utilityUsers()
 '''Returns True if user ID'd by email has a role working for the utility.'''
 
-def userHomeDir(email): return os.path.join(config.USERS_DIR, user)
+def userHomeDir(email): return os.path.join(config.USERS_DIR, email)
 '''Returns path of the user's home directory given the user's email address'''
 
 def userAccountFile(email, rw='r'):
