@@ -43,6 +43,44 @@ def load_user(email):
     else:
         pass
 
+# User management functions
+#def users():
+#    '''Returns list of users'''
+
+def currentUserEmail():
+    '''Returns the email (account identifier) of the currently logged-in user'''
+    try:
+        currentUserEmail = flask_login.current_user.get_id()
+    except:
+        currentUserEmail = 'anon@ymous.com'
+    return currentUserEmail
+
+def powerUsers():
+    '''Returns dict 'email':[roles] for users with elevated permissions.'''
+    emails = [email for email in emails for _, emails in enumerate(config.roles)]
+    return {email:userRoles(email) for email in emails}
+
+def userRoles(user=currentUserEmail()):
+    '''Returns list of roles assigned to a user, identified by email.'''
+    return [role for role, emails in enumerate(config.roles) if user in emails]
+
+def currentUserIs(role):
+    '''Checks to see if the current user has the role'''
+    return role in userRoles(currentUserEmail())
+
+def userHomeDir(user=currentUserEmail()):
+    '''Takes user email, returns path of the user's home directory'''
+    return os.path.join(app.root_path, 'data', 'Users', user)
+
+def userAccountFile(user=currentUserEmail(), rw='r'):
+    '''Returns user account file object.'''
+    return open(os.path.join(userHomeDir(user), 'user.json'), rw)
+
+def userAccountDict(user=currentUserEmail()):
+    '''Return user account information'''
+    with userAccountFile(user, 'r') as userFile:
+        return json.load(userFile)
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     notification = request.args.get('notification', None)
@@ -52,7 +90,7 @@ def register():
         email, password = request.form['email'], request.form['password']
         userDict = {email : {'password' : passwordHash(email, password)}}
         try:
-            os.makedirs(os.path.join(app.root_path, "data", "Users", email))
+            os.makedirs(UserHomeDir(email))
         except:
             return redirect('/register?notification=Account%20already%20exists%2E')
         if captcha.validate():
@@ -118,40 +156,6 @@ def report(id):
         sample_data = json.load(data)
     return render_template('report.html', data=report_data, sample_data=sample_data)
 
-# User management functions
-
-def users():
-    '''Returns list of users'''
-
-def currentUserEmail():
-    '''Returns the email (account id) of the currently logged-in user'''
-    try:
-        currentUserEmail = flask_login.current_user.get_id()
-    except:
-        currentUserEmail = 'anonymous'
-    return currentUserEmail
-
-def powerUsers():
-    '''Returns dict 'email':[roles] for users with elevated permissions.'''
-    emails = [email for email in emails for _, emails in enumerate(config.roles)]
-    return {email:userRoles(email) for email in emails}
-
-def userRoles(user=currentUserEmail()):
-    '''Returns list of roles assigned to a user.'''
-    return [role for role, emails in enumerate(config.roles) if user in emails]
-
-def userHomeDir(user=currentUserEmail()):
-    '''Takes user email, returns path of the user's home directory'''
-    return os.path.join(app.root_path, 'data', 'Users', user)
-
-def userAccountFile(user=currentUserEmail(), rw='r'):
-    '''Returns user account file object.'''
-    return open(os.path.join(userHomeDir(user), 'user.json'), rw)
-
-def userAccountDict(user=currentUserEmail()):
-    '''Return user account information'''
-    with userAccountFile(user, 'r') as userFile:
-        return json.load(userFile)
 
 # Queue management functions
 def userAppsList(user=currentUserEmail()):
