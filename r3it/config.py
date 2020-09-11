@@ -26,7 +26,8 @@ roles = {
         'engineer2@electric.coop'
     ],
     'memberServices' : [
-        'ms@electric.coop'
+        'ms@electric.coop',
+        'engineer@electric.coop'
     ],
     'solarDeveloper' : [
         'installer@solar.com',

@@ -57,7 +57,7 @@ def appFile(email,id,rw='r'):
 
 def appDict(email, id):
     '''Returns interconnection application dict given email and app id.'''
-    with appFile(email, id, 'r') as appFile: return json.load(appFile)
+    with appFile(email, id, 'r') as file: return json.load(file)
 
 def queue():
     '''Returns list of application dicts sorted by precedence'''
