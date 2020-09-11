@@ -100,15 +100,20 @@ def logout():
 def index():
     '''Landing page; shows interconnection inboxes for logged in users.'''
     notification = request.args.get('notification', None)
-    data = [
+    data, priorities = [
         [str(key+1), # queue position
-        ic.get('Time of Request'),
-        ic.get('Address (Facility)'),
-        ic.get('Status')] for key, ic in enumerate(queue()) \
-                                        if authorizedToView(email, ic)
+        app.get('Time of Request'),
+        app.get('Address (Facility)'),
+        app.get('Status')] for key, app in enumerate(queue()) \
+                                        if authorizedToView(email, app)
+    ],
+    [
+        [str(key+1),
+        app.get('Time of Request'),
+        app.get('Address (Facility)'),
+        app.get('Status')] for key, app in enumerate(queue) \
+                                    if requiresUsersAction(currentUser(),app)
     ]
-#TODO: Fix priorities; rn requiresUsersAction doesn't have ownership it needs.
-    priorities = [row for row in data if requiresUsersAction(currentUser(),row)]
     return render_template('index.html', data=data, \
                                          priorities=priorities, \
                                          notification=notification)
@@ -116,6 +121,7 @@ def index():
 @flask_login.login_required
 def report(id):
     '''Given interconnection ID, render detailed report page'''
+#TODO: Reconfigure to user timestamps or uuids instead of queue index.
     report_data = queue()[int(id)-1]
     with open(app.root_path + '/../sample/allOutputData.json') as data:
         sample_data = json.load(data)
@@ -124,17 +130,16 @@ def report(id):
 @app.route('/add-to-queue', methods=['GET', 'POST'])
 @flask_login.login_required
 def add_to_queue():
-    interconnection_request = {}
-    for key, item in request.form.items():
-        interconnection_request[key] = item
-    interconnection_request['Time of Request'] = str(datetime.timestamp(datetime.now()))
-    interconnection_request['Status'] = 'Application Submitted'
-    try:
-        os.makedirs(os.path.join(app.root_path, 'data','Users',currentUser(), "applications", interconnection_request['Time of Request']))
-    except OSError:
-        pass
-    with open(os.path.join(app.root_path, 'data','Users',currentUser(), "applications", interconnection_request['Time of Request'], 'application.json'), 'w') as queue:
-        json.dump(interconnection_request, queue)
+    '''Adds an interconnection application to the queue'''
+    app = {key:item for key, item in request.form.items()}
+    app['Timestamp'] = str(datetime.timestamp(datetime.now()))
+    app['Time of Request'] = str(datetime.now())
+    app['Status'] = 'Application Submitted'
+    try: os.makedirs(appPath(currentUser(),app['Timestamp']))
+    except: pass
+    with appFile(currentUser(), app['Timestamp'], 'w') as appFile:
+        json.dump(app, appFile)
+    # TODO: Figure out the fork-but-not-exec issue (below -> many errors)
     # run analysis on the queue as a separate process
     # p = Process(target=interconnection.processQueue)
     # p.start()
@@ -143,6 +148,7 @@ def add_to_queue():
 @app.route('/application')
 @flask_login.login_required
 def application():
+    '''GET returns form for new interconnection application.'''
     firstNames = ['James', 'John', 'Robert', 'Michael', 'William', 'David', 'Richard', 'Charles', 'Mary', 'Patricia', 'Linda', 'Barbara', 'Elizabeth', 'Jennifer', 'Maria', 'Susan', 'Margaret']
     lastNames = ['Smith', 'Jones', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis']
     trees = ['Oak', 'Birch', 'Cypress', 'Maple', 'Pine', 'Hickory', 'Ash', 'Aspen', 'Elder Berry']

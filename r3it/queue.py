@@ -43,6 +43,22 @@ def requiresUsersAction(email, app):
         if status in actionItems.get(role,[]): employeePriority = True
     return customerPriority or employeePriority
 
+def appDir(email,id):
+    '''Returns path for application directory given user email and app id'''
+    return os.path.join(userHomeDir(email),APPLICATIONS_DIR,id)
+
+def appPath(email,id):
+    '''Returns path for application file given email and id (timestamp).'''
+    return os.path.join(appDir(email,id),'application.json')
+
+def appFile(email,id,rw='r'):
+    '''Returns file object for application given email and id (timestamp).'''
+    return open(os.path.join(appPath(email,id),'application.json'),rw)
+
+def appDict(email, id):
+    '''Returns interconnection application dict given email and app id.'''
+    with appFile(email, id, 'r') as appFile: return json.load(appFile)
+
 def queue():
     '''Returns list of application dicts sorted by precedence'''
     return sorted([json.load(open(path)) for path in allAppPaths()], \
