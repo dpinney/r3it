@@ -1,11 +1,26 @@
 # config.py
 
-utilityName = 'Touchstone Energy'
-sizeThreshold = 10
-logo = '/static/TouchstoneEnergy.png'
-engineers = ['engineer@electric.coop']
-memberServices = ['ms@electric.coop']
 COOKIE_KEY = "topsecretvalue"
+utilityName = 'Touchstone Energy'
+logo = '/static/TouchstoneEnergy.png'
+sizeThreshold = 10
+roles = {
+    'engineer' : [
+        'engineer@electric.coop',
+        'engineer2@electric.coop'
+    ],
+    'memberServices' : [
+        'ms@electric.coop'
+    ],
+    'solarDeveloper' : [
+        'installer@solar.com',
+        'installer@secondsolar.com'
+    ]
+}
+utilityRoles = [
+    'engineer',
+    'memberServices'
+]
 
 statuses = (
     'Application Submitted', # Attn: Member services, upon submission.

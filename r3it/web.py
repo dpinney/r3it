@@ -1,57 +1,41 @@
-import config
-import base64
-import copy
-import csv
-import json
+import config #, interconnection, user, queue
+import base64, json, copy, csv, os, hashlib, random, uuid
 from datetime import datetime
-import flask_login
-from werkzeug.utils import secure_filename
-import os, hashlib, random, logging, uuid, cachelib
-import uuid
-import logging
-from flask_sessionstore import Session
-from flask_session_captcha import FlaskSessionCaptcha
-from random import choice as pick
-from flask import Flask, redirect, request, send_from_directory, render_template, flash, url_for
 from multiprocessing import Process
-# import interconnection
+from flask import Flask, redirect, request, render_template, url_for
+from werkzeug.utils import secure_filename
+import flask_login, flask_sessionstore, flask_session_captcha
 
 # Instantiate app
 app = Flask(__name__)
 app.secret_key = config.COOKIE_KEY
+
+# Instantiate CAPTCHA
 app.config['CAPTCHA_ENABLE'] = True
 app.config['CAPTCHA_LENGTH'] = 5
 app.config['CAPTCHA_WIDTH'] = 160
 app.config['CAPTCHA_HEIGHT'] = 60
 app.config['SESSION_TYPE'] = 'filesystem'
-Session(app)
-captcha = FlaskSessionCaptcha(app)
+flask_sessionstore.Session(app)
+captcha = flask_session_captcha.FlaskSessionCaptcha(app)
 
 # Inject global template variables.
 @app.context_processor
 def inject_config():
-    return dict(logo=config.logo, sizeThreshold=config.sizeThreshold, utilityName=config.utilityName)
-
+    return dict(
+        logo=config.logo,
+        sizeThreshold=config.sizeThreshold,
+        utilityName=config.utilityName
+        )
 # Initiate authentication system.
+login_manager = flask_login.LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = '/'
 
 class User(flask_login.UserMixin):
     def __init__(self, email):
         self.id = email
-        if self.id in config.engineers:
-            self.type = 'engineer'
-        elif self.id in config.memberServices:
-            self.type = 'memberServices'
-        else:
-            self.type = 'customer'
-
-class Anon(flask_login.AnonymousUserMixin):
-    def __init__(self):
-        self.id = 'anonymous'
-        self.type = 'anonymous'
-
-login_manager = flask_login.LoginManager()
-login_manager.init_app(app)
-login_manager.login_view = '/'
+        self.type = userType(email)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -82,8 +66,8 @@ def load_user(email):
 def authorized(ic):
     '''Is the user authorized to see this application?'''
     authed = flask_login.current_user.is_authenticated()
-    employee = authed and not currentUser() == 'customer'
-    applicant = authed and currentUser() == ic.get('Email (Customer)')
+    employee = authed and not currentUserEmail() == 'customer'
+    applicant = authed and currentUserEmail() == ic.get('Email (Customer)')
     return employee or applicant
 
 @app.route('/logout')
@@ -111,6 +95,7 @@ def passwordHash(username, password):
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    '''GET for the login page, POST to log in user.'''
     notification = request.args.get('notification', None)
     if request.method == "GET":
         return render_template("login.html", notification=notification)
@@ -119,7 +104,6 @@ def login():
         passwordAttemptHash = passwordHash(email, passwordAttempt)
         passwordHash = userAccountDict(email).get(email, {}).get('password')
         passwordsMatch = passwordHash == passwordAttemptHash
-
         if passwordsMatch:
             flask_login.login_user(load_user(email))
             return redirect('/')
@@ -129,37 +113,49 @@ def login():
 @app.route('/report/<id>')
 @flask_login.login_required
 def report(id):
+    '''Given interconnection ID, render detailed report page'''
     report_data = listIC()[int(id)-1]
     with open(app.root_path + '/../sample/allOutputData.json') as data:
         sample_data = json.load(data)
     return render_template('report.html', data=report_data, sample_data=sample_data)
 
+# User management functions
+
 def users():
     '''Returns list of users'''
-    (_, users, _) = next(os.walk(os.path.join(app.root_path, 'data', 'Users')), (None, [], None))
-    return users
 
-def currentUser():
+def currentUserEmail():
+    '''Returns the email (account id) of the currently logged-in user'''
     try:
-        currentUser = flask_login.current_user.get_id()
+        currentUserEmail = flask_login.current_user.get_id()
     except:
-        currentUser = 'anonymous'
-    return currentUser
+        currentUserEmail = 'anonymous'
+    return currentUserEmail
 
-def userHomeDir(user=currentUser()):
+def powerUsers():
+    '''Returns dict 'email':[roles] for users with elevated permissions.'''
+    emails = [email for email in emails for _, emails in enumerate(config.roles)]
+    return {email:userRoles(email) for email in emails}
+
+def userRoles(user=currentUserEmail()):
+    '''Returns list of roles assigned to a user.'''
+    return [role for role, emails in enumerate(config.roles) if user in emails]
+
+def userHomeDir(user=currentUserEmail()):
     '''Takes user email, returns path of the user's home directory'''
     return os.path.join(app.root_path, 'data', 'Users', user)
 
-def userAccountFile(user=currentUser(), rw='r'):
+def userAccountFile(user=currentUserEmail(), rw='r'):
     '''Returns user account file object.'''
     return open(os.path.join(userHomeDir(user), 'user.json'), rw)
 
-def userAccountDict(user=currentUser()):
+def userAccountDict(user=currentUserEmail()):
     '''Return user account information'''
     with userAccountFile(user, 'r') as userFile:
         return json.load(userFile)
 
-def userAppsList(user=currentUser()):
+# Queue management functions
+def userAppsList(user=currentUserEmail()):
     '''Returns IDs of applications belonging to a user'''
     (_, applications, _) = next(os.walk(os.path.join(userHomeDir(user), "applications")), (None, [], None))
     return applications
@@ -189,14 +185,14 @@ def add_to_queue():
     for key, item in request.form.items():
         interconnection_request[key] = item
     interconnection_request['Timestamp'] = str(datetime.timestamp(datetime.now()))
-#   TODO: Re-add interconnection.py when OMF is fixed.
+#   TODO: Re-add interconnection.py when OMF is fixed.datetime.
 #   interconnection_request['Status'] = interconnection.submitApplication(interconnection_request)
     interconnection_request['Status'] = 'Submitted'
     try:
-        os.makedirs(os.path.join(app.root_path, 'data','Users',currentUser(), "applications", interconnection_request['Time of Request']))
+        os.makedirs(os.path.join(app.root_path, 'data','Users',currentUserEmail(), "applications", interconnection_request['Time of Request']))
     except OSError:
         pass
-    with open(os.path.join(app.root_path, 'data','Users',currentUser(), "applications", interconnection_request['Time of Request'], 'application.json'), 'w') as queue:
+    with open(os.path.join(app.root_path, 'data','Users',currentUserEmail(), "applications", interconnection_request['Time of Request'], 'application.json'), 'w') as queue:
         json.dump(interconnection_request, queue)
 
     # run analysis on the queue as a separate process
@@ -217,18 +213,18 @@ def application():
     phases = ['One', 'Three']
     sizes = range(1,20)
     voltages = ['110', '220', '600']
-    firstname, lastname = pick(firstNames), pick(lastNames)
+    firstname, lastname = random.choice(firstNames), random.choice(lastNames)
     default = {
         'label' : '{} {}\'s Solar Project'.format(firstname, lastname),
         'name' : '{} {}'.format(firstname, lastname),
-        'address' : "{} {} {}".format(str(pick(range(9999))), pick(trees), pick(suffixes)),
-        'zip' : '{}'.format(pick(zips)),
+        'address' : "{} {} {}".format(str(random.choice(range(9999))), random.choice(trees), random.choice(suffixes)),
+        'zip' : '{}'.format(random.choice(zips)),
         'city': 'LaCrosse',
         'state' : 'WI',
-        'phone' : '({}{}) {}{} - {}'.format(pick(range(2,9)), pick(range(10,99)), pick(range(2,9)), pick(range(10,99)), pick(range(1000,9999))),
-        'size' : '{}'.format(pick(sizes)),
-        'voltage' : '{}'.format(pick(voltages)),
-        'email' : currentUser()
+        'phone' : '({}{}) {}{} - {}'.format(random.choice(range(2,9)), random.choice(range(10,99)), random.choice(range(2,9)), random.choice(range(10,99)), random.choice(range(1000,9999))),
+        'size' : '{}'.format(random.choice(sizes)),
+        'voltage' : '{}'.format(random.choice(voltages)),
+        'email' : currentUserEmail()
     }
     return render_template('application.html', default = default)
 
@@ -265,10 +261,10 @@ def upload_file():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
         try:
-            os.makedirs(os.path.join(app.root_path, "data", currentUser(), "uploads"))
+            os.makedirs(os.path.join(app.root_path, "data", currentUserEmail(), "uploads"))
         except OSError:
             pass
-        file.save(os.path.join(app.root_path, "data", currentUser(), "uploads", filename))
+        file.save(os.path.join(app.root_path, "data", currentUserEmail(), "uploads", filename))
         return redirect(url_for('upload_file') + '?notification=Upload%20successful%2E')
     return render_template('upload.html', notification=notification)
 
