@@ -134,7 +134,7 @@ def add_to_queue():
     app['Timestamp'] = str(datetime.timestamp(datetime.now()))
     app['Time of Request'] = str(datetime.now())
     app['Status'] = 'Application Submitted'
-    try: os.makedirs(appPath(currentUser(),app['Timestamp']))
+    try: os.makedirs(appDir(currentUser(),app['Timestamp']))
     except: pass
     with appFile(currentUser(), app['Timestamp'], 'w') as appfile:
         json.dump(app, appfile)
