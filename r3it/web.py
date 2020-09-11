@@ -9,7 +9,14 @@ import flask_login, flask_sessionstore, flask_session_captcha
 # Instantiate app
 app = Flask(__name__)
 app.secret_key = config.COOKIE_KEY
-
+# Inject global template variables.
+@app.context_processor
+def inject_config():
+    return dict(
+        logo          = config.logo,
+        sizeThreshold = config.sizeThreshold,
+        utilityName   = config.utilityName
+        )
 # Instantiate CAPTCHA
 app.config['CAPTCHA_ENABLE'] = True
 app.config['CAPTCHA_LENGTH'] = 5
@@ -19,23 +26,22 @@ app.config['SESSION_TYPE'] = 'filesystem'
 flask_sessionstore.Session(app)
 captcha = flask_session_captcha.FlaskSessionCaptcha(app)
 
-# Inject global template variables.
-@app.context_processor
-def inject_config():
-    return dict(
-        logo=config.logo,
-        sizeThreshold=config.sizeThreshold,
-        utilityName=config.utilityName
-        )
-# Initiate authentication system.
+# Instantiate authentication system.
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = '/'
+login_manager.login_view = '/login'
 
 class User(flask_login.UserMixin):
     def __init__(self, email):
         self.id = email
         self.type = userType(email)
+
+@login_manager.user_loader
+def load_user(email):
+    if email in users():
+        return User(email)
+    else:
+        pass
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -56,43 +62,6 @@ def register():
         else:
             return redirect('/register?notification=CAPTCHA%20error%2E')
 
-@login_manager.user_loader
-def load_user(email):
-    if email in users():
-        return User(email)
-    else:
-        return Anon()
-
-def authorized(ic):
-    '''Is the user authorized to see this application?'''
-    authed = flask_login.current_user.is_authenticated()
-    employee = authed and not currentUserEmail() == 'customer'
-    applicant = authed and currentUserEmail() == ic.get('Email (Customer)')
-    return employee or applicant
-
-@app.route('/logout')
-def logout():
-    try:
-        flask_login.logout_user()
-    except:
-        pass
-    return redirect('/')
-
-@app.route('/')
-def index():
-    notification = request.args.get('notification', None)
-    data = [
-            [str(key+1), # queue position
-            ic.get('Time of Request'),
-            ic.get('Address (Facility)'),
-            ic.get('Status')] for key, ic in enumerate(listIC()) if authorized(ic)
-        ]
-    priorities = [row for row in data if row[3] in config.actionItems.get(flask_login.current_user.type)]
-    return render_template('index.html', data=data, priorities=priorities, notification=notification)
-
-def passwordHash(username, password):
-    return str(base64.b64encode(hashlib.pbkdf2_hmac('sha256', b'{password}', b'{username}', 100000)))
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     '''GET for the login page, POST to log in user.'''
@@ -109,6 +78,36 @@ def login():
             return redirect('/')
         else:
             return redirect('/login?notification=Username%20or%20password%20does%20not%20match%20our%20records%2E')
+
+@app.route('/logout')
+def logout():
+    try:
+        flask_login.logout_user()
+    except:
+        pass
+    return redirect('/')
+
+def authorized(ic):
+    '''Is the current user authorized to see this application?'''
+#TODO: fix 68
+    employee = not currentUserEmail() == 'customer'
+    applicant = currentUserEmail() == ic.get('Email (Customer)')
+    return employee or applicant
+
+@app.route('/')
+def index():
+    notification = request.args.get('notification', None)
+    data = [
+            [str(key+1), # queue position
+            ic.get('Time of Request'),
+            ic.get('Address (Facility)'),
+            ic.get('Status')] for key, ic in enumerate(listIC()) if authorized(ic)
+        ]
+    priorities = [row for row in data if row[3] in config.actionItems.get(flask_login.current_user.type)]
+    return render_template('index.html', data=data, priorities=priorities, notification=notification)
+
+def passwordHash(username, password):
+    return str(base64.b64encode(hashlib.pbkdf2_hmac('sha256', b'{password}', b'{username}', 100000)))
 
 @app.route('/report/<id>')
 @flask_login.login_required
