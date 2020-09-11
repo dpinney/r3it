@@ -55,7 +55,7 @@ def currentUser():
         currentUserEmail = 'anon@ymous.com'
     return currentUserEmail
 
-# Account management routes.
+# Account-related routes.
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     '''Account registration with CAPTCHA verification'''
@@ -81,8 +81,7 @@ def login():
     if request.method == "GET":
         return render_template("login.html", notification=notification)
     if request.method == "POST":
-        email, pwAttempt = request.form['email'], request.form['password']
-        if passwordHash(email) == hashPassword(email, pwAttempt):
+        if passwordCorrect(request.form['email'], request.form['password']):
             flask_login.login_user(load_user(email))
             return redirect('/')
         else:
@@ -97,20 +96,15 @@ def logout():
         pass
     return redirect('/')
 
-def authorized(ic):
-    '''Is the current user authorized to see this application?'''
-    employee = not currentUser() == 'customer'
-    applicant = currentUser() == ic.get('Email (Customer)')
-    return employee or applicant
-
 @app.route('/')
 def index():
+    '''Landing page; shows interconnection inboxes for logged in users.'''
     notification = request.args.get('notification', None)
     data = [
             [str(key+1), # queue position
             ic.get('Time of Request'),
             ic.get('Address (Facility)'),
-            ic.get('Status')] for key, ic in enumerate(listIC()) if authorized(ic)
+            ic.get('Status')] for key, ic in enumerate(listIC()) if authorizedToView(email, ic)
         ]
     priorities = [row for row in data if row[3] in config.actionItems.get(flask_login.current_user.type)]
     return render_template('index.html', data=data, priorities=priorities, notification=notification)
@@ -124,23 +118,8 @@ def report(id):
         sample_data = json.load(data)
     return render_template('report.html', data=report_data, sample_data=sample_data)
 
-# Queue management functions
-def userAppsList(user=currentUser()):
-    '''Returns IDs of applications belonging to a user'''
-    (_, applications, _) = next(os.walk(os.path.join(userHomeDir(user), "applications")), (None, [], None))
-    return applications
-
-def allAppIDs():
-    '''Returns list of all application IDs'''
-    return (apps for apps in userAppsList(user) for user in users())
-
-def appExists(appID='-1'):
-    '''Returns true when an appID corresponds to an application'''
-    return appID in allAppIDs()
-
 def listIC():
     icList = []
-    # Restrict customers from seeing all interconnection applications
     for user in users():
         for application in userAppsList(user):
             with open(os.path.join(app.root_path, 'data', 'Users', user, "applications", application, 'application.json')) as appJSON:
