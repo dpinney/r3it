@@ -53,7 +53,7 @@ def appPath(email,id):
 
 def appFile(email,id,rw='r'):
     '''Returns file object for application given email and id (timestamp).'''
-    return open(os.path.join(appPath(email,id),'application.json'),rw)
+    return open(appPath(email,id),rw)
 
 def appDict(email, id):
     '''Returns interconnection application dict given email and app id.'''

@@ -136,8 +136,8 @@ def add_to_queue():
     app['Status'] = 'Application Submitted'
     try: os.makedirs(appPath(currentUser(),app['Timestamp']))
     except: pass
-    with appFile(currentUser(), app['Timestamp'], 'w') as appFile:
-        json.dump(app, appFile)
+    with appFile(currentUser(), app['Timestamp'], 'w') as appfile:
+        json.dump(app, appfile)
     # TODO: Figure out the fork-but-not-exec issue (below -> many errors)
     # run analysis on the queue as a separate process
     # p = Process(target=interconnection.processQueue)
