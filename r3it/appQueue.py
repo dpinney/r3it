@@ -1,7 +1,7 @@
 # queue.py
 # Functions for managing the interconnection application queue.
 
-import glob, json, os
+import glob, json, os, sets
 from user import *
 from config import *
 
@@ -59,6 +59,6 @@ def appDict(email, id):
     '''Returns interconnection application dict given email and app id.'''
     with appFile(email, id, 'r') as file: return json.load(file)
 
-def queue():
+def appQueue():
     '''Returns list of application dicts sorted by precedence'''
     return sorted([json.load(open(path)) for path in allAppPaths()], key=lambda x: float(x.get('Timestamp',0)))

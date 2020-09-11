@@ -1,6 +1,6 @@
-import config #, interconnection
+import config , interconnection
 from user import *
-from queue import *
+from appQueue import *
 import base64, json, copy, csv, os, hashlib, random, uuid, glob
 import flask_login, flask_sessionstore, flask_session_captcha
 from datetime import datetime
@@ -104,14 +104,14 @@ def index():
         [str(key+1), # queue position
         app.get('Time of Request'),
         app.get('Address (Facility)'),
-        app.get('Status')] for key, app in enumerate(queue()) \
+        app.get('Status')] for key, app in enumerate(appQueue()) \
                                     if authorizedToView(currentUser(), app)
     ]
     priorities = [
         [str(key+1),
         app.get('Time of Request'),
         app.get('Address (Facility)'),
-        app.get('Status')] for key, app in enumerate(queue()) \
+        app.get('Status')] for key, app in enumerate(appQueue()) \
                                     if requiresUsersAction(currentUser(),app)
     ]
     return render_template('index.html', data=data, \
@@ -121,15 +121,15 @@ def index():
 @flask_login.login_required
 def report(id):
     '''Given interconnection ID, render detailed report page'''
-#TODO: Reconfigure to user timestamps or uuids instead of queue index.
-    report_data = queue()[int(id)-1]
+# TODO: Reconfigure to user timestamps or uuids instead of queue index.
+    report_data = appQueue()[int(id)-1]
     with open(app.root_path + '/../sample/allOutputData.json') as data:
         sample_data = json.load(data)
     return render_template('report.html', data=report_data, sample_data=sample_data)
 
 @app.route('/add-to-queue', methods=['GET', 'POST'])
 @flask_login.login_required
-def add_to_queue():
+def add_to_appQueue():
     '''Adds an interconnection application to the queue'''
     app = {key:item for key, item in request.form.items()}
     app['Timestamp'] = str(datetime.timestamp(datetime.now()))
@@ -141,8 +141,8 @@ def add_to_queue():
         json.dump(app, appfile)
     # TODO: Figure out the fork-but-not-exec issue (below -> many errors)
     # run analysis on the queue as a separate process
-    # p = Process(target=interconnection.processQueue)
-    # p.start()
+    p = Process(target=interconnection.processQueue)
+    p.start()
     return redirect('/?notification=Application%20submitted%2E')
 
 @app.route('/application')
@@ -176,7 +176,7 @@ def application():
 @app.route('/update-status/<id>/<status>')
 @flask_login.login_required
 def update_status(position, status):
-    data = queue()
+    data = appQueue()
 #    status = interconnection.compute_status(data[position])
     if status not in config.statuses:
         return 'Status invalid; no update made.'
