@@ -38,6 +38,7 @@ login_manager.login_view = '/login'
 class User(flask_login.UserMixin):
     def __init__(self, email):
         self.id = email
+        self.roles = userRoles(email)
 
 @login_manager.user_loader
 def load_user(email):
