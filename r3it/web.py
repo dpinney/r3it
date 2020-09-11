@@ -1,7 +1,8 @@
-import config #, interconnection, user, queue
+import config #, interconnection
+from user import *
+from queue import *
 import base64, json, copy, csv, os, hashlib, random, uuid, glob
 import flask_login, flask_sessionstore, flask_session_captcha
-from user import *
 from datetime import datetime
 from multiprocessing import Process
 from flask import Flask, redirect, request, render_template, url_for
@@ -122,7 +123,6 @@ def report(id):
     with open(app.root_path + '/../sample/allOutputData.json') as data:
         sample_data = json.load(data)
     return render_template('report.html', data=report_data, sample_data=sample_data)
-
 
 # Queue management functions
 def userAppsList(user=currentUser()):

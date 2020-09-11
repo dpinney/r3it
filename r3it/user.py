@@ -1,7 +1,7 @@
 # user.py
 # Functions returning information about users and their files.
 def users(): return glob.glob(config.USERS_DIR)
-    '''Returns list of users, identified by email address.'''
+'''Returns list of users, identified by email address.'''
 
 def privilegedUsers():
     '''Returns dict 'email':[roles] for users with elevated permissions.'''
@@ -23,13 +23,13 @@ def userRoles(email):
     return [role for role, emails in enumerate(config.roles) if email in emails]
 
 def userHasRole(email, role): return role in userRoles(email)
-    '''Returns True if the user ID'd by email has role'''
+'''Returns True if the user ID'd by email has role'''
 
 def userHasUtilityRole(email): return email in utilityUsers()
-    '''Returns True if user ID'd by email has a role working for the utility.'''
+'''Returns True if user ID'd by email has a role working for the utility.'''
 
 def userHomeDir(email): return os.path.join(config.USERS_DIR, user)
-    '''Returns path of the user's home directory given the user's email address'''
+'''Returns path of the user's home directory given the user's email address'''
 
 def userAccountFile(email, rw='r'):
     '''Returns user account file as a file object given user's email address.'''
@@ -44,4 +44,4 @@ def hashPassword(email, password):
     return str(base64.b64encode(hashlib.pbkdf2_hmac('sha256', b'{password}', b'{email}', 100000)))
 
 def passwordHash(email): return userAccountDict(email).get(email, {}).get('password')
-    '''Returns the password hash of a user, given the user's email address'''
+'''Returns the password hash of a user, given the user's email address'''
