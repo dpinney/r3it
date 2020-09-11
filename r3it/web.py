@@ -101,31 +101,25 @@ def index():
     '''Landing page; shows interconnection inboxes for logged in users.'''
     notification = request.args.get('notification', None)
     data = [
-            [str(key+1), # queue position
-            ic.get('Time of Request'),
-            ic.get('Address (Facility)'),
-            ic.get('Status')] for key, ic in enumerate(listIC()) if authorizedToView(email, ic)
-        ]
-    priorities = [row for row in data if row[3] in config.actionItems.get(flask_login.current_user.type)]
-    return render_template('index.html', data=data, priorities=priorities, notification=notification)
-
+        [str(key+1), # queue position
+        ic.get('Time of Request'),
+        ic.get('Address (Facility)'),
+        ic.get('Status')] for key, ic in enumerate(queue()) \
+                                        if authorizedToView(email, ic)
+    ]
+#TODO: Fix priorities; rn requiresUsersAction doesn't have ownership it needs.
+    priorities = [row for row in data if requiresUsersAction(currentUser(),row)]
+    return render_template('index.html', data=data, \
+                                         priorities=priorities, \
+                                         notification=notification)
 @app.route('/report/<id>')
 @flask_login.login_required
 def report(id):
     '''Given interconnection ID, render detailed report page'''
-    report_data = listIC()[int(id)-1]
+    report_data = queue()[int(id)-1]
     with open(app.root_path + '/../sample/allOutputData.json') as data:
         sample_data = json.load(data)
     return render_template('report.html', data=report_data, sample_data=sample_data)
-
-def listIC():
-    icList = []
-    for user in users():
-        for application in userAppsList(user):
-            with open(os.path.join(app.root_path, 'data', 'Users', user, "applications", application, 'application.json')) as appJSON:
-                icList.append(json.load(appJSON))
-    icList.sort(key=lambda x: float(x.get('Time of Request')))
-    return icList
 
 @app.route('/add-to-queue', methods=['GET', 'POST'])
 @flask_login.login_required
@@ -176,7 +170,7 @@ def application():
 @app.route('/update-status/<id>/<status>')
 @flask_login.login_required
 def update_status(position, status):
-    data = listIC()
+    data = queue()
 #    status = interconnection.compute_status(data[position])
     if status not in config.statuses:
         return 'Status invalid; no update made.'
