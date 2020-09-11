@@ -5,7 +5,6 @@ import csv
 import json
 from datetime import datetime
 import flask_login
-from flask_wtf.file import FileField, FileRequired
 from werkzeug.utils import secure_filename
 import os, hashlib, random, logging, uuid, cachelib
 import uuid
@@ -16,9 +15,6 @@ from random import choice as pick
 from flask import Flask, redirect, request, send_from_directory, render_template, flash, url_for
 from multiprocessing import Process
 import interconnection
-
-# Global static variables.
-r3itDir = os.path.dirname(os.path.abspath(__file__))
 
 # Instantiate app
 app = Flask(__name__)
@@ -37,9 +33,6 @@ def inject_config():
     return dict(logo=config.logo, sizeThreshold=config.sizeThreshold, utilityName=config.utilityName)
 
 # Initiate authentication system.
-login_manager = flask_login.LoginManager()
-login_manager.init_app(app)
-login_manager.login_view = '/'
 
 class User(flask_login.UserMixin):
     def __init__(self, email):
@@ -56,21 +49,25 @@ class Anon(flask_login.AnonymousUserMixin):
         self.id = 'anonymous'
         self.type = 'anonymous'
 
+login_manager = flask_login.LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = '/'
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     notification = request.args.get('notification', None)
     if request.method == "GET":
         return render_template("register.html", notification=notification)
     if request.method == "POST":
-        email, password = request.form['username'], pwHash(request.form['username'],request.form['password'])
-        user = {email : {'password' : password}}
+        email, password = request.form['email'], request.form['password']
+        userDict = {email : {'password' : passwordHash(email, password)}}
         try:
             os.makedirs(os.path.join(app.root_path, "data", "Users", email))
-        except OSError:
-            pass
+        except:
+            return redirect('/register?notification=Account%20already%20exists%2E')
         if captcha.validate():
-            with open(os.path.join(app.root_path, 'data', 'Users', email, 'user.json'), 'w') as userFile:
-                json.dump(user, userFile)
+            with userAccountFile(email, 'w') as userFile:
+                json.dump(userDict, userFile)
             return redirect('/login?notification=Registration%20successful%2E')
         else:
             return redirect('/register?notification=CAPTCHA%20error%2E')
@@ -85,12 +82,16 @@ def load_user(email):
 def authorized(ic):
     '''Is the user authorized to see this application?'''
     authed = flask_login.current_user.is_authenticated()
-    employee = authed and not flask_login.current_user.id == 'customer'
-    applicant = authed and flask_login.current_user.id == ic.get('Email (Customer)')
+    employee = authed and not currentUser() == 'customer'
+    applicant = authed and currentUser() == ic.get('Email (Customer)')
     return employee or applicant
+
 @app.route('/logout')
 def logout():
-    flask_login.logout_user()
+    try:
+        flask_login.logout_user()
+    except:
+        pass
     return redirect('/')
 
 @app.route('/')
@@ -105,7 +106,8 @@ def index():
     priorities = [row for row in data if row[3] in config.actionItems.get(flask_login.current_user.type)]
     return render_template('index.html', data=data, priorities=priorities, notification=notification)
 
-def pwHash(username, password): return str(base64.b64encode(hashlib.pbkdf2_hmac('sha256', b'{password}', b'{username}', 100000)))
+def passwordHash(username, password):
+    return str(base64.b64encode(hashlib.pbkdf2_hmac('sha256', b'{password}', b'{username}', 100000)))
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -113,14 +115,12 @@ def login():
     if request.method == "GET":
         return render_template("login.html", notification=notification)
     if request.method == "POST":
-        email, passwordAttempt = request.form['email'], pwHash(request.form['email'],request.form['password'])
-        try:
-            with open(os.path.join(app.root_path, 'data', 'Users', email, 'user.json'), 'r') as userJson:
-                user = json.load(userJson)
-        except:
-            user = {}
-        password = user.get(email, {}).get('password')
-        if email in user and password == passwordAttempt:
+        email, passwordAttempt = request.form['email'], request.form['password']
+        passwordAttemptHash = passwordHash(email, passwordAttempt)
+        passwordHash = userAccountDict(email).get(email, {}).get('password')
+        passwordsMatch = passwordHash == passwordAttemptHash
+
+        if passwordsMatch:
             flask_login.login_user(load_user(email))
             return redirect('/')
         else:
@@ -135,23 +135,50 @@ def report(id):
     return render_template('report.html', data=report_data, sample_data=sample_data)
 
 def users():
+    '''Returns list of users'''
     (_, users, _) = next(os.walk(os.path.join(app.root_path, 'data', 'Users')), (None, [], None))
     return users
 
-def applications(user):
-    (_, applications, _) = next(os.walk(os.path.join(app.root_path, 'data', 'Users', user, "applications")), (None, [], None))
+def currentUser():
+    try:
+        currentUser = flask_login.current_user.get_id()
+    except:
+        currentUser = 'anonymous'
+    return currentUser
+
+def userHomeDir(user=currentUser()):
+    '''Takes user email, returns path of the user's home directory'''
+    return os.path.join(app.root_path, 'data', 'Users', user)
+
+def userAccountFile(user=currentUser(), rw='r'):
+    '''Returns user account file object.'''
+    return open(os.path.join(userHomeDir(user), 'user.json'), rw)
+
+def userAccountDict(user=currentUser()):
+    '''Return user account information'''
+    with userAccountFile(user, 'r') as userFile:
+        return json.load(userFile)
+
+def userAppsList(user=currentUser()):
+    '''Returns IDs of applications belonging to a user'''
+    (_, applications, _) = next(os.walk(os.path.join(userHomeDir(user), "applications")), (None, [], None))
     return applications
+
+def allAppIDs():
+    '''Returns list of all application IDs'''
+    return (apps for apps in userAppsList(user) for user in users())
+
+def appExists(appID='-1'):
+    '''Returns true when an appID corresponds to an application'''
+    return appID in allAppIDs()
 
 def listIC():
     icList = []
     # Restrict customers from seeing all interconnection applications
     for user in users():
-        (_, applications, _) = next(os.walk(os.path.join(app.root_path, 'data', 'Users', user, "applications")), (None, None, []))
-        if applications:
-            for application in applications:
-                with open(os.path.join(app.root_path, 'data', 'Users', user, "applications", application, 'application.json')) as appJSON:
-                    appData = json.load(appJSON)
-                    icList.append(appData)
+        for application in userAppsList(user):
+            with open(os.path.join(app.root_path, 'data', 'Users', user, "applications", application, 'application.json')) as appJSON:
+                icList.append(json.load(appJSON))
     icList.sort(key=lambda x: float(x.get('Time of Request')))
     return icList
 
@@ -162,21 +189,22 @@ def add_to_queue():
     interconnection_request = {}
     for key, item in request.form.items():
         interconnection_request[key] = item
+
     
     interconnection_request['Time of Request'] = str(datetime.timestamp(datetime.now()))
     interconnection_request['Status'] = 'Application Submitted'
     interconnection_request['Position'] = interconnection.getQueueLen()+1
 
     try:
-        os.makedirs(os.path.join(app.root_path, 'data','Users',flask_login.current_user.id, "applications", interconnection_request['Time of Request']))
+        os.makedirs(os.path.join(app.root_path, 'data','Users',currentUser(), "applications", interconnection_request['Time of Request']))
     except OSError:
         pass
-    with open(os.path.join(app.root_path, 'data','Users',flask_login.current_user.id, "applications", interconnection_request['Time of Request'], 'application.json'), 'w') as queue:
+    with open(os.path.join(app.root_path, 'data','Users',currentUser(), "applications", interconnection_request['Time of Request'], 'application.json'), 'w') as queue:
         json.dump(interconnection_request, queue)
 
     # run analysis on the queue as a separate process
-    # p = Process(target=interconnection.processQueue)
-    # p.start()
+    p = Process(target=interconnection.processQueue)
+    p.start()
 
     return redirect('/?notification=Application%20submitted%2E')
 
@@ -202,7 +230,7 @@ def application():
         'phone' : '({}{}) {}{} - {}'.format(pick(range(2,9)), pick(range(10,99)), pick(range(2,9)), pick(range(10,99)), pick(range(1000,9999))),
         'size' : '{}'.format(pick(sizes)),
         'voltage' : '{}'.format(pick(voltages)),
-        'email' : flask_login.current_user.id
+        'email' : currentUser()
     }
     return render_template('application.html', default = default)
 
@@ -239,10 +267,10 @@ def upload_file():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
         try:
-            os.makedirs(os.path.join(app.root_path, "data", flask_login.current_user.id, "uploads"))
+            os.makedirs(os.path.join(app.root_path, "data", currentUser(), "uploads"))
         except OSError:
             pass
-        file.save(os.path.join(app.root_path, "data", flask_login.current_user.id, "uploads", filename))
+        file.save(os.path.join(app.root_path, "data", currentUser(), "uploads", filename))
         return redirect(url_for('upload_file') + '?notification=Upload%20successful%2E')
     return render_template('upload.html', notification=notification)
 

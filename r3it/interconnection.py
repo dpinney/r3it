@@ -86,7 +86,7 @@ def processQueue():
 
             # run screens
             request = runAllScreensAndUpdateStatus(request, requestFolders)
-            if not request['Screen Results']['allPassed']:
+            if not request['Screen Results']['passedAll']:
                 allPreviousPassed = False
 
             # save request info to file
