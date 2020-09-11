@@ -18,7 +18,7 @@ def utilityUsers():
     for email, roles in privilegedUsers().items():
         for role in roles:
             if role in config.utilityRoles: utilityUsers.append(email)
-    return utilityUsers
+    return set(utilityUsers)
 # Would this work? Probably less readable regardless:
 # return [email for role in roles for email, roles in enumerate(privilegedUsers) if role in config.utilityRoles]
 
