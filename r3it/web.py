@@ -1,15 +1,16 @@
 import config #, interconnection, user, queue
 import base64, json, copy, csv, os, hashlib, random, uuid, glob
+import flask_login, flask_sessionstore, flask_session_captcha
 from user import *
 from datetime import datetime
 from multiprocessing import Process
 from flask import Flask, redirect, request, render_template, url_for
 from werkzeug.utils import secure_filename
-import flask_login, flask_sessionstore, flask_session_captcha
 
 # Instantiate app
 app = Flask(__name__)
 app.secret_key = config.COOKIE_KEY
+
 # Inject global template variables.
 @app.context_processor
 def inject_config():
@@ -18,6 +19,7 @@ def inject_config():
         sizeThreshold = config.sizeThreshold,
         utilityName   = config.utilityName
         )
+
 # Instantiate CAPTCHA
 app.config['CAPTCHA_ENABLE'] = True
 app.config['CAPTCHA_LENGTH'] = 5
@@ -44,8 +46,7 @@ def load_user(email):
     else:
         pass
 
-# Functions for checking on the current user.
-def currentUserEmail():
+def currentUser():
     '''Returns the email (account identifier) of the currently logged-in user'''
     try:
         currentUserEmail = flask_login.current_user.get_id()
@@ -56,35 +57,31 @@ def currentUserEmail():
 # Account management routes.
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    '''Account registration with CAPTCHA verification'''
     notification = request.args.get('notification', None)
     if request.method == "GET":
         return render_template("register.html", notification=notification)
     if request.method == "POST":
         email, password = request.form['email'], request.form['password']
-        userDict = {email : {'password' : passwordHash(email, password)}}
-        try:
-            os.makedirs(UserHomeDir(email))
-        except:
-            return redirect('/register?notification=Account%20already%20exists%2E')
+        userDict = {email : {'password' : hashPassword(email, password)}}
         if captcha.validate():
-            with userAccountFile(email, 'w') as userFile:
-                json.dump(userDict, userFile)
+            try: os.makedirs(userHomeDir(email))
+            except:
+                return redirect('/register?notification=Account%20already%20exists%2E')
+            with userAccountFile(email, 'w') as userFile: json.dump(userDict, userFile)
             return redirect('/login?notification=Registration%20successful%2E')
         else:
             return redirect('/register?notification=CAPTCHA%20error%2E')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    '''GET for the login page, POST to log in user.'''
+    '''GET for the login page, POST to log in user with flask_login.'''
     notification = request.args.get('notification', None)
     if request.method == "GET":
         return render_template("login.html", notification=notification)
     if request.method == "POST":
-        email, passwordAttempt = request.form['email'], request.form['password']
-        passwordAttemptHash = passwordHash(email, passwordAttempt)
-        passwordHash = userAccountDict(email).get(email, {}).get('password')
-        passwordsMatch = passwordHash == passwordAttemptHash
-        if passwordsMatch:
+        email, pwAttempt = request.form['email'], request.form['password']
+        if passwordHash(email) == hashPassword(email, pwAttempt):
             flask_login.login_user(load_user(email))
             return redirect('/')
         else:
@@ -92,6 +89,7 @@ def login():
 
 @app.route('/logout')
 def logout():
+    '''Logs the user out of their account.'''
     try:
         flask_login.logout_user()
     except:
@@ -100,8 +98,8 @@ def logout():
 
 def authorized(ic):
     '''Is the current user authorized to see this application?'''
-    employee = not currentUserEmail() == 'customer'
-    applicant = currentUserEmail() == ic.get('Email (Customer)')
+    employee = not currentUser() == 'customer'
+    applicant = currentUser() == ic.get('Email (Customer)')
     return employee or applicant
 
 @app.route('/')
@@ -116,9 +114,6 @@ def index():
     priorities = [row for row in data if row[3] in config.actionItems.get(flask_login.current_user.type)]
     return render_template('index.html', data=data, priorities=priorities, notification=notification)
 
-def passwordHash(username, password):
-    return str(base64.b64encode(hashlib.pbkdf2_hmac('sha256', b'{password}', b'{username}', 100000)))
-
 @app.route('/report/<id>')
 @flask_login.login_required
 def report(id):
@@ -130,7 +125,7 @@ def report(id):
 
 
 # Queue management functions
-def userAppsList(user=currentUserEmail()):
+def userAppsList(user=currentUser()):
     '''Returns IDs of applications belonging to a user'''
     (_, applications, _) = next(os.walk(os.path.join(userHomeDir(user), "applications")), (None, [], None))
     return applications
@@ -162,10 +157,10 @@ def add_to_queue():
     interconnection_request['Time of Request'] = str(datetime.timestamp(datetime.now()))
     interconnection_request['Status'] = 'Application Submitted'
     try:
-        os.makedirs(os.path.join(app.root_path, 'data','Users',currentUserEmail(), "applications", interconnection_request['Time of Request']))
+        os.makedirs(os.path.join(app.root_path, 'data','Users',currentUser(), "applications", interconnection_request['Time of Request']))
     except OSError:
         pass
-    with open(os.path.join(app.root_path, 'data','Users',currentUserEmail(), "applications", interconnection_request['Time of Request'], 'application.json'), 'w') as queue:
+    with open(os.path.join(app.root_path, 'data','Users',currentUser(), "applications", interconnection_request['Time of Request'], 'application.json'), 'w') as queue:
         json.dump(interconnection_request, queue)
     # run analysis on the queue as a separate process
     # p = Process(target=interconnection.processQueue)
@@ -194,7 +189,7 @@ def application():
         'phone' : '({}{}) {}{} - {}'.format(random.choice(range(2,9)), random.choice(range(10,99)), random.choice(range(2,9)), random.choice(range(10,99)), random.choice(range(1000,9999))),
         'size' : '{}'.format(random.choice(sizes)),
         'voltage' : '{}'.format(random.choice(voltages)),
-        'email' : currentUserEmail()
+        'email' : currentUser()
     }
     return render_template('application.html', default = default)
 
@@ -214,7 +209,7 @@ def update_status(position, status):
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ['txt', 'pdf', 'doc', 'docx']
-
+#TODO Re-work uploads
 @app.route('/upload', methods=['GET', 'POST'])
 @flask_login.login_required
 def upload_file():
@@ -231,10 +226,10 @@ def upload_file():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
         try:
-            os.makedirs(os.path.join(app.root_path, "data", currentUserEmail(), "uploads"))
+            os.makedirs(os.path.join(app.root_path, "data", currentUser(), "uploads"))
         except OSError:
             pass
-        file.save(os.path.join(app.root_path, "data", currentUserEmail(), "uploads", filename))
+        file.save(os.path.join(app.root_path, "data", currentUser(), "uploads", filename))
         return redirect(url_for('upload_file') + '?notification=Upload%20successful%2E')
     return render_template('upload.html', notification=notification)
 

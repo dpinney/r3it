@@ -1,8 +1,7 @@
 # user.py
 # Functions returning information about users and their files.
-def users():
+def users(): return glob.glob(config.USERS_DIR)
     '''Returns list of users, identified by email address.'''
-    return glob.glob(config.USERS_DIR)
 
 def privilegedUsers():
     '''Returns dict 'email':[roles] for users with elevated permissions.'''
@@ -23,23 +22,26 @@ def userRoles(email):
     '''Returns list of roles assigned to a user, identified by email.'''
     return [role for role, emails in enumerate(config.roles) if email in emails]
 
-def userHasRole(email, role):
+def userHasRole(email, role): return role in userRoles(email)
     '''Returns True if the user ID'd by email has role'''
-    return role in userRoles(email)
 
-def userHasUtilityRole(email):
+def userHasUtilityRole(email): return email in utilityUsers()
     '''Returns True if user ID'd by email has a role working for the utility.'''
-    return email in utilityUsers()
 
-def userHomeDir(email):
-    '''Takes user email, returns path of the user's home directory'''
-    return os.path.join(config.USERS_DIR, user)
+def userHomeDir(email): return os.path.join(config.USERS_DIR, user)
+    '''Returns path of the user's home directory given the user's email address'''
 
 def userAccountFile(email, rw='r'):
-    '''Returns user account file object.'''
+    '''Returns user account file as a file object given user's email address.'''
     return open(os.path.join(userHomeDir(user), 'user.json'), rw)
 
-def userAccountDict(user):
-    '''Return user account information'''
-    with userAccountFile(user, 'r') as userFile:
-        return json.load(userFile)
+def userAccountDict(email):
+    '''Return user account information given user's email address.'''
+    with userAccountFile(email, 'r') as userFile: return json.load(userFile)
+
+def hashPassword(email, password):
+    '''Returns password hash given an email (as a salt) and a password'''
+    return str(base64.b64encode(hashlib.pbkdf2_hmac('sha256', b'{password}', b'{email}', 100000)))
+
+def passwordHash(email): return userAccountDict(email).get(email, {}).get('password')
+    '''Returns the password hash of a user, given the user's email address'''
