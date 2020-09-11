@@ -1,4 +1,5 @@
 # config.py
+
 # constants -------------------------------------------------------------------
 
 DATA_DIR = './data/'
@@ -14,6 +15,9 @@ APPLICATIONS_DIR = 'applications/'
 METER_NAME = 'node62474211556T62474211583'
 COOKIE_KEY = "topsecretvalue"
 USERS_DIR = '/data/Users'
+
+# Utility parameters.
+
 utilityName = 'Touchstone Energy'
 logo = '/static/TouchstoneEnergy.png'
 sizeThreshold = 10
@@ -35,6 +39,7 @@ utilityRoles = [
     'memberServices'
 ]
 
+# All possible statuses an interconnection application may have.
 statuses = (
     'Application Submitted', # Attn: Member services, upon submission.
     'Engineering Review', # Attn: Engineering, if above size threshold
@@ -48,6 +53,8 @@ statuses = (
     'Commissioned',
     'Out of Service'
 )
+
+# User roles and the application statuses that require their action.
 actionItems = {
     'engineer': (
         'Engineering Review',

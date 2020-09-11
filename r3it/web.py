@@ -1,5 +1,6 @@
 import config #, interconnection, user, queue
-import base64, json, copy, csv, os, hashlib, random, uuid
+import base64, json, copy, csv, os, hashlib, random, uuid, glob
+from user import *
 from datetime import datetime
 from multiprocessing import Process
 from flask import Flask, redirect, request, render_template, url_for
@@ -43,10 +44,7 @@ def load_user(email):
     else:
         pass
 
-# User management functions
-#def users():
-#    '''Returns list of users'''
-
+# Functions for checking on the current user.
 def currentUserEmail():
     '''Returns the email (account identifier) of the currently logged-in user'''
     try:
@@ -55,32 +53,7 @@ def currentUserEmail():
         currentUserEmail = 'anon@ymous.com'
     return currentUserEmail
 
-def powerUsers():
-    '''Returns dict 'email':[roles] for users with elevated permissions.'''
-    emails = [email for email in emails for _, emails in enumerate(config.roles)]
-    return {email:userRoles(email) for email in emails}
-
-def userRoles(user=currentUserEmail()):
-    '''Returns list of roles assigned to a user, identified by email.'''
-    return [role for role, emails in enumerate(config.roles) if user in emails]
-
-def currentUserIs(role):
-    '''Checks to see if the current user has the role'''
-    return role in userRoles(currentUserEmail())
-
-def userHomeDir(user=currentUserEmail()):
-    '''Takes user email, returns path of the user's home directory'''
-    return os.path.join(app.root_path, 'data', 'Users', user)
-
-def userAccountFile(user=currentUserEmail(), rw='r'):
-    '''Returns user account file object.'''
-    return open(os.path.join(userHomeDir(user), 'user.json'), rw)
-
-def userAccountDict(user=currentUserEmail()):
-    '''Return user account information'''
-    with userAccountFile(user, 'r') as userFile:
-        return json.load(userFile)
-
+# Account management routes.
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     notification = request.args.get('notification', None)
@@ -127,7 +100,6 @@ def logout():
 
 def authorized(ic):
     '''Is the current user authorized to see this application?'''
-#TODO: fix 68
     employee = not currentUserEmail() == 'customer'
     applicant = currentUserEmail() == ic.get('Email (Customer)')
     return employee or applicant
