@@ -1,14 +1,12 @@
 {% extends "base.html" %}
 
 {% block head %}
-
     <style>
         table {
             width: 100%;
             border-spacing: 2px;
             table-layout: fixed;
         }
-
         td,
         th {
             border: 1px;
@@ -18,7 +16,6 @@
             vertical-align: center;
             overflow-wrap: break-word
         }
-
         .tableContainer {
             max-height: 80%;
             overflow-y: auto;
@@ -27,14 +24,10 @@
 
     <!-- Library Imports -->
     <script>sampleData = {{ sample_data | tojson }}</script>
-
-
 {% endblock %}
 
 {% block content %}
-
-    <H1>Interconnection report for request {{data['Time of Request']}}</H1>
-
+    <H1>Interconnection report for request {{data['id']}}</H1>
     <table style='width:100%' border='1'>
         {% for key in data %} {% if 'id' != key %}
         <tr>
@@ -43,7 +36,6 @@
         </tr>
         {% endif %} {% endfor %}
     </table>
-
 {% endblock %}
 
 {% block customer %}
@@ -55,8 +47,6 @@
     </form>
     {% endif %}
     <hr>
-
-
 {% endblock %}
 
 {% block engineer %}
@@ -66,9 +56,7 @@
         <input type='submit' value='Proffer Interconnection Agreement'/>
         </form>
     {% endif %}
-
     <hr>
-
     <H2>Sample tables below.</H2>
     <!-- Tables -->
     <p class="reportTitle" style="page-break-before:always">Maximum and Minimum Voltages</p>

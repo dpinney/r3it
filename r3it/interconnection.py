@@ -54,7 +54,6 @@ def processQueue():
     # loop through queue and process each request
     allPreviousPassed = True
     for requestPosition in range(1,len(requestFolders)+1):
-
         # get current request
         requestDir = requestFolders[requestPosition] + '/'
         requestInfoFileName = requestDir+config.INFO_FILENAME
