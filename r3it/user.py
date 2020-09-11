@@ -9,13 +9,13 @@ def users():
 
 def privilegedUsers():
     '''Returns dict 'email':[roles] for users with elevated permissions.'''
-    emails = [email for email in emails for _, emails in enumerate(config.roles)]
+    emails = [email for _ , emails in config.roles.items() for email in emails]
     return {email:userRoles(email) for email in emails}
 
 def utilityUsers():
     '''Returns a list of users assigned a role working for the utility.'''
     utilityUsers = []
-    for email, roles in enumerate(privilegedUsers()):
+    for email, roles in privilegedUsers().items():
         for role in roles:
             if role in config.utilityRoles: utilityUsers.append(email)
     return utilityUsers
@@ -24,7 +24,7 @@ def utilityUsers():
 
 def userRoles(email):
     '''Returns list of roles assigned to a user, identified by email.'''
-    return [role for role, emails in enumerate(config.roles) if email in emails]
+    return [role for role, emails in config.roles.items() if email in emails]
 
 def userHasRole(email, role): return role in userRoles(email)
 '''Returns True if the user ID'd by email has role'''
