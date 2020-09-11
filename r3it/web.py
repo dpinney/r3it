@@ -100,19 +100,19 @@ def logout():
 def index():
     '''Landing page; shows interconnection inboxes for logged in users.'''
     notification = request.args.get('notification', None)
-    data, priorities = [
+    data = [
         [str(key+1), # queue position
         app.get('Time of Request'),
         app.get('Address (Facility)'),
         app.get('Status')] for key, app in enumerate(queue()) \
                                         if authorizedToView(currentUser(), app)
-    ],
-    [
+    ]
+    priorities = [
         [str(key+1),
         app.get('Time of Request'),
         app.get('Address (Facility)'),
         app.get('Status')] for key, app in enumerate(queue()) \
-                                    if requiresUsersAction(currentUser(),app)
+                                        if requiresUsersAction(currentUser(),app)
     ]
     return render_template('index.html', data=data, \
                                          priorities=priorities, \
