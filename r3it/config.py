@@ -1,6 +1,19 @@
 # config.py
+# constants -------------------------------------------------------------------
 
+DATA_DIR = './data/'
+USERS_DIR = DATA_DIR + 'Users/'
+TEMPLATE_DIR = DATA_DIR + 'templates/'
+INFO_FILENAME = 'application.json'
+OMD_FILENAME = 'Olin Barre Geo Modified DER.omd'
+INPUT_FILENAME = 'allInputData.json'
+OUTPUT_FILENAME = 'allOutputData.json'
+GRIDLABD_DIR = 'gridlabd/'
+APPLICATIONS_DIR = 'applications/'
+# TODO: non-hardcoded meter
+METER_NAME = 'node62474211556T62474211583'
 COOKIE_KEY = "topsecretvalue"
+USERS_DIR = '/data/Users'
 utilityName = 'Touchstone Energy'
 logo = '/static/TouchstoneEnergy.png'
 sizeThreshold = 10
