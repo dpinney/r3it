@@ -1,6 +1,6 @@
 # user.py
 # Functions returning information about users and their files.
-import glob, config, os
+import glob, config, os, json, base64, hashlib
 
 def users():
     '''Returns list of users, identified by email address.'''
@@ -37,7 +37,7 @@ def userHomeDir(email): return os.path.join(config.USERS_DIR, email)
 
 def userAccountFile(email, rw='r'):
     '''Returns user account file as a file object given user's email address.'''
-    return open(os.path.join(userHomeDir(user), 'user.json'), rw)
+    return open(os.path.join(userHomeDir(email), 'user.json'), rw)
 
 def userAccountDict(email):
     '''Return user account information given user's email address.'''

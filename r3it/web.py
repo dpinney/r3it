@@ -38,7 +38,6 @@ login_manager.login_view = '/login'
 class User(flask_login.UserMixin):
     def __init__(self, email):
         self.id = email
-        self.type = userType(email)
 
 @login_manager.user_loader
 def load_user(email):
@@ -82,7 +81,7 @@ def login():
         return render_template("login.html", notification=notification)
     if request.method == "POST":
         if passwordCorrect(request.form['email'], request.form['password']):
-            flask_login.login_user(load_user(email))
+            flask_login.login_user(load_user(request.form['email']))
             return redirect('/')
         else:
             return redirect('/login?notification=Username%20or%20password%20does%20not%20match%20our%20records%2E')
@@ -105,14 +104,14 @@ def index():
         app.get('Time of Request'),
         app.get('Address (Facility)'),
         app.get('Status')] for key, app in enumerate(queue()) \
-                                        if authorizedToView(currentUser(), app)
+                                    if authorizedToView(currentUser(), app)
     ]
     priorities = [
         [str(key+1),
         app.get('Time of Request'),
         app.get('Address (Facility)'),
         app.get('Status')] for key, app in enumerate(queue()) \
-                                        if requiresUsersAction(currentUser(),app)
+                                    if requiresUsersAction(currentUser(),app)
     ]
     return render_template('index.html', data=data, \
                                          priorities=priorities, \
