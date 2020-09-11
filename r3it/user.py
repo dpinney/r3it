@@ -1,6 +1,8 @@
 # user.py
 # Functions returning information about users and their files.
-def users(): return glob.glob(config.USERS_DIR)
+import glob, config
+
+def users(): return glob.glob(config.USERS_DIR+'/*')
 '''Returns list of users, identified by email address.'''
 
 def privilegedUsers():

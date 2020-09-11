@@ -16,7 +16,7 @@ def authorizedToView(email, app):
 
 def userAppsList(email):
     '''Returns IDs of applications belonging to a user.'''
-    return glob.glob(os.path.join(userHomeDir(email), "applications"))
+    return glob.glob(os.path.join(userHomeDir(email), "applications/*"))
 
 def allAppIDs():
     '''Returns list of all application IDs'''
@@ -27,8 +27,7 @@ def appExists(appID): return appID in allAppIDs()
 
 def allAppDirs():
     '''Returns list of interconnection application directories.'''
-    return [os.path.join(USERS_DIR, user, APPLICATIONS_DIR, app) \
-                            for app in userAppsList(user) for user in users()]
+    return [appDir(user, app) for user in users() for app in userAppsList(user)]
 
 def allAppPaths():
     '''Returns a list of paths to all interconnection application.'''
@@ -57,7 +56,7 @@ def appFile(email,id,rw='r'):
 
 def appDict(email, id):
     '''Returns interconnection application dict given email and app id.'''
-    with appFile(email, id, 'r') as appFile: return json.load(appFile)
+    with appFile(email, id, 'r') as appFile: return jsglobon.load(appFile)
 
 def queue():
     '''Returns list of application dicts sorted by precedence'''
