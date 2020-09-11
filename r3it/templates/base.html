@@ -10,16 +10,17 @@
 	{% else %}
 		<a href='/login'>Login</a>
 		<a href='/register'>Register</a>
+		{% block anonymous %}{% endblock %}
 	{% endif %}
 	<hr>
 	{% if notification%}
 	<H3> {{ notification }} </H3>
 	{% endif %}
 	{% block content %} {% endblock %}
-	{% if current_user.type == 'engineer' %} {% block engineer %}{% endblock %}
-	{% elif current_user.type == 'memberServices' %} {% block ms %}{% endblock %}
-	{% elif current_user.type == 'customer' %} {% block customer %}{% endblock %}
-	{% else %} {% block anonymous %}{% endblock %} {% endif %}
+	{% if 'engineer' in current_user.roles %} {% block engineer %}{% endblock %}
+	{% elif 'memberServices' in current_user.roles %} {% block ms %}{% endblock %}
+	{% else %} {% block customer %}{% endblock %}
+	{% endif %}
 	<hr>
 	<div id="footer">&copy; Copyright 2020 by <a href="http://nreca.coop">NRECA</a></div>
 </body>
