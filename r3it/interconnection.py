@@ -1,7 +1,7 @@
 import inspect
 import config
 import random, json, os, glob
-from shutil import copy2
+from shutil import copy2, rmtree
 from omf.models import derInterconnection
 from omf import feeder
 
@@ -46,104 +46,100 @@ def _test(number_to_push, random_inputs_or_not):
 # constants -------------------------------------------------------------------
 
 DATA_DIR = './data/'
-TEMPLATE_DIR = 'templates/'
-INFO_FILENAME = 'info.json'
-REQUEST_DIR_PREFIX = DATA_DIR+'after_request_'
+USERS_DIR = DATA_DIR + 'Users/'
+TEMPLATE_DIR = DATA_DIR + 'templates/'
+INFO_FILENAME = 'application.json'
 OMD_FILENAME = 'Olin Barre Geo Modified DER.omd'
 INPUT_FILENAME = 'allInputData.json'
 OUTPUT_FILENAME = 'allOutputData.json'
 GRIDLABD_DIR = 'gridlabd/'
+APPLICATIONS_DIR = 'applications/'
+
+# TODO: non-hardcoded meter
+METER_NAME = 'node62474211556T62474211583'
+
+
 # primary functions -----------------------------------------------------------
-
-def submitApplication(interconnectionForm):
- 
-    # create folder for request
-    requestDir = REQUEST_DIR_PREFIX+str(interconnectionForm['Position'])+'/'
-    try: 
-        os.mkdir( requestDir )
-        os.mkdir( requestDir+GRIDLABD_DIR )
-    except: 
-        pass
-
-    
-    # save request info in the corresponding directory 
-    interconnectionForm['Status'] = 'Application Submitted'
-    with open(requestDir+INFO_FILENAME, 'w') as file:
-        json.dump(interconnectionForm, file)
-
-    return 'Application Submitted'
 
 def processQueue():
 
-    # TODO: add withdrawal logic
-    # TODO: remove interactions with queue.json once 
-    #       front end is no longer dependent on it
-
     # get a list of all requests
-    folderList = glob.glob(REQUEST_DIR_PREFIX+'*')
+    requestFolders = getRequestFolders()
+    print(requestFolders)
 
     # loop through queue and process each request
-    aPreviousEntryFailed = False 
-    for requestPosition in range(1,len(folderList)+1):
+    allPreviousPassed = True 
+    for requestPosition in range(1,len(requestFolders)+1):
 
         # get current request
-        requestDir = REQUEST_DIR_PREFIX+ str(requestPosition)+'/'
+        requestDir = requestFolders[requestPosition] + '/'
         requestInfoFileName = requestDir+INFO_FILENAME
         with open(requestInfoFileName) as infoFile:
             request = json.load(infoFile)
         
-        # if we see a failed request, update previously failed boolean
-        if request.get('Status') == 'Engineering Review':
-            aPreviousEntryFailed = True
+        # if we see a previously failing request, 
+        # or an unprocessed request that isnt after a failure
+        # run the screens and update statuses
+        if (request.get('Status')=='Engineering Review') or \
+            ( (request.get('Status') == 'Application Submitted') and \
+                allPreviousPassed ):
 
-        # if current request has been submitted but not processed
-        elif request.get('Status') == 'Application Submitted':
-                      
-            # dont update the requests that occur after 
-            # a previously failed request 
-            if not aPreviousEntryFailed:
-                
-                # # add omd and input data to folder 
-                # copy2(DATA_DIR+TEMPLATE_DIR+OMD_FILENAME, \
-                #     requestDir+GRIDLABD_DIR+OMD_FILENAME)
-                # copy2(DATA_DIR+TEMPLATE_DIR+INPUT_FILENAME, \
-                #     requestDir+GRIDLABD_DIR+INPUT_FILENAME)
+            # run screens
+            request = runAllScreensAndUpdateStatus(request, requestFolders)
+            if not request['Screen Results']['allPassed']:
+                allPreviousPassed = False
+
+            # save request info to file
+            with open(requestInfoFileName, 'w') as infoFile:
+                json.dump(request, infoFile)
                
-                meterName = 'node62474211556T62474211583'
-                initializePowerflowModel(requestPosition,meterName)
-                
-                #run screens
-                screenResults = runAllScreens(request['Position'])
-                request['Screens Passed'] = screenResults
-
-                # if all screens pass, update current request status to passed
-                if screenResults['passedAll'] == True:
-                    request['Status'] = 'Interconnection Agreement Proffered'
-                else: # if any of the screens failed
-                    request['Status'] = 'Engineering Review'
-                    aPreviousEntryFailed = True
-
-        # update request info
-        with open(requestInfoFileName, 'w') as infoFile:
-            json.dump(request, infoFile)
-    
-        # temp: update queue remove once frontend no longer needs queue.json
-        with open('data/queue.json') as queueFile:
-            queue = json.load(queueFile)
-        queue[str(requestPosition)] = request
-        with open('data/queue.json','w') as queueFile:
-            json.dump(queue, queueFile)
-
 def withdraw(requestPosition):
 
     # set status to withdrawn 
     # process queue
     pass
 
+def getQueueLen():
+
+    queueLen = 0
+
+    users = glob.glob(USERS_DIR + '/*')
+    for user in users:
+        requests = glob.glob(user + '/'+ APPLICATIONS_DIR + '/*')
+        queueLen += len(requests)
+        print(queueLen)
+
+    return queueLen
+
 # helper functions ------------------------------------------------------------
 
-def runAllScreens(requestPosition):
+def getRequestFolders():
 
+    queue = {}
+
+    users = glob.glob(USERS_DIR + '/*')
+    for user in users:
+        requests = glob.glob(user + '/'+ APPLICATIONS_DIR + '/*')
+        for request in requests:
+
+            with open(request + '/' + INFO_FILENAME) as infoFile:
+                requestInfo = json.load(infoFile)
+            requestPosition = requestInfo['Position']
+            queue[requestPosition] = request
+
+    return queue
+
+def runAllScreensAndUpdateStatus(request, requestFolders):
+
+    # copy over model from the previous passing request and 
+    # add desired generation at given meter
+    gridlabdWorkingDir = initializePowerflowModel(request, requestFolders)          
+
+    # run the omf derInterconnection model
+    derInterconnection.runForeground(gridlabdWorkingDir)
+    with open(gridlabdWorkingDir+OUTPUT_FILENAME) as modelOutputFile:
+        modelOutputs = json.load(modelOutputFile)
+    
     # define screen names based on entries in omf model output
     screenResults = {
         # are voltages within +- 5% inclusive of nominal if nominal <600
@@ -164,27 +160,26 @@ def runAllScreens(requestPosition):
         # user provided threshold
        'faultPOIVolts': False
     }
-
-    # run the omf derInterconnection model
-    workingDir = REQUEST_DIR_PREFIX + requestPosition + '/' + GRIDLABD_DIR
-    derInterconnection.runForeground(workingDir)
-    with open(workingDir+OUTPUT_FILENAME) as modelOutputFile:
-        modelOutputs = json.load(modelOutputFile)
     
     # check screens for failures
     passedAll = True
     for screen in screenResults.keys():
-        screenPassed = runScreen(modelOutputs[screen])
+        screenPassed = runSingleScreen(modelOutputs[screen])
         screenResults[screen] = screenPassed
         if screenPassed == False:
             passedAll = False
     screenResults['passedAll'] = passedAll
 
-    # if we had failed any screens we would have already returned
-    # therefore if we are here, we passed all screens
-    return screenResults
+    # update current request results and status 
+    request['Screen Results'] = screenResults
+    if screenResults['passedAll'] == True:
+        request['Status'] = 'Interconnection Agreement Proffered'
+    else: # if any of the screens failed
+        request['Status'] = 'Engineering Review'
+
+    return request
     
-def runScreen(screeningData):
+def runSingleScreen(screeningData):
 
     screenPassed = True
     for entry in screeningData:
@@ -195,72 +190,39 @@ def runScreen(screeningData):
 
     return screenPassed
 
-def initializePowerflowModel(requestPosition, meterName):
+def initializePowerflowModel(request, requestFolders):
 
-    def getPreviouslyPassingRequestDir(requestPosition):
+    # initialize vars
+    requestPosition = request['Position']
+    requestDir = requestFolders[requestPosition] + '/'
+    gridlabdWorkingDir = requestDir+GRIDLABD_DIR
 
-        # go through previous requests
-        previousRequestPosition = requestPosition-1
-        while previousRequestPosition > 0:
+    # create empty directory for gridlabd analysis
+    try:
+        rmtree(gridlabdWorkingDir)
+    except FileNotFoundError as e:
+        pass
+    os.mkdir(gridlabdWorkingDir)
 
-            # get previous request status
-            previousRequestDir = REQUEST_DIR_PREFIX + \
-                str(previousRequestPosition) + '/'
-            infoFileName = previousRequestDir+INFO_FILENAME
-            with open(infoFileName) as infoFile:
-                previousRequest = json.load(infoFile)
-                previousStatus = previousRequest['Status'] 
-
-            # break out of loop at the first approved request
-            if previousStatus == 'Interconnection Agreement Proffered':
-                break
-            else: # keep looping till there are no more requests
-                previousRequestPosition -= 1
-            
-        # if we didnt find a previously passing request, something went wrong
-        if previousRequestPosition == 0:
-            raise Exception('this error should not be possible. \
-                We are processing a request that has not had any \
-                any passing requests before it and also isnt the \
-                1st request. processQueue() should prevent this \
-                from happening ')
-
-        return previousRequestPosition, previousRequestDir
-
-    def rekeyGridlabDModelByName( tree ):
-
-        # makes it easier to search for items
-        newTree = {}
-        for key in tree.keys():
-            name = tree[key].get('name',None)
-            if name is not None:
-                newTree[name] = {'item': tree[key], 'originalKey': key}
-        return newTree
-
-    # main intialization logic ------------------------------------------------
-
-    # get directory for current request
-    requestDir = REQUEST_DIR_PREFIX + str(requestPosition) + '/'
-        
     # if first request 
     if requestPosition == 1:
     
         # copy original templates
         previousRequestPosition = 0
-        copy2(DATA_DIR+TEMPLATE_DIR+OMD_FILENAME, \
-            requestDir+GRIDLABD_DIR+OMD_FILENAME)
-        copy2(DATA_DIR+TEMPLATE_DIR+INPUT_FILENAME, \
-            requestDir+GRIDLABD_DIR+INPUT_FILENAME)
+        copy2(TEMPLATE_DIR+OMD_FILENAME, \
+            gridlabdWorkingDir+OMD_FILENAME)
+        copy2(TEMPLATE_DIR+INPUT_FILENAME, \
+            gridlabdWorkingDir+INPUT_FILENAME)
     
     else: # otherwise get model from previously passing request and update it
         
         # copy templates
         previousRequestPosition, previousRequestDir = \
-            getPreviouslyPassingRequestDir(requestPosition)
+            getPreviouslyPassingRequestDir(requestPosition,requestFolders)
         copy2(previousRequestDir+GRIDLABD_DIR+OMD_FILENAME, \
-            requestDir+GRIDLABD_DIR+OMD_FILENAME)
+           gridlabdWorkingDir+OMD_FILENAME)
         copy2(previousRequestDir+GRIDLABD_DIR+INPUT_FILENAME, \
-            requestDir+GRIDLABD_DIR+INPUT_FILENAME)
+           gridlabdWorkingDir+INPUT_FILENAME)
 
         # debug    
         print()
@@ -289,21 +251,18 @@ def initializePowerflowModel(requestPosition, meterName):
         newTree['addedDerBreaker']['item']
         
     # get meter
-    meter = newTree[meterName]['item']
+    meter = newTree[METER_NAME]['item']
     
     # create inverter and set parent to meter, get phases from meter
     inverter = { 'object':'inverter',
         'name': 'inverterForRequest'+str(requestPosition),
-        'parent': meterName,
+        'parent': METER_NAME,
         'rated_power':25000,
         'phases':'' }
     inverter['phases'] = meter['phases']
     feeder.insert(tree, inverter)
     
     # get attributes for the solar object
-    requestInfoFileName = requestDir+INFO_FILENAME
-    with open(requestInfoFileName) as infoFile:
-        request = json.load(infoFile)
     kW = request['Nameplate Rating (kW)']
     # at efficiency = 0.155, area = rated_kw * 75 ft^2/kW.
     SOLAR_EFFICIENCY = 0.155
@@ -331,7 +290,7 @@ def initializePowerflowModel(requestPosition, meterName):
             transformer = tree[key]
             transformerTo = transformer['to']
             transformerFrom = transformer['from']
-            if transformerTo == meterName:
+            if transformerTo == METER_NAME:
                 transformerKey = key
                 break
 
@@ -373,12 +332,57 @@ def initializePowerflowModel(requestPosition, meterName):
         omd['tree'] = tree
         json.dump(omd, omdFile, indent=4)
 
+    return gridlabdWorkingDir
+
+def getPreviouslyPassingRequestDir(requestPosition, requestFolders):
+
+    # go through previous requests
+    previousRequestPosition = requestPosition-1
+    while previousRequestPosition > 0:
+
+        # get previous request status
+        previousRequestDir = requestFolders[previousRequestPosition] + '/'
+        infoFileName = previousRequestDir+INFO_FILENAME
+        with open(infoFileName) as infoFile:
+            previousRequest = json.load(infoFile)
+            previousStatus = previousRequest['Status'] 
+
+        # break out of loop at the first approved request
+        if previousStatus == 'Interconnection Agreement Proffered':
+            break
+        else: # keep looping till there are no more requests
+            previousRequestPosition -= 1
+        
+    # if we didnt find a previously passing request, something went wrong
+    if previousRequestPosition == 0:
+        raise Exception('this error should not be possible. \
+            We are processing a request that has not had any \
+            any passing requests before it and also isnt the \
+            1st request. processQueue() should prevent this \
+            from happening ')
+
+    return previousRequestPosition, previousRequestDir
+
+def rekeyGridlabDModelByName( tree ):
+
+    # makes it easier to search for items
+    newTree = {}
+    for key in tree.keys():
+        name = tree[key].get('name',None)
+        if name is not None:
+            newTree[name] = {'item': tree[key], 'originalKey': key}
+
+    return newTree
+
 # run tests when file is run --------------------------------------------------
 
 def _tests():
+    
     processQueue()
-    # meterName = 'node62474211556T62474211583'
-    # initializePowerflowModel(2,meterName)
+    
+    # METER_NAME = 'node62474211556T62474211583'
+    # initializePowerflowModel(2,METER_NAME)
+
 
 if __name__ == '__main__':
     _tests()

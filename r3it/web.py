@@ -15,7 +15,7 @@ from flask_session_captcha import FlaskSessionCaptcha
 from random import choice as pick
 from flask import Flask, redirect, request, send_from_directory, render_template, flash, url_for
 from multiprocessing import Process
-# import interconnection
+import interconnection
 
 # Global static variables.
 r3itDir = os.path.dirname(os.path.abspath(__file__))
@@ -158,13 +158,15 @@ def listIC():
 @app.route('/add-to-queue', methods=['GET', 'POST'])
 @flask_login.login_required
 def add_to_queue():
+    
     interconnection_request = {}
     for key, item in request.form.items():
         interconnection_request[key] = item
+    
     interconnection_request['Time of Request'] = str(datetime.timestamp(datetime.now()))
-#   TODO: Re-add interconnection.py when OMF is unbroken.
-#   interconnection_request['Status'] = interconnection.submitApplication(interconnection_request)
-    interconnection_request['Status'] = 'Submitted'
+    interconnection_request['Status'] = 'Application Submitted'
+    interconnection_request['Position'] = interconnection.getQueueLen()+1
+
     try:
         os.makedirs(os.path.join(app.root_path, 'data','Users',flask_login.current_user.id, "applications", interconnection_request['Time of Request']))
     except OSError:
@@ -173,9 +175,8 @@ def add_to_queue():
         json.dump(interconnection_request, queue)
 
     # run analysis on the queue as a separate process
-#   TODO: Re-add interconnection.py when OMF is unbroken.
-#    p = Process(target=interconnection.processQueue)
-#    p.start()
+    # p = Process(target=interconnection.processQueue)
+    # p.start()
 
     return redirect('/?notification=Application%20submitted%2E')
 
