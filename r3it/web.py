@@ -2,13 +2,9 @@ import config #, interconnection, user, queue
 import base64, json, copy, csv, os, hashlib, random, uuid
 from datetime import datetime
 from multiprocessing import Process
-<<<<<<< HEAD
 from flask import Flask, redirect, request, render_template, url_for
 from werkzeug.utils import secure_filename
 import flask_login, flask_sessionstore, flask_session_captcha
-=======
-import interconnection
->>>>>>> 14db530304150b63f3dff59bfff091c07772bd23
 
 # Instantiate app
 app = Flask(__name__)
@@ -185,34 +181,20 @@ def listIC():
 @app.route('/add-to-queue', methods=['GET', 'POST'])
 @flask_login.login_required
 def add_to_queue():
-    
     interconnection_request = {}
     for key, item in request.form.items():
         interconnection_request[key] = item
-<<<<<<< HEAD
-    interconnection_request['Timestamp'] = str(datetime.timestamp(datetime.now()))
-#   TODO: Re-add interconnection.py when OMF is fixed.datetime.
-#   interconnection_request['Status'] = interconnection.submitApplication(interconnection_request)
-    interconnection_request['Status'] = 'Submitted'
-=======
-
-    
     interconnection_request['Time of Request'] = str(datetime.timestamp(datetime.now()))
     interconnection_request['Status'] = 'Application Submitted'
-    interconnection_request['Position'] = interconnection.getQueueLen()+1
-
->>>>>>> 14db530304150b63f3dff59bfff091c07772bd23
     try:
         os.makedirs(os.path.join(app.root_path, 'data','Users',currentUserEmail(), "applications", interconnection_request['Time of Request']))
     except OSError:
         pass
     with open(os.path.join(app.root_path, 'data','Users',currentUserEmail(), "applications", interconnection_request['Time of Request'], 'application.json'), 'w') as queue:
         json.dump(interconnection_request, queue)
-
     # run analysis on the queue as a separate process
-    p = Process(target=interconnection.processQueue)
-    p.start()
-
+    # p = Process(target=interconnection.processQueue)
+    # p.start()
     return redirect('/?notification=Application%20submitted%2E')
 
 @app.route('/application')
