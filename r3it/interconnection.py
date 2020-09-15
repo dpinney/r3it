@@ -51,7 +51,6 @@ def processQueue(lock):
     # processQueue is called asynchronously, the lock ensure only one instance 
     # is running at a time so files arent being overwritten and breaking things
     lock.acquire()
-    print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
 
     # get a list of all requests
     requestFolders = allAppDirs()
@@ -65,17 +64,26 @@ def processQueue(lock):
         with open(requestInfoFileName) as infoFile:
             request = json.load(infoFile)
 
+
+        print(request.get('previousRequestWithdrawn','+++++++'))
+
         # if we see a previously failing request,
         # or an unprocessed request that isnt after a failure
         # run the screens and update statuses
-        if (request.get('Status')=='Engineering Review') or \
+        if (request.get('previousRequestWithdrawn',False) == True) or \
+            (request.get('Status') == 'Engineering Review') or \
             ( (request.get('Status') == 'Application Submitted') and \
                 allPreviousPassed ):
+
+            print('-------------here0----------------')
 
             # run screens
             request = runAllScreensAndUpdateStatus(requestPosition, requestFolders)
             if not request['Screen Results']['passedAll']:
                 allPreviousPassed = False
+
+            # update withrawn status
+            request['previousRequestWithdrawn'] = False
 
             # save request info to file
             with open(requestInfoFileName, 'w') as infoFile:
@@ -83,13 +91,53 @@ def processQueue(lock):
 
     # release lock so the next iteration of processQueue can run
     lock.release()
-    print('----------------------------------------------------------')
 
-def withdraw(requestPosition):
+#TODO link to front-end
+def withdraw(withdrawLock, processQueueLock, requestPosition):
 
-    # set status to withdrawn
+    withdrawLock.acquire()
+
+    print('-------------here----------------')
+    print('requestPosition',requestPosition)
+
+    # get a list of all requests
+    requestFolders = allAppDirs()
+    for currentRequestPosition in range(len(requestFolders)):
+
+        print('-------------here1----------------')
+        print('currentRequestPosition',currentRequestPosition)
+
+        if currentRequestPosition >= requestPosition:
+
+            # get current request
+            requestDir = requestFolders[currentRequestPosition] + '/'
+            requestInfoFileName = requestDir+config.INFO_FILENAME
+            with open(requestInfoFileName) as infoFile:
+                request = json.load(infoFile)
+
+            print('before',request['Status'],request.get('previousRequestWithdrawn','') )
+            
+            # update withrawn status
+            if currentRequestPosition == requestPosition:
+                print('-------------here2----------------')
+                request['Status'] = 'Withdrawn'
+            else:
+                print('-------------here3----------------')
+                request['previousRequestWithdrawn'] = True
+
+            print('after',request['Status'],request.get('previousRequestWithdrawn','') )
+            
+            # save request info to file
+            with open(requestInfoFileName, 'w') as infoFile:
+                json.dump(request, infoFile)
+
+
     # process queue
-    pass
+    print('-------------here4----------------')
+    processQueue(processQueueLock)
+    print('-------------here5----------------')
+    
+    withdrawLock.release()
 
 # helper functions ------------------------------------------------------------
 
@@ -347,6 +395,13 @@ def _tests():
 
     # config.METER_NAME = 'node62474211556T62474211583'
     # initializePowerflowModel(2,config.METER_NAME)
+
+    # must be run after all pending processQueue requests are processed
+    # because these locks are just place holders
+    # from multiprocessing import Lock
+    # withdrawLock = Lock()
+    # queueLock = Lock()
+    # withdraw(withdrawLock, queueLock, 1)
 
 
 if __name__ == '__main__':
