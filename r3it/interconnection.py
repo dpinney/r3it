@@ -64,9 +64,6 @@ def processQueue(lock):
         with open(requestInfoFileName) as infoFile:
             request = json.load(infoFile)
 
-
-        print(request.get('previousRequestWithdrawn','+++++++'))
-
         # if we see a previously failing request,
         # or an unprocessed request that isnt after a failure
         # run the screens and update statuses
@@ -74,8 +71,6 @@ def processQueue(lock):
             (request.get('Status') == 'Engineering Review') or \
             ( (request.get('Status') == 'Application Submitted') and \
                 allPreviousPassed ):
-
-            print('-------------here0----------------')
 
             # run screens
             request = runAllScreensAndUpdateStatus(requestPosition, requestFolders)
@@ -97,15 +92,9 @@ def withdraw(withdrawLock, processQueueLock, requestPosition):
 
     withdrawLock.acquire()
 
-    print('-------------here----------------')
-    print('requestPosition',requestPosition)
-
     # get a list of all requests
     requestFolders = allAppDirs()
     for currentRequestPosition in range(len(requestFolders)):
-
-        print('-------------here1----------------')
-        print('currentRequestPosition',currentRequestPosition)
 
         if currentRequestPosition >= requestPosition:
 
@@ -114,28 +103,20 @@ def withdraw(withdrawLock, processQueueLock, requestPosition):
             requestInfoFileName = requestDir+config.INFO_FILENAME
             with open(requestInfoFileName) as infoFile:
                 request = json.load(infoFile)
-
-            print('before',request['Status'],request.get('previousRequestWithdrawn','') )
             
             # update withrawn status
             if currentRequestPosition == requestPosition:
-                print('-------------here2----------------')
                 request['Status'] = 'Withdrawn'
             else:
-                print('-------------here3----------------')
                 request['previousRequestWithdrawn'] = True
 
-            print('after',request['Status'],request.get('previousRequestWithdrawn','') )
-            
             # save request info to file
             with open(requestInfoFileName, 'w') as infoFile:
                 json.dump(request, infoFile)
 
 
     # process queue
-    print('-------------here4----------------')
     processQueue(processQueueLock)
-    print('-------------here5----------------')
     
     withdrawLock.release()
 
