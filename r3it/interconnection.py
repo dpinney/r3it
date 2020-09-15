@@ -4,6 +4,7 @@ import random, json, os, glob
 from shutil import copy2, rmtree
 from omf.models import derInterconnection
 from omf import feeder
+from appQueue import allAppDirs
 
 '''
 DIRECTORY STRUCTURE
@@ -45,15 +46,19 @@ def _test(number_to_push, random_inputs_or_not):
 
 # primary functions -----------------------------------------------------------
 
-def processQueue():
+def processQueue(lock):
+
+    # processQueue is called asynchronously, the lock ensure only one instance 
+    # is running at a time so files arent being overwritten and breaking things
+    lock.acquire()
+    print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
 
     # get a list of all requests
-    requestFolders = getRequestFolders()
-    print(requestFolders)
+    requestFolders = allAppDirs()
 
     # loop through queue and process each request
     allPreviousPassed = True
-    for requestPosition in range(1,len(requestFolders)+1):
+    for requestPosition in range(len(requestFolders)):
         # get current request
         requestDir = requestFolders[requestPosition] + '/'
         requestInfoFileName = requestDir+config.INFO_FILENAME
@@ -68,7 +73,7 @@ def processQueue():
                 allPreviousPassed ):
 
             # run screens
-            request = runAllScreensAndUpdateStatus(request, requestFolders)
+            request = runAllScreensAndUpdateStatus(requestPosition, requestFolders)
             if not request['Screen Results']['passedAll']:
                 allPreviousPassed = False
 
@@ -76,47 +81,24 @@ def processQueue():
             with open(requestInfoFileName, 'w') as infoFile:
                 json.dump(request, infoFile)
 
+    # release lock so the next iteration of processQueue can run
+    lock.release()
+    print('----------------------------------------------------------')
+
 def withdraw(requestPosition):
 
     # set status to withdrawn
     # process queue
     pass
 
-def getQueueLen():
-
-    queueLen = 0
-
-    users = glob.glob(config.USERS_DIR + '/*')
-    for user in users:
-        requests = glob.glob(user + '/'+ config.APPLICATIONS_DIR + '/*')
-        queueLen += len(requests)
-        print(queueLen)
-
-    return queueLen
-
 # helper functions ------------------------------------------------------------
 
-def getRequestFolders():
-
-    queue = {}
-
-    users = glob.glob(config.USERS_DIR + '/*')
-    for user in users:
-        requests = glob.glob(user + '/'+ config.APPLICATIONS_DIR + '/*')
-        for request in requests:
-
-            with open(request + '/' + config.INFO_FILENAME) as infoFile:
-                requestInfo = json.load(infoFile)
-            requestPosition = requestInfo['Position']
-            queue[requestPosition] = request
-
-    return queue
-
-def runAllScreensAndUpdateStatus(request, requestFolders):
+def runAllScreensAndUpdateStatus(requestPosition, requestFolders):
 
     # copy over model from the previous passing request and
     # add desired generation at given meter
-    gridlabdWorkingDir = initializePowerflowModel(request, requestFolders)
+    requestDir = requestFolders[requestPosition] + '/'
+    gridlabdWorkingDir = initializePowerflowModel(requestPosition, requestFolders)
 
     # run the omf derInterconnection model
     derInterconnection.runForeground(gridlabdWorkingDir)
@@ -154,6 +136,9 @@ def runAllScreensAndUpdateStatus(request, requestFolders):
     screenResults['passedAll'] = passedAll
 
     # update current request results and status
+    requestInfoFileName = requestDir+config.INFO_FILENAME
+    with open(requestInfoFileName) as infoFile:
+        request = json.load(infoFile)
     request['Screen Results'] = screenResults
     if screenResults['passedAll'] == True:
         request['Status'] = 'Interconnection Agreement Proffered'
@@ -173,12 +158,14 @@ def runSingleScreen(screeningData):
 
     return screenPassed
 
-def initializePowerflowModel(request, requestFolders):
+def initializePowerflowModel(requestPosition, requestFolders):
 
     # initialize vars
-    requestPosition = request['Position']
     requestDir = requestFolders[requestPosition] + '/'
     gridlabdWorkingDir = requestDir+config.GRIDLABD_DIR
+    requestInfoFileName = requestDir+config.INFO_FILENAME
+    with open(requestInfoFileName) as infoFile:
+        request = json.load(infoFile)
 
     # create empty directory for gridlabd analysis
     try:
@@ -188,10 +175,10 @@ def initializePowerflowModel(request, requestFolders):
     os.mkdir(gridlabdWorkingDir)
 
     # if first request
-    if requestPosition == 1:
+    if requestPosition == 0:
 
         # copy original templates
-        previousRequestPosition = 0
+        previousRequestPosition = -1
         copy2(config.TEMPLATE_DIR+config.OMD_FILENAME, \
             gridlabdWorkingDir+config.OMD_FILENAME)
         copy2(config.TEMPLATE_DIR+config.INPUT_FILENAME, \
@@ -206,12 +193,6 @@ def initializePowerflowModel(request, requestFolders):
            gridlabdWorkingDir+config.OMD_FILENAME)
         copy2(previousRequestDir+config.GRIDLABD_DIR+config.INPUT_FILENAME, \
            gridlabdWorkingDir+config.INPUT_FILENAME)
-
-        # debug
-        print()
-        print(requestDir)
-        print(previousRequestDir)
-        print()
 
     # load omd and rekey to make name lookups easier
     with open(requestDir+config.GRIDLABD_DIR+config.OMD_FILENAME) as omdFile:
@@ -319,9 +300,10 @@ def initializePowerflowModel(request, requestFolders):
 
 def getPreviouslyPassingRequestDir(requestPosition, requestFolders):
 
+
     # go through previous requests
     previousRequestPosition = requestPosition-1
-    while previousRequestPosition > 0:
+    while previousRequestPosition >= 0:
 
         # get previous request status
         previousRequestDir = requestFolders[previousRequestPosition] + '/'
@@ -337,7 +319,7 @@ def getPreviouslyPassingRequestDir(requestPosition, requestFolders):
             previousRequestPosition -= 1
 
     # if we didnt find a previously passing request, something went wrong
-    if previousRequestPosition == 0:
+    if previousRequestPosition == -1:
         raise Exception('this error should not be possible. \
             We are processing a request that has not had any \
             any passing requests before it and also isnt the \

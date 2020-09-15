@@ -4,7 +4,7 @@ from appQueue import *
 import base64, json, copy, csv, os, hashlib, random, uuid, glob
 import flask_login, flask_sessionstore, flask_session_captcha
 from datetime import datetime
-from multiprocessing import Process
+from multiprocessing import Process, Lock
 from flask import Flask, redirect, request, render_template, url_for
 from werkzeug.utils import secure_filename
 
@@ -20,6 +20,9 @@ def inject_config():
         sizeThreshold = config.sizeThreshold,
         utilityName   = config.utilityName
         )
+
+# instantiate queue processing lock, ensure only one que processing run happens at a time
+processQueueLock = Lock()
 
 # Instantiate CAPTCHA
 app.config['CAPTCHA_ENABLE'] = True
@@ -141,7 +144,7 @@ def add_to_appQueue():
         json.dump(app, appfile)
     # TODO: Figure out the fork-but-not-exec issue (below -> many errors)
     # run analysis on the queue as a separate process
-    p = Process(target=interconnection.processQueue)
+    p = Process(target=interconnection.processQueue, args=(processQueueLock,))
     p.start()
     return redirect('/?notification=Application%20submitted%2E')
 

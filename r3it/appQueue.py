@@ -1,7 +1,7 @@
 # queue.py
 # Functions for managing the interconnection application queue.
 
-import glob, json, os, sets
+import glob, json, os
 from user import *
 from config import *
 
@@ -27,8 +27,14 @@ def appExists(appID): return appID in allAppIDs()
 '''Returns true when an appID corresponds to an application'''
 
 def allAppDirs():
-    '''Returns list of interconnection application directories.'''
-    return [appDir(user, app) for user in users() for app in userAppIDs(user)]
+    '''Returns sorted list of interconnection application directories.'''
+
+    def getTimestamp(path):
+        info = json.load(open(path+'/'+config.INFO_FILENAME))
+        return float(info.get('Timestamp',0))
+
+    dirs = [appDir(user, app) for user in users() for app in userAppIDs(user)]
+    return sorted( dirs, key = getTimestamp)
 
 def allAppPaths():
     '''Returns a list of paths to all interconnection application.'''
