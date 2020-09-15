@@ -217,4 +217,4 @@ def upload_file():
     return render_template('upload.html', notification=notification)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host= '0.0.0.0')
