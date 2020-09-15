@@ -171,7 +171,8 @@ def application():
         'phone' : '({}{}) {}{} - {}'.format(random.choice(range(2,9)), random.choice(range(10,99)), random.choice(range(2,9)), random.choice(range(10,99)), random.choice(range(1000,9999))),
         'size' : '{}'.format(random.choice(sizes)),
         'voltage' : '{}'.format(random.choice(voltages)),
-        'email' : currentUser()
+        'email' : currentUser(),
+        'meterID' : '{}'.format(random.choice(range(99999999)))
     }
     return render_template('application.html', default = default)
 
