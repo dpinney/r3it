@@ -172,7 +172,7 @@ def application():
         'size' : '{}'.format(random.choice(sizes)),
         'voltage' : '{}'.format(random.choice(voltages)),
         'email' : currentUser(),
-        'meterID' : '{}'.format(random.choice(range(99999999)))
+        'meterID' : '{}'.format(random.choice(interconnection.getMeterNameList(config.TEMPLATE_DIR+config.OMD_FILENAME)))
     }
     return render_template('application.html', default = default)
 

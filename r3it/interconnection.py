@@ -368,11 +368,29 @@ def rekeyGridlabDModelByName( tree ):
 
     return newTree
 
+def getMeterNameList( omdPath ):
+
+    # load omd
+    with open(omdPath) as omdFile:
+        omd = json.load(omdFile)
+    tree = omd.get('tree', {})
+
+    # loop through omd and keep track of the meters
+    meterNameList = []
+    for key in tree.keys():
+        objectType = tree[key].get('object',None)
+        if (objectType == 'meter') or (objectType == 'triplex_meter'):
+            name = tree[key].get('name',None)
+            if name is not None:
+                meterNameList.append(name)
+
+    return meterNameList
+
 # run tests when file is run --------------------------------------------------
 
 def _tests():
 
-    processQueue()
+    # processQueue()
 
     # config.METER_NAME = 'node62474211556T62474211583'
     # initializePowerflowModel(2,config.METER_NAME)
@@ -383,6 +401,9 @@ def _tests():
     # withdrawLock = Lock()
     # queueLock = Lock()
     # withdraw(withdrawLock, queueLock, 1)
+
+    getMeterNameList(config.TEMPLATE_DIR+config.OMD_FILENAME)
+
 
 
 if __name__ == '__main__':
