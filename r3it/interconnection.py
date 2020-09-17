@@ -208,7 +208,7 @@ def initializePowerflowModel(requestPosition, requestFolders):
 
         # copy original templates
         previousRequestPosition = -1
-        copy2(os.path.join(config.TEMPLATE_DIR,OMD_FILENAME), \
+        copy2(os.path.join(config.TEMPLATE_DIR,config.OMD_FILENAME), \
             os.path.join(gridlabdWorkingDir,config.OMD_FILENAME))
         copy2(os.path.join(config.TEMPLATE_DIR,config.INPUT_FILENAME), \
             os.path.join(gridlabdWorkingDir,config.INPUT_FILENAME))
