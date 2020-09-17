@@ -40,7 +40,7 @@
 
 {% block customer %}
     <hr>
-    {% if 'Interconnection Agreement Executed' == data['Status'] %}
+    {% if 'Interconnection Agreement Proffered' == {{data['Status']}} %}
     <form method=post enctype=multipart/form-data>
         <input type=file name=file>
         <input type=submit value=Upload>
@@ -51,7 +51,7 @@
 
 {% block engineer %}
     <hr>
-    {% if 'Engineering Review' == data['Status'] %}
+    {% if 'Engineering Review' == {{data['Status']}} %}
         <form action='{{"/update-status/" + data["id"] + "/Interconnection%20Agreement%20Proffered"}}'>
         <input type='submit' value='Proffer Interconnection Agreement'/>
         </form>
