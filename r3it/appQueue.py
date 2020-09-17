@@ -52,8 +52,9 @@ def appPath(id):
 def appFile(id,rw='r'): return open(appPath(id),rw)
 '''Returns file object for application given id (timestamp).'''
 
-def appDict(id): with appFile(id, 'r') as file: return json.load(file)
-'''Returns interconnection application dict given app id.'''
+def appDict(id):
+    '''Returns interconnection application dict given app id.'''
+    with appFile(id, 'r') as file: return json.load(file)
 
 def appQueue():
     '''Returns list of application dicts sorted by precedence'''
