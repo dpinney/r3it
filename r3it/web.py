@@ -1,4 +1,4 @@
-import config , interconnection
+import config, interconnection
 from user import *
 from appQueue import *
 import base64, json, copy, csv, os, hashlib, random, uuid, glob
@@ -19,7 +19,7 @@ def inject_config():
         logo          = config.logo,
         sizeThreshold = config.sizeThreshold,
         utilityName   = config.utilityName
-        )
+    )
 
 # instantiate queue processing lock, ensure only one que processing run happens at a time
 processQueueLock = Lock()
@@ -45,17 +45,13 @@ class User(flask_login.UserMixin):
 
 @login_manager.user_loader
 def load_user(email):
-    if email in users():
-        return User(email)
-    else:
-        pass
+    if email in users(): return User(email)
+    else: pass
 
 def currentUser():
     '''Returns the email (account identifier) of the currently logged-in user'''
-    try:
-        currentUserEmail = flask_login.current_user.get_id()
-    except:
-        currentUserEmail = 'anon@ymous.com'
+    try: currentUserEmail = flask_login.current_user.get_id()
+    except: currentUserEmail = 'anon@ymous.com'
     return currentUserEmail
 
 # Account-related routes.
@@ -115,7 +111,7 @@ def index():
         app.get('Time of Request'),
         app.get('Address (Facility)'),
         app.get('Status')] for key, app in enumerate(appQueue()) \
-                                    if requiresUsersAction(currentUser(),app)
+                                    if requiresUsersAction(currentUser(), app)
     ]
     return render_template('index.html', data=data, \
                                          priorities=priorities, \
