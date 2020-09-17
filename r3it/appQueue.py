@@ -58,4 +58,6 @@ def appDict(id):
 
 def appQueue():
     '''Returns list of application dicts sorted by precedence'''
-    return sorted([json.load(open(path)) for path in allAppPaths()], key=lambda x: float(x.get('ID',0)))
+    try: return sorted([json.load(open(path)) \
+            for path in allAppPaths()], key=lambda x: float(x.get('ID',0)))
+    except: return []
