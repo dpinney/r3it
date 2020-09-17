@@ -52,4 +52,5 @@ def passwordHash(email): return userAccountDict(email).get(email, {}).get('passw
 
 def passwordCorrect(email, passwordAttempt):
     '''Returns true if password attempt matches password.'''
-    return passwordHash(email) == hashPassword(email, passwordAttempt)
+    try: return passwordHash(email) == hashPassword(email, passwordAttempt)
+    except: return False
