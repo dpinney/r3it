@@ -102,6 +102,7 @@ def index():
     data = [
         [str(key+1), # queue position
         app.get('Time of Request'),
+        app.get('ID'),
         app.get('Address (Facility)'),
         app.get('Status')] for key, app in enumerate(appQueue()) \
                                     if authorizedToView(currentUser(), app)
@@ -109,6 +110,7 @@ def index():
     priorities = [
         [str(key+1),
         app.get('Time of Request'),
+        app.get('ID'),
         app.get('Address (Facility)'),
         app.get('Status')] for key, app in enumerate(appQueue()) \
                                     if requiresUsersAction(currentUser(), app)
@@ -120,12 +122,8 @@ def index():
 @flask_login.login_required
 def report(id):
     '''Given interconnection ID, render detailed report page'''
-# TODO: Reconfigure to user timestamps or uuids instead of queue index.
-    report_data = appQueue()[int(id)-1]
-    owner = report_data['Email (Customer)']
-    app = report_data['Timestamp']
-    outputFile = os.path.join(appDir(owner, app),'gridlabd','allOutputData.json')
-    with open(outputFile) as data:
+    report_data = appDict(id)
+    with open(os.path.join(appDir(id),GRIDLABD_DIR,OUTPUT_FILENAME) as data:
         eng_data = json.load(data)
     return render_template('report.html', data=report_data, eng_data=eng_data)
 
@@ -134,12 +132,12 @@ def report(id):
 def add_to_appQueue():
     '''Adds an interconnection application to the queue'''
     app = {key:item for key, item in request.form.items()}
-    app['Timestamp'] = str(datetime.timestamp(datetime.now()))
+    app['ID'] = str(datetime.timestamp(datetime.now() * 10**7 + random.choice(range(999))))
     app['Time of Request'] = str(datetime.now())
     app['Status'] = 'Application Submitted'
-    try: os.makedirs(appDir(currentUser(),app['Timestamp']))
+    try: os.makedirs(appDir(app['ID']))
     except: pass
-    with appFile(currentUser(), app['Timestamp'], 'w') as appfile:
+    with appFile(app['ID'], 'w') as appfile:
         json.dump(app, appfile)
     # TODO: Figure out the fork-but-not-exec issue (below -> many errors)
     # run analysis on the queue as a separate process
@@ -191,6 +189,7 @@ def update_status(position, status):
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ['txt', 'pdf', 'doc', 'docx']
+
 #TODO Re-work uploads
 @app.route('/upload', methods=['GET', 'POST'])
 @flask_login.login_required

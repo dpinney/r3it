@@ -27,14 +27,14 @@
 {% endblock %}
 
 {% block content %}
-    <H1>Interconnection report for request {{data['id']}}</H1>
+    <H1>Interconnection report for request {{data['ID']}}</H1>
     <table style='width:100%' border='1'>
-        {% for key in data %} {% if 'id' != key %}
+        {% for key in data %}
         <tr>
             <th>{{key}}</th>
             <th style='font-weight: normal'>{{data[key]}}</th>
         </tr>
-        {% endif %} {% endfor %}
+        {% endfor %}
     </table>
 {% endblock %}
 
@@ -52,7 +52,7 @@
 {% block engineer %}
     <hr>
     {% if 'Engineering Review' == data['Status'] %}
-        <form action='{{"/update-status/" + data["id"] + "/Interconnection%20Agreement%20Proffered"}}'>
+        <form action='{{"/update-status/" + data['ID'] + "/Interconnection%20Agreement%20Proffered"}}'>
         <input type='submit' value='Proffer Interconnection Agreement'/>
         </form>
     {% endif %}

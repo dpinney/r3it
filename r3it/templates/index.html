@@ -41,6 +41,7 @@
 	    <tr>
 	        <th>Queue Position</th>
 	        <th>Time of Request</th>
+					<th>Application ID</th>
 	        <th>Address (Facility)</th>
 	        <th>Status</th>
 	        <th>Report</th>
@@ -51,7 +52,8 @@
 	        <th style='font-weight: normal'>{{row[1]}}</th>
 	        <th style='font-weight: normal'>{{row[2]}}</th>
 	        <th style='font-weight: normal'>{{row[3]}}</th>
-	        <th style='font-weight: normal'><a href='{{"report/" + row[0]}}'>See report</a></th>
+	        <th style='font-weight: normal'>{{row[4]}}</th>
+	        <th style='font-weight: normal'><a href='{{"report/" + row[2]}}'>See report</a></th>
 	    </tr>
 	    {% endfor %}
 	</table>

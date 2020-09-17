@@ -16,25 +16,17 @@ def authorizedToView(email, app):
 
 def userAppIDs(email):
     '''Returns IDs of applications belonging to a user.'''
-    paths = glob.glob(os.path.join(userHomeDir(email), "applications/*"))
-    return [path.rsplit('/',1)[1].lower() for path in paths]
+    return [app.get('ID','') for app in appQueue() if userOwnsApp(email,app)]
 
 def allAppIDs():
     '''Returns list of all application IDs'''
-    return [apps for user in users() for apps in userAppIDs(user)]
+    return [path.rsplit('/',1)[1].lower() for path in allAppDirs()]
 
 def appExists(appID): return appID in allAppIDs()
 '''Returns true when an appID corresponds to an application'''
 
-def allAppDirs():
+def allAppDirs(): return sorted([glob.glob(APPLICATIONS_DIR)])
     '''Returns sorted list of interconnection application directories.'''
-
-    def getTimestamp(path):
-        info = json.load(open(path+'/'+config.INFO_FILENAME))
-        return float(info.get('Timestamp',0))
-
-    dirs = [appDir(user, app) for user in users() for app in userAppIDs(user)]
-    return sorted( dirs, key = getTimestamp)
 
 def allAppPaths():
     '''Returns a list of paths to all interconnection application.'''
@@ -49,22 +41,22 @@ def requiresUsersAction(email, app):
         if status in actionItems.get(role,[]): employeePriority = True
     return customerPriority or employeePriority
 
-def appDir(email,id):
-    '''Returns path for application directory given user email and app id'''
-    return os.path.join(userHomeDir(email),APPLICATIONS_DIR,id)
+def appDir(id):
+    '''Returns path for application directory given app id'''
+    return os.path.join(APPLICATIONS_DIR,id)
 
-def appPath(email,id):
-    '''Returns path for application file given email and id (timestamp).'''
-    return os.path.join(appDir(email,id),'application.json')
+def appPath(id):
+    '''Returns path for application file given id.'''
+    return os.path.join(appDir(id),'application.json')
 
-def appFile(email,id,rw='r'):
-    '''Returns file object for application given email and id (timestamp).'''
-    return open(appPath(email,id),rw)
+def appFile(id,rw='r'):
+    '''Returns file object for application given id (timestamp).'''
+    return open(appPath(id),rw)
 
-def appDict(email, id):
-    '''Returns interconnection application dict given email and app id.'''
-    with appFile(email, id, 'r') as file: return json.load(file)
+def appDict(id):
+    '''Returns interconnection application dict given app id.'''
+    with appFile(id, 'r') as file: return json.load(file)
 
 def appQueue():
     '''Returns list of application dicts sorted by precedence'''
-    return sorted([json.load(open(path)) for path in allAppPaths()], key=lambda x: float(x.get('Timestamp',0)))
+    return sorted([json.load(open(path)) for path in allAppPaths()], key=lambda x: float(x.get('ID',0)))
