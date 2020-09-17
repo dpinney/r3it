@@ -122,9 +122,11 @@ def report(id):
     '''Given interconnection ID, render detailed report page'''
 # TODO: Reconfigure to user timestamps or uuids instead of queue index.
     report_data = appQueue()[int(id)-1]
-    with open(app.root_path + '/../sample/allOutputData.json') as data:
-        sample_data = json.load(data)
-    return render_template('report.html', data=report_data, sample_data=sample_data)
+    owner = report_data['Email (Customer)']
+    app = report_data['Timestamp']
+    with open(appDir(owner, app) + '/gridlabd/allOutputData.json') as data:
+        eng_data = json.load(data)
+    return render_template('report.html', data=report_data, eng_data=eng_data)
 
 @app.route('/add-to-queue', methods=['GET', 'POST'])
 @flask_login.login_required
