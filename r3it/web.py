@@ -134,7 +134,7 @@ def report(id):
 def add_to_appQueue():
     '''Adds an interconnection application to the queue'''
     app = {key:item for key, item in request.form.items()}
-    app['ID'] = str(datetime.timestamp(datetime.now()) * 10**7 + random.choice(range(999)))
+    app['ID'] = str(int(datetime.timestamp(datetime.now())) * 10**7 + random.choice(range(999)))
     app['Time of Request'] = str(datetime.now())
     app['Status'] = 'Application Submitted'
     try: os.makedirs(appDir(app['ID']))
@@ -175,17 +175,15 @@ def application():
     }
     return render_template('application.html', default = default)
 
-#TODO: Fix update status
 @app.route('/update-status/<id>/<status>')
 @flask_login.login_required
-def update_status(position, status):
-    data = appQueue()
-#    status = interconnection.compute_status(data[position])
+def update_status(id, status):
+    data = appDict(id)
     if status not in config.statuses:
         return 'Status invalid; no update made.'
-    data[id]['Status'] = status
-#    with open('data/queue.json', 'w') as queue:
-#        json.dump(data, queue)
+    data['Status'] = status
+    with appFile(id, 'w') as file:
+        json.dump(data, file)
     return redirect(request.referrer)
 
 def allowed_file(filename):
