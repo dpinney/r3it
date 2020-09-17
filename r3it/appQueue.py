@@ -26,7 +26,7 @@ def appExists(appID): return appID in allAppIDs()
 '''Returns true when an appID corresponds to an application'''
 
 def allAppDirs(): return sorted([glob.glob(APPLICATIONS_DIR)])
-    '''Returns sorted list of interconnection application directories.'''
+'''Returns sorted list of interconnection application directories.'''
 
 def allAppPaths():
     '''Returns a list of paths to all interconnection application.'''
@@ -49,13 +49,11 @@ def appPath(id):
     '''Returns path for application file given id.'''
     return os.path.join(appDir(id),'application.json')
 
-def appFile(id,rw='r'):
-    '''Returns file object for application given id (timestamp).'''
-    return open(appPath(id),rw)
+def appFile(id,rw='r'): return open(appPath(id),rw)
+'''Returns file object for application given id (timestamp).'''
 
-def appDict(id):
-    '''Returns interconnection application dict given app id.'''
-    with appFile(id, 'r') as file: return json.load(file)
+def appDict(id): with appFile(id, 'r') as file: return json.load(file)
+'''Returns interconnection application dict given app id.'''
 
 def appQueue():
     '''Returns list of application dicts sorted by precedence'''
