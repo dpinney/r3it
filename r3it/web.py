@@ -123,8 +123,10 @@ def index():
 def report(id):
     '''Given interconnection ID, render detailed report page'''
     report_data = appDict(id)
-    with open(os.path.join(appDir(id),GRIDLABD_DIR,OUTPUT_FILENAME)) as data:
-        eng_data = json.load(data)
+    try:
+        with open(os.path.join(appDir(id),GRIDLABD_DIR,OUTPUT_FILENAME)) as data:
+            eng_data = json.load(data)
+    except: eng_data = []
     return render_template('report.html', data=report_data, eng_data=eng_data)
 
 @app.route('/add-to-queue', methods=['GET', 'POST'])
