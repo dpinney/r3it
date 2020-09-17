@@ -48,7 +48,7 @@ def _test(number_to_push, random_inputs_or_not):
 
 def processQueue(lock):
 
-    # processQueue is called asynchronously, the lock ensure only one instance 
+    # processQueue is called asynchronously, the lock ensure only one instance
     # is running at a time so files arent being overwritten and breaking things
     lock.acquire()
 
@@ -103,7 +103,7 @@ def withdraw(withdrawLock, processQueueLock, requestPosition):
             requestInfoFileName = requestDir+config.INFO_FILENAME
             with open(requestInfoFileName) as infoFile:
                 request = json.load(infoFile)
-            
+
             # update withrawn status
             if currentRequestPosition == requestPosition:
                 request['Status'] = 'Withdrawn'
@@ -117,7 +117,7 @@ def withdraw(withdrawLock, processQueueLock, requestPosition):
 
     # process queue
     processQueue(processQueueLock)
-    
+
     withdrawLock.release()
 
 # helper functions ------------------------------------------------------------
@@ -191,8 +191,8 @@ def initializePowerflowModel(requestPosition, requestFolders):
 
     # initialize vars
     requestDir = requestFolders[requestPosition] + '/'
-    gridlabdWorkingDir = requestDir+config.GRIDLABD_DIR
-    requestInfoFileName = requestDir+config.INFO_FILENAME
+    gridlabdWorkingDir = os.path.join(requestDir,config.GRIDLABD_DIR)
+    requestInfoFileName = os.path.join(requestDir,config.INFO_FILENAME)
     with open(requestInfoFileName) as infoFile:
         request = json.load(infoFile)
 
@@ -208,23 +208,23 @@ def initializePowerflowModel(requestPosition, requestFolders):
 
         # copy original templates
         previousRequestPosition = -1
-        copy2(config.TEMPLATE_DIR+config.OMD_FILENAME, \
-            gridlabdWorkingDir+config.OMD_FILENAME)
-        copy2(config.TEMPLATE_DIR+config.INPUT_FILENAME, \
-            gridlabdWorkingDir+config.INPUT_FILENAME)
+        copy2(os.path.join(config.TEMPLATE_DIR,OMD_FILENAME), \
+            os.path.join(gridlabdWorkingDir,config.OMD_FILENAME))
+        copy2(os.path.join(config.TEMPLATE_DIR,config.INPUT_FILENAME), \
+            os.path.join(gridlabdWorkingDir,config.INPUT_FILENAME))
 
     else: # otherwise get model from previously passing request and update it
 
         # copy templates
         previousRequestPosition, previousRequestDir = \
             getPreviouslyPassingRequestDir(requestPosition,requestFolders)
-        copy2(previousRequestDir+config.GRIDLABD_DIR+config.OMD_FILENAME, \
-           gridlabdWorkingDir+config.OMD_FILENAME)
-        copy2(previousRequestDir+config.GRIDLABD_DIR+config.INPUT_FILENAME, \
-           gridlabdWorkingDir+config.INPUT_FILENAME)
+        copy2(os.path.join(previousRequestDir,config.GRIDLABD_DIR,config.OMD_FILENAME), \
+           os.path.join(gridlabdWorkingDir,config.OMD_FILENAME))
+        copy2(os.path.join(previousRequestDir,config.GRIDLABD_DIR,config.INPUT_FILENAME), \
+           os.path.join(gridlabdWorkingDir,config.INPUT_FILENAME))
 
     # load omd and rekey to make name lookups easier
-    with open(requestDir+config.GRIDLABD_DIR+config.OMD_FILENAME) as omdFile:
+    with open(os.path.join(requestDir,config.GRIDLABD_DIR,config.OMD_FILENAME)) as omdFile:
         omd = json.load(omdFile)
     tree = omd.get('tree', {})
     newTree = rekeyGridlabDModelByName( tree )
