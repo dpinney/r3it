@@ -132,7 +132,7 @@ def report(id):
 def add_to_appQueue():
     '''Adds an interconnection application to the queue'''
     app = {key:item for key, item in request.form.items()}
-    app['ID'] = str(datetime.timestamp(datetime.now() * 10**7 + random.choice(range(999))))
+    app['ID'] = str(datetime.timestamp(datetime.now()) * 10**7 + random.choice(range(999)))
     app['Time of Request'] = str(datetime.now())
     app['Status'] = 'Application Submitted'
     try: os.makedirs(appDir(app['ID']))
