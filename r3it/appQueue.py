@@ -25,7 +25,7 @@ def allAppIDs():
 def appExists(appID): return appID in allAppIDs()
 '''Returns true when an appID corresponds to an application'''
 
-def allAppDirs(): return sorted([glob.glob(APPLICATIONS_DIR)])
+def allAppDirs(): return sorted([glob.glob(APPLICATIONS_DIR + '*')])
 '''Returns sorted list of interconnection application directories.'''
 
 def allAppPaths():
