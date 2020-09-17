@@ -27,12 +27,12 @@
 {% endblock %}
 
 {% block content %}
-    <H1>Interconnection report for request {{data['id']}}</H1>
+    <H1>Interconnection report for request data['id']</H1>
     <table style='width:100%' border='1'>
         {% for key in data %} {% if 'id' != key %}
         <tr>
             <th>{{key}}</th>
-            <th style='font-weight: normal'>{{data[key]}}</th>
+            <th style='font-weight: normal'>data[key]</th>
         </tr>
         {% endif %} {% endfor %}
     </table>
@@ -40,7 +40,7 @@
 
 {% block customer %}
     <hr>
-    {% if 'Interconnection Agreement Proffered' == {{data['Status']}} %}
+    {% if 'Interconnection Agreement Proffered' == data['Status'] %}
     <form method=post enctype=multipart/form-data>
         <input type=file name=file>
         <input type=submit value=Upload>
@@ -51,7 +51,7 @@
 
 {% block engineer %}
     <hr>
-    {% if 'Engineering Review' == {{data['Status']}} %}
+    {% if 'Engineering Review' == data['Status'] %}
         <form action='{{"/update-status/" + data["id"] + "/Interconnection%20Agreement%20Proffered"}}'>
         <input type='submit' value='Proffer Interconnection Agreement'/>
         </form>
