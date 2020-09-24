@@ -127,7 +127,10 @@ def report(id):
         with open(os.path.join(appDir(id),GRIDLABD_DIR,OUTPUT_FILENAME)) as data:
             eng_data = json.load(data)
     except: eng_data = []
-    return render_template('report.html', data=report_data, eng_data=eng_data)
+    next_statuses = allowedStatusChanges.get(report_data.get('Status'))
+    updates = [update for update, role in enumerate(next_statuses) \
+                                        if role in userRoles(currentUser())]
+    return render_template('report.html', data=report_data, eng_data=eng_data, updates=updates)
 
 @app.route('/add-to-queue', methods=['GET', 'POST'])
 @flask_login.login_required
@@ -179,8 +182,7 @@ def application():
 @flask_login.login_required
 def update_status(id, status):
     data = appDict(id)
-    if status not in config.statuses:
-        return 'Status invalid; no update made.'
+    if status not in config.statuses: return 'Status invalid; no update made.'
     data['Status'] = status
     with appFile(id, 'w') as file:
         json.dump(data, file)
