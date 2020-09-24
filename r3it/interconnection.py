@@ -5,6 +5,7 @@ from shutil import copy2, rmtree
 from omf.models import derInterconnection
 from omf import feeder
 from appQueue import allAppDirs
+from geocodio import GeocodioClient
 
 '''
 DIRECTORY STRUCTURE
@@ -48,9 +49,11 @@ def _test(number_to_push, random_inputs_or_not):
 
 def processQueue(lock):
 
-    # processQueue is called asynchronously, the lock ensure only one instance
+    # processQueue is called asynchronously, the lock ensures only one instance
     # is running at a time so files arent being overwritten and breaking things
-    lock.acquire()
+    acquired = lock.acquire(False)
+    if not acquired:
+        return
 
     # get a list of all requests
     requestFolders = allAppDirs()
@@ -84,8 +87,20 @@ def processQueue(lock):
             with open(requestInfoFileName, 'w') as infoFile:
                 json.dump(request, infoFile)
 
+    # get a list of all requests again to see if any new requests have been submitted
+    rerun = False
+    newRequestFolders = allAppDirs()
+    for requestDir in newRequestFolders:
+        if requestDir not in requestFolders:
+            rerun = True
+            break
+
     # release lock so the next iteration of processQueue can run
     lock.release()
+
+    # if there are new reuests process queue again
+    if rerun:
+        processQueue(lock)
 
 #TODO link to front-end
 def withdraw(withdrawLock, processQueueLock, requestPosition):
@@ -208,10 +223,11 @@ def initializePowerflowModel(requestPosition, requestFolders):
 
         # copy original templates
         previousRequestPosition = -1
+        inputFileName = os.path.join(gridlabdWorkingDir,config.INPUT_FILENAME)
+        with open(inputFileName,'w') as inputFile:
+            json.dump(config.gridlabdInputs, inputFile)
         copy2(os.path.join(config.TEMPLATE_DIR,config.OMD_FILENAME), \
             os.path.join(gridlabdWorkingDir,config.OMD_FILENAME))
-        copy2(os.path.join(config.TEMPLATE_DIR,config.INPUT_FILENAME), \
-            os.path.join(gridlabdWorkingDir,config.INPUT_FILENAME))
 
     else: # otherwise get model from previously passing request and update it
 
@@ -227,29 +243,31 @@ def initializePowerflowModel(requestPosition, requestFolders):
     with open(os.path.join(requestDir,config.GRIDLABD_DIR,config.OMD_FILENAME)) as omdFile:
         omd = json.load(omdFile)
     tree = omd.get('tree', {})
-    newTree = rekeyGridlabDModelByName( tree )
+    nameKeyedTree = rekeyGridlabDModelByName( tree )
 
+    
     # rename old der
-    newTree['addedDer']['item']['name'] = \
-        'addedDerForRequest' + str(previousRequestPosition)
-    newTree['addedDerStepUp']['item']['name'] = \
-        'addedDerStepUpForRequest' + str(previousRequestPosition)
-    newTree['addedDerBreaker']['item']['name'] = \
-        'addedDerBreakerForRequest' + str(previousRequestPosition)
-    tree[newTree['addedDer']['originalKey']] = \
-        newTree['addedDer']['item']
-    tree[newTree['addedDerStepUp']['originalKey']] = \
-        newTree['addedDerStepUp']['item']
-    tree[newTree['addedDerBreaker']['originalKey']] = \
-        newTree['addedDerBreaker']['item']
+    if nameKeyedTree.get('addedDer',None) is not None:
+        newName = 'addedDerForRequest' + str(previousRequestPosition)
+        tree, nameKeyedTree = renameTreeItem( tree, nameKeyedTree, \
+            'addedDer', newName)
+    if nameKeyedTree.get('addedDerStepUp',None) is not None:
+        newName = 'addedDerStepUpForRequest' + str(previousRequestPosition)
+        tree, nameKeyedTree = renameTreeItem( tree, nameKeyedTree, \
+            'addedDerStepUp', newName)
+    if nameKeyedTree.get('addedDerBreaker',None) is not None:
+        newName = 'addedDerBreakerForRequest' + str(previousRequestPosition)
+        tree, nameKeyedTree = renameTreeItem( tree, nameKeyedTree, \
+            'addedDerBreaker', newName)
 
     # get meter
-    meter = newTree[config.METER_NAME]['item']
+    meterName = request['Meter ID']
+    meter = nameKeyedTree[meterName]['item']
 
     # create inverter and set parent to meter, get phases from meter
     inverter = { 'object':'inverter',
         'name': 'inverterForRequest'+str(requestPosition),
-        'parent': config.METER_NAME,
+        'parent': meterName,
         'rated_power':25000,
         'phases':'' }
     inverter['phases'] = meter['phases']
@@ -283,41 +301,55 @@ def initializePowerflowModel(requestPosition, requestFolders):
             transformer = tree[key]
             transformerTo = transformer['to']
             transformerFrom = transformer['from']
-            if transformerTo == config.METER_NAME:
+            if transformerTo == meterName:
                 transformerKey = key
                 break
 
     # if we dont find a transformer raise an error
     if len(transformer) == 0:
         raise Exception('transformer is not directly connected to meter')
+    
+    # else if transformer is the same as a previous run rename it for current run
+    namePrefix = 'addedDerStepUpForRequest'
+    transformerName = transformer.get('name','')
+    if transformerName.startswith(namePrefix):
+        oldRequestNum = transformerName[len(namePrefix):]
+        tree, nameKeyedTree = renameTreeItem( tree, nameKeyedTree, \
+            transformerName, 'addedDerStepUp')
+        breakerName = 'addedDerBreakerForRequest' + oldRequestNum
+        tree, nameKeyedTree = renameTreeItem( tree, nameKeyedTree, \
+            breakerName, 'addedDerBreaker')        
 
-    # create new node to go between breaker and transformer (poi)
-    poi = { 'object': 'node',
-        'name': 'poiForRequest'+ str(requestPosition),
-        'nominal_voltage':0,
-        'phases':'' }
-    transformerFromItem = newTree[transformerFrom]['item']
-    poi['nominal_voltage'] = transformerFromItem['nominal_voltage']
-    poi['phases'] = transformerFromItem['phases']
-    feeder.insert(tree, poi)
+    # else if transformer is not the same as a previous run add a breaker
+    else:
 
-    # update transformer name and set transformer 'from' to new node
-    transformer['name'] = 'addedDerStepUp'
-    transformer['from'] = poi['name']
-    tree[transformerKey] = transformer
+        # create new node to go between breaker and transformer
+        poi = { 'object': 'node',
+            'name': 'poiForRequest'+ str(requestPosition),
+            'nominal_voltage':0,
+            'phases':'' }
+        transformerFromItem = nameKeyedTree[transformerFrom]['item']
+        poi['nominal_voltage'] = transformerFromItem['nominal_voltage']
+        poi['phases'] = transformerFromItem['phases']
+        feeder.insert(tree, poi)
 
-    # create fuse
-    fuse = { 'object': 'fuse',
-        'name': 'addedDerBreaker',
-        'status': 'CLOSED',
-        'current_limit': 50000,
-        'phases': '',
-        'from': '',
-        'to': '' }
-    fuse['from'] = transformerFrom
-    fuse['to'] = poi['name']
-    fuse['phases'] = poi['phases']
-    feeder.insert(tree, fuse)
+        # update transformer name and set transformer 'from' to new node
+        transformer['name'] = 'addedDerStepUp'
+        transformer['from'] = poi['name']
+        tree[transformerKey] = transformer
+
+        # create fuse
+        fuse = { 'object': 'fuse',
+            'name': 'addedDerBreaker',
+            'status': 'CLOSED',
+            'current_limit': 50000,
+            'phases': '',
+            'from': '',
+            'to': '' }
+        fuse['from'] = transformerFrom
+        fuse['to'] = poi['name']
+        fuse['phases'] = poi['phases']
+        feeder.insert(tree, fuse)
 
     # save changes to file
     with open(requestDir+config.GRIDLABD_DIR+config.OMD_FILENAME,'w') as omdFile:
@@ -360,13 +392,22 @@ def getPreviouslyPassingRequestDir(requestPosition, requestFolders):
 def rekeyGridlabDModelByName( tree ):
 
     # makes it easier to search for items
-    newTree = {}
+    nameKeyedTree = {}
     for key in tree.keys():
         name = tree[key].get('name',None)
         if name is not None:
-            newTree[name] = {'item': tree[key], 'originalKey': key}
+            nameKeyedTree[name] = {'item': tree[key], 'originalKey': key}
 
-    return newTree
+    return nameKeyedTree
+
+def renameTreeItem( tree, nameKeyedTree, name, newName):
+
+    nameKeyedTree[name]['item']['name'] = newName
+    nameKeyedTree[newName] = nameKeyedTree[name]
+    del nameKeyedTree[name]
+    tree[nameKeyedTree[newName]['originalKey']] = nameKeyedTree[newName]['item']
+
+    return (tree, nameKeyedTree)
 
 def getMeterNameList( omdPath ):
 
@@ -386,6 +427,27 @@ def getMeterNameList( omdPath ):
 
     return meterNameList
 
+def getObjectFromAddress(address, tree):
+
+    # client = GeocodioClient('8f07c00f5f5c073567306f30f1f0ce07770886f')
+    # returned = client.geocode(address)
+    # location = returned['results'][0]['location']
+
+    for key in tree.keys():
+        objType = tree[key].get('object',None)
+        latitude = tree[key].get('latitude',None)
+        longitude = tree[key].get('logitude',None)
+        if ( latitude == round(location['lat'],1) ) and \
+            ( longitude == round(location['lng'],1) ):
+                return tree[key]
+    
+    raise Exception('No node in model with latitude: ', latitude, \
+        ' and longitude: ', longitude)
+
+def getMeterForObject():
+    pass
+
+
 # run tests when file is run --------------------------------------------------
 
 def _tests():
@@ -402,9 +464,13 @@ def _tests():
     # queueLock = Lock()
     # withdraw(withdrawLock, queueLock, 1)
 
-    getMeterNameList(config.TEMPLATE_DIR+config.OMD_FILENAME)
+    # getMeterNameList(config.TEMPLATE_DIR+config.OMD_FILENAME)
 
-
+    address = "6311 Birch Ave., LaCrosse, WI, 54612"
+    with open(os.path.join(config.TEMPLATE_DIR,config.OMD_FILENAME)) as omdFile:
+        omd = json.load(omdFile)
+    tree = omd.get('tree', {})
+    getObjectFromAddress(address, tree)
 
 if __name__ == '__main__':
     _tests()
