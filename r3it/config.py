@@ -44,7 +44,7 @@ utilityRoles = [
 statuses = (
     'Application Submitted', # Attn: Member services, upon submission.
     'Engineering Review', # Attn: Engineering, if above size threshold
-    'Customer Options Meeting Required', # Attn: Member Services, if engineering says so
+    'Customer Options Meeting Required', # Attn: Member Services
     'Customer Options Meeting Proposed', # Attn: Consumer, when proposed by member services.
     'Customer Options Meeting Scheduled', # Attn: ???,
     'Interconnection Agreement Proffered', # Attn: Customer
@@ -52,8 +52,42 @@ statuses = (
     'Permission to Operate Proffered', # Attn: Customer
     'Commissioning Test Needed', # Attn: Engineering, Customer
     'Commissioned',
-    'Out of Service'
+    'Out of Service',
+    'Withdrawn'
 )
+
+allowedStatusChanges = {
+    'Application Submitted' : {
+        'Engineering Review' : 'memberServices',
+        'Interconnection Agreement Proffered' : 'memberServices'
+    },
+    'Engineering Review' : {
+        'Customer Options Meeting Required' : 'engineer',
+        'Interconnection Agreement Proffered' : 'engineer'
+    },
+    'Customer Options Meeting Required' : {
+        'Customer Options Meeting Proposed' : 'memberServices'
+    },
+    'Customer Options Meeting Proposed' : {
+        'Customer Options Meeting Scheduled' : 'memberServices'
+    },
+    'Customer Options Meeting Scheduled' : {
+        'Interconnection Agreement Proffered' : 'engineer'
+    },
+    'Interconnection Agreement Proffered' : {
+        'Interconnection Agreement Executed' : 'customer'
+    },
+    'Permission to Operate Proffered' : {
+        'Commissioning Test Needed' : 'memberServices',
+        'Commissioned' : 'memberServices'
+    },
+    'Commissioning Test Needed' : {
+        'Commissioned' : 'memberServices'
+    },
+    'Commissioned': {
+        'Out of Service' : 'memberServices'
+    }
+}
 
 # User roles and the application statuses that require their action.
 actionItems = {
