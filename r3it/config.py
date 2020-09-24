@@ -14,7 +14,7 @@ GRIDLABD_DIR = 'gridlabd/'
 APPLICATIONS_DIR = os.path.join(DATA_DIR,'applications')
 # TODO: non-hardcoded meter
 METER_NAME = 'node62474211556T62474211583'
-COOKIE_KEY = "topsecretvalue"
+COOKIE_KEY = 'topsecretvalue'
 
 # Utility parameters.
 
@@ -72,4 +72,21 @@ actionItems = {
         'Application Submitted',
         'Customer Options Meeting Required'
     )
+}
+
+# gridlabd inputs
+gridlabdInputs = {
+    'modelType': 'derInterconnection',
+    'layoutAlgorithm': 'forceDirected',
+    'flickerThreshold': '2',
+    'newGeneration': 'addedDer',
+    'newGenerationStepUp': 'addedDerStepUp',
+    'newGenerationBreaker': 'addedDerBreaker',
+    'thermalThreshold': '100',
+    'peakLoadData': '',
+    'minLoadData': '',
+    'tapThreshold': '2',
+    'faultCurrentThreshold': '10',
+    'faultVoltsThreshold': '138',
+    'newGenerationInsolation': '30'
 }
