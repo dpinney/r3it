@@ -6,6 +6,7 @@ from omf.models import derInterconnection
 from omf import feeder
 from appQueue import allAppDirs
 from geocodio import GeocodioClient
+from math import sqrt
 
 '''
 DIRECTORY STRUCTURE
@@ -427,25 +428,46 @@ def getMeterNameList( omdPath ):
 
     return meterNameList
 
-def getObjectFromAddress(address, tree):
+def getMeterFromLatLong(latitude, longitude, tree):
 
-    # client = GeocodioClient('8f07c00f5f5c073567306f30f1f0ce07770886f')
-    # returned = client.geocode(address)
-    # location = returned['results'][0]['location']
-
+    # loop through meter and pick the closest one
+    smallestDist = None
+    bestMeterName = None
     for key in tree.keys():
         objType = tree[key].get('object',None)
-        latitude = tree[key].get('latitude',None)
-        longitude = tree[key].get('logitude',None)
-        if ( latitude == round(location['lat'],1) ) and \
-            ( longitude == round(location['lng'],1) ):
-                return tree[key]
-    
-    raise Exception('No node in model with latitude: ', latitude, \
-        ' and longitude: ', longitude)
+        if ( (objType == 'meter') or (objType == 'triplex_meter') ):
+            
+            # get this meters latitude and longitude
+            objName = tree[key].get('name',None)
+            meterLatitude = tree[key].get('latitude',None)
+            meterLongitude = tree[key].get('longitude',None)
+            
+            # calc dist to query address
+            if meterLatitude is not None and meterLatitude is not None:
+                dist = sqrt( \
+                    (latitude-meterLatitude)**2 + \
+                    (longitude-meterLongitude)**2 )
+                
+                # keep track of the min val
+                if (smallestDist == None) or (dist < smallestDist):
+                    smallestDist = dist
+                    bestMeterName = objName
 
-def getMeterForObject():
-    pass
+    if bestMeterName is None:
+        raise Exception('No match found, please ensure model has meters \
+            and that the meters have a defined latitude and longitude')
+
+    return bestMeterName
+
+def getLatLongFromAddress(address):
+
+    client = GeocodioClient( config.GEOCODE_KEY )
+    returned = client.geocode(address)
+    location = returned['results'][0]['location']
+    latitude = location['lat']
+    longitude = location['lng']
+
+    return latitude,longitude
 
 
 # run tests when file is run --------------------------------------------------
@@ -454,7 +476,6 @@ def _tests():
 
     # processQueue()
 
-    # config.METER_NAME = 'node62474211556T62474211583'
     # initializePowerflowModel(2,config.METER_NAME)
 
     # must be run after all pending processQueue requests are processed
@@ -466,11 +487,28 @@ def _tests():
 
     # getMeterNameList(config.TEMPLATE_DIR+config.OMD_FILENAME)
 
-    address = "6311 Birch Ave., LaCrosse, WI, 54612"
-    with open(os.path.join(config.TEMPLATE_DIR,config.OMD_FILENAME)) as omdFile:
-        omd = json.load(omdFile)
-    tree = omd.get('tree', {})
-    getObjectFromAddress(address, tree)
+    numCorrect = 0
+    numAttempts = 100
+    for attemptNum in range(numAttempts):
+        queryMeterName = random.choice(getMeterNameList(os.path.join(config.TEMPLATE_DIR,config.OMD_FILENAME)))
+        with open(os.path.join(config.TEMPLATE_DIR,config.OMD_FILENAME)) as omdFile:
+            omd = json.load(omdFile)
+        tree = omd.get('tree', {})
+        for key in tree.keys():
+            objName = tree[key].get('name',None)
+            if (objName == queryMeterName):
+                latitude = tree[key]['latitude']
+                longitude = tree[key]['longitude']
+                meterName = getMeterFromLatLong(latitude,longitude,tree)
+                break
+        if (queryMeterName == meterName):
+            numCorrect += 1
+    print(100*numCorrect/numAttempts,'% of meters identified correctly out of', numAttempts, 'attempts')
+
+    address = "1109 N Highland St, Arlington VA"
+    lati, longi = getLatLongFromAddress(address)
+    print(lati, longi)
+
 
 if __name__ == '__main__':
     _tests()

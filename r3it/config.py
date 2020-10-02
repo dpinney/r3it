@@ -12,9 +12,8 @@ INPUT_FILENAME = 'allInputData.json'
 OUTPUT_FILENAME = 'allOutputData.json'
 GRIDLABD_DIR = 'gridlabd/'
 APPLICATIONS_DIR = os.path.join(DATA_DIR,'applications')
-# TODO: non-hardcoded meter
-METER_NAME = 'node62474211556T62474211583'
 COOKIE_KEY = 'topsecretvalue'
+GEOCODE_KEY = '8f07c00f5f5c073567306f30f1f0ce07770886f'
 
 # Utility parameters.
 
