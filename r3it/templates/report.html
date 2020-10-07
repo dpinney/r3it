@@ -50,6 +50,7 @@
 {% endblock %}
 
 {% block engineer %}
+	  <script src="/static/sorttable.js"></script>
     <hr>
     {% if 'Engineering Review' == data['Status'] %}
         <form action='{{"/update-status/" + data['ID'] + "/Interconnection%20Agreement%20Proffered"}}'>
@@ -60,7 +61,7 @@
     <H2>Sample tables below.</H2>
     <!-- Tables -->
     <p class="reportTitle" style="page-break-before:always">Maximum and Minimum Voltages</p>
-    <div class="content tableContainer">
+    <div div class="sorttable">
         <table id="minMaxVolts">
             <tr>
                 <th rowspan="2">DER Status</th>
