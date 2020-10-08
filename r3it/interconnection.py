@@ -446,6 +446,8 @@ def getMeterFromLatLong(latitude, longitude, tree):
     # loop through meter and pick the closest one
     smallestDist = None
     bestMeterName = None
+    bestMeterLongitude = None
+    bestMeterLatitude = None
     for key in tree.keys():
         objType = tree[key].get('object',None)
         if ( (objType == 'meter') or (objType == 'triplex_meter') ):
@@ -456,7 +458,7 @@ def getMeterFromLatLong(latitude, longitude, tree):
             meterLongitude = tree[key].get('longitude',None)
             
             # calc dist to query address
-            if meterLatitude is not None and meterLatitude is not None:
+            if meterLatitude is not None and meterLongitude is not None:
                 dist = sqrt( \
                     (latitude-meterLatitude)**2 + \
                     (longitude-meterLongitude)**2 )
@@ -465,17 +467,21 @@ def getMeterFromLatLong(latitude, longitude, tree):
                 if (smallestDist == None) or (dist < smallestDist):
                     smallestDist = dist
                     bestMeterName = objName
+                    bestMeterLatitude = meterLatitude
+                    bestMeterLongitude = meterLongitude
 
     if bestMeterName is None:
         raise Exception('No match found, please ensure model has meters \
             and that the meters have a defined latitude and longitude')
 
-    return bestMeterName
+    return bestMeterName, bestMeterLatitude, bestMeterLongitude
 
 def getLatLongFromAddress(address):
 
     client = GeocodioClient( config.GEOCODE_KEY )
     returned = client.geocode(address)
+    print()
+    print(returned)
     location = returned['results'][0]['location']
     latitude = location['lat']
     longitude = location['lng']
@@ -487,10 +493,16 @@ def getLatLongFromAddress(address):
 
 def _tests():
 
+    # 1 -----------------------------------------------------------------------
+    
     # processQueue()
 
+    # 2 -----------------------------------------------------------------------
+    
     # initializePowerflowModel(2,config.METER_NAME)
 
+    # 3 -----------------------------------------------------------------------
+    
     # must be run after all pending processQueue requests are processed
     # because these locks are just place holders
     # from multiprocessing import Lock
@@ -498,34 +510,93 @@ def _tests():
     # queueLock = Lock()
     # withdraw(withdrawLock, queueLock, 1)
 
+    # 4 -----------------------------------------------------------------------
+    
     # getMeterNameList(config.TEMPLATE_DIR+config.OMD_FILENAME)
 
-    # numCorrect = 0
-    # numAttempts = 100
-    # omdFileName = os.path.join(config.TEMPLATE_DIR,config.OMD_FILENAME)
-    # for attemptNum in range(numAttempts):
-    #     queryMeterName = random.choice(getMeterNameList(omdFileName))
-    #     with open(omdFileName) as omdFile:
-    #         omd = json.load(omdFile)
-    #     tree = omd.get('tree', {})
-    #     for key in tree.keys():
-    #         objName = tree[key].get('name',None)
-    #         if (objName == queryMeterName):
-    #             latitude = tree[key]['latitude']
-    #             longitude = tree[key]['longitude']
-    #             meterName = getMeterFromLatLong(latitude,longitude,tree)
-    #             break
-    #     if (queryMeterName == meterName):
-    #         numCorrect += 1
-    # print(100*numCorrect/numAttempts, \
-    #     '% of meters identified correctly out of', numAttempts, 'attempts')
-
+    # 5 -----------------------------------------------------------------------
+    
     # address = "1109 N Highland St, Arlington VA"
     # lati, longi = getLatLongFromAddress(address)
     # print(lati, longi)
+    
+    # 6 -----------------------------------------------------------------------
+    
+    # init geocoding client
+    client = GeocodioClient( config.GEOCODE_KEY )
+    
+    # get model tree
+    omdFileName = os.path.join(config.TEMPLATE_DIR,config.OMD_FILENAME)
+    with open(omdFileName) as omdFile:
+        omd = json.load(omdFile)
+    tree = omd.get('tree', {})
+    
+    # get lat long mappings
+    geoFilename = os.path.join('..','test', \
+        'Olin Barre Real Coordinates Lat Lons.geojson')
+    with open(geoFilename) as geoFile:
+        coordinates = json.load(geoFile)
+        coordinates = coordinates['features']
 
+    # replace all of the gridlab coordinates with the correct ones
+    for key in tree.keys():
+        objName = tree[key].get('name',None)    
+        if objName is not None:
+            for item in coordinates: 
+                itemName = item['properties']['name']
+                if ( (objName+'_A') == itemName ) or \
+                ( (objName+'_B') == itemName ) or \
+                ( (objName+'_C') == itemName ) :
+                    longitude = item['geometry']['coordinates'][0]
+                    latitude = item['geometry']['coordinates'][1]
+                    tree[key]['latitude'] = latitude
+                    tree[key]['longitude'] = longitude
+        
+    # # run through num attempts tests
+    # minAcc = None
+    # numCorrect = 0
+    # numAttempts = 1
+    # for attemptNum in range(numAttempts):
+        
+    #     # select a random meter to test
+    #     queryMeterName = random.choice(getMeterNameList(omdFileName))
+    #     for key in tree.keys():
+    #         objName = tree[key].get('name',None)
+    #         if (objName == queryMeterName):
+                
+    #             # get lat and long
+    #             latitude = tree[key].get('latitude',None)
+    #             longitude = tree[key].get('longitude',None) 
+    #             print('\n'+queryMeterName,latitude,longitude)
+                
+    #             # get address from lat long
+    #             returned = client.reverse((latitude, longitude))
+    #             address = returned['results'][0]['formatted_address']
+    #             accuracy = returned['results'][0]['accuracy']
+    #             if minAcc is None or accuracy<minAcc:
+    #                 minAcc = accuracy
+                                
+    #             # test function to get lat long from address and
+    #             # to get meter from lat long
+    #             lati, longi = getLatLongFromAddress(address)
+    #             print(accuracy,address,lati,longi)
+    #             meterName, meterLatitude, meterLongitude = \
+    #                 getMeterFromLatLong(lati,longi,tree)
+    #             break
+
+    #     print(meterName, meterLatitude, meterLongitude)
+    #     if (queryMeterName == meterName):
+    #         print('match found correctly')
+    #         numCorrect += 1
+    
+    # print(100*numCorrect/numAttempts, \
+    #     '% of meters identified correctly out of', numAttempts, 'attempts', \
+    #     'with min accuracy of:', minAcc )
+
+
+    # -------------------------------------------------------------------------
     pass;
-
+    # -------------------------------------------------------------------------
 
 if __name__ == '__main__':
     _tests()
