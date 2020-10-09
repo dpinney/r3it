@@ -36,6 +36,21 @@
         </tr>
         {% endfor %}
     </table>
+    <H3>Submitted Documents</H3>
+    <table style='width:100%' border='1'>
+        {% for file in files %}
+        <tr>
+            <th>{{file}}</th>
+            <th style='font-weight: normal'><a href='{{"/download/" + data['ID']+'/'+file}}'>Download</a></th>
+        </tr>
+        {% endfor %}
+    </table>
+    <H3>Submitted Documents</H3>
+    {% for update in updates %}
+    <form action='{{"/update-status/" + data['ID'] + '/' + update}}'>
+      <input type='submit' value='{{"Update status to " + update}}'>
+    </form>
+    {% endfor %}
 {% endblock %}
 
 {% block customer %}
@@ -45,8 +60,17 @@
         <input type=file name=file>
         <input type=submit value=Upload>
     </form>
-    {% endif %}
     <hr>
+    {% endif %}
+
+    <form action='{{"/update-status/" + data['ID'] + "/Withdrawn"}}'>
+      <input type='submit' value='Withdraw Interconnection Application'/>
+    </form>
+    <hr>
+{% endblock %}
+
+{% block ms %}
+
 {% endblock %}
 
 {% block engineer %}
