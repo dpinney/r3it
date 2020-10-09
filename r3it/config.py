@@ -18,7 +18,7 @@ GEOCODE_KEY = '8f07c00f5f5c073567306f30f1f0ce07770886f'
 # Utility parameters.
 
 utilityName = 'Touchstone Energy'
-logo = '/static/TouchstoneEnergy.png'
+logo = '/static/exampleElectric.png'
 sizeThreshold = 10
 roles = {
     'engineer' : [
