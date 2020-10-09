@@ -7,8 +7,6 @@ from config import *
 
 def authorizedToView(email, app):
     '''Returns true if the user is authorized to view the application.'''
-    print("email:", type(email))
-    print("app:", app)
     return userHasUtilityRole(email) or userOwnsApp(email, app)
 
 def userAppIDs(email):

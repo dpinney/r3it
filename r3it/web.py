@@ -130,14 +130,9 @@ def report(id):
     except: eng_data = []
     next_statuses = allowedStatusChanges.get(report_data.get('Status'))
     if next_statuses:
-        print('yes next_statuses')
         updates = [update for update, role in next_statuses.items() \
                             if role in userRoles(currentUser(), report_data)]
     else: updates = []
-    print(updates)
-    print(userRoles(currentUser(), report_data))
-    print(next_statuses)
-    #print([update for update, role in next_statuses])
     if request.method == 'POST': # File uploads
         # check if the post request has the file part
         if 'file' not in request.files:
