@@ -74,7 +74,10 @@ allowedStatusChanges = {
         'Interconnection Agreement Proffered' : 'engineer'
     },
     'Interconnection Agreement Proffered' : {
-        'Interconnection Agreement Executed' : 'customer'
+        'Interconnection Agreement Executed' : 'memberServices'
+    },
+    'Interconnection Agreement Executed' : {
+        'Permission to Operate Proffered' : 'memberServices'
     },
     'Permission to Operate Proffered' : {
         'Commissioning Test Needed' : 'memberServices',

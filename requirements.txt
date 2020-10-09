@@ -5,4 +5,4 @@ Werkzeug==0.16
 cachelib
 flask_sessionstore
 flask_session_captcha
-geocodio
+pygeocodio

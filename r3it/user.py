@@ -2,6 +2,11 @@
 # Functions returning information about users and their files.
 import glob, config, os, json, base64, hashlib
 
+def userOwnsApp(email, app):
+    '''Returns true if the user is the customer or the solar installer.'''
+    return email == app.get('Email (Customer)') \
+        or email == app.get('Email (Contact)')
+
 def users():
     '''Returns list of users, identified by email address.'''
     userPaths = glob.glob(config.USERS_DIR+'/*')
@@ -22,9 +27,11 @@ def utilityUsers():
 # Would this work? Probably less readable regardless:
 # return [email for role in roles for email, roles in enumerate(privilegedUsers) if role in config.utilityRoles]
 
-def userRoles(email):
+def userRoles(email, app={}):
     '''Returns list of roles assigned to a user, identified by email.'''
-    return [role for role, emails in config.roles.items() if email in emails]
+    roles = [role for role, emails in config.roles.items() if email in emails]
+    if userOwnsApp(email,app): roles.append('customer')
+    return roles
 
 def userHasRole(email, role): return role in userRoles(email)
 '''Returns True if the user ID'd by email has role'''

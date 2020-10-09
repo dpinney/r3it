@@ -5,13 +5,10 @@ import glob, json, os
 from user import *
 from config import *
 
-def userOwnsApp(email, app):
-    '''Returns true if the user is the customer or the solar installer.'''
-    return email == app.get('Email (Customer)') \
-        or email == app.get('Email (Contact)')
-
 def authorizedToView(email, app):
     '''Returns true if the user is authorized to view the application.'''
+    print("email:", type(email))
+    print("app:", app)
     return userHasUtilityRole(email) or userOwnsApp(email, app)
 
 def userAppIDs(email):
@@ -27,6 +24,9 @@ def appExists(appID): return appID in allAppIDs()
 
 def allAppDirs(): return sorted(glob.glob(os.path.join(APPLICATIONS_DIR,'*')))
 '''Returns sorted list of interconnection application directories.'''
+
+def allAppUploads(id):
+    return sorted(os.path.basename(x) for x in glob.glob(os.path.join(appDir(id),'uploads','*')))
 
 def allAppPaths():
     '''Returns a list of paths to all interconnection application.'''

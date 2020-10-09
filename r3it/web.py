@@ -5,7 +5,7 @@ import base64, json, copy, csv, os, hashlib, random, uuid, glob
 import flask_login, flask_sessionstore, flask_session_captcha
 from datetime import datetime
 from multiprocessing import Process, Lock
-from flask import Flask, redirect, request, render_template, url_for
+from flask import Flask, redirect, request, render_template, url_for, send_from_directory
 from werkzeug.utils import secure_filename
 
 # Instantiate app
@@ -118,7 +118,8 @@ def index():
     return render_template('index.html', data=data, \
                                          priorities=priorities, \
                                          notification=notification)
-@app.route('/report/<id>')
+
+@app.route('/report/<id>', methods=['GET', 'POST'])
 @flask_login.login_required
 def report(id):
     '''Given interconnection ID, render detailed report page'''
@@ -128,9 +129,41 @@ def report(id):
             eng_data = json.load(data)
     except: eng_data = []
     next_statuses = allowedStatusChanges.get(report_data.get('Status'))
-    updates = [update for update, role in enumerate(next_statuses) \
-                                        if role in userRoles(currentUser())]
-    return render_template('report.html', data=report_data, eng_data=eng_data, updates=updates)
+    if next_statuses:
+        print('yes next_statuses')
+        updates = [update for update, role in next_statuses.items() \
+                            if role in userRoles(currentUser(), report_data)]
+    else: updates = []
+    print(updates)
+    print(userRoles(currentUser(), report_data))
+    print(next_statuses)
+    #print([update for update, role in next_statuses])
+    if request.method == 'POST': # File uploads
+        # check if the post request has the file part
+        if 'file' not in request.files:
+            return redirect('/report' + id + '?notification=No%20file%20part%2E')
+        file = request.files['file']
+        # if user does not select file, browser also
+        # submit an empty part without filename
+        if file.filename == '':
+            return redirect('/report/' + id + '?notification=No%20file%20selected%2E')
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+        try:
+            os.makedirs(os.path.join(app.root_path, "data", 'applications', id, "uploads"))
+        except OSError:
+            pass
+        file.save(os.path.join(app.root_path, "data", 'applications', id, 'uploads', filename))
+        return redirect(url_for('index') + '?notification=Upload%20successful%2E')
+    return render_template('report.html', data=report_data, eng_data=eng_data, updates=updates, files=allAppUploads(id))
+
+@app.route('/download/<id>/<path:filename>')
+@flask_login.login_required
+def download(id, filename):
+    if authorizedToView(currentUser(), appDict(id)):
+        return send_from_directory(os.path.join(appDir(id),'uploads'), filename)
+    else:
+        return redirect('/')
 
 @app.route('/add-to-queue', methods=['GET', 'POST'])
 @flask_login.login_required
@@ -191,30 +224,6 @@ def update_status(id, status):
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ['txt', 'pdf', 'doc', 'docx']
-
-#TODO Re-work uploads
-@app.route('/upload', methods=['GET', 'POST'])
-@flask_login.login_required
-def upload_file():
-    notification = request.args.get('notification', None)
-    if request.method == 'POST':
-        # check if the post request has the file part
-        if 'file' not in request.files:
-            return redirect('/upload?notification=No%20file%20part%2E')
-        file = request.files['file']
-        # if user does not select file, browser also
-        # submit an empty part without filename
-        if file.filename == '':
-            return redirect('/upload?notification=No%20file%20selected%2E')
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-        try:
-            os.makedirs(os.path.join(app.root_path, "data", currentUser(), "uploads"))
-        except OSError:
-            pass
-        file.save(os.path.join(app.root_path, "data", currentUser(), "uploads", filename))
-        return redirect(url_for('upload_file') + '?notification=Upload%20successful%2E')
-    return render_template('upload.html', notification=notification)
 
 if __name__ == '__main__':
     app.run(debug=True, host= '0.0.0.0')
