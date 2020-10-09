@@ -492,7 +492,4 @@ var forEach = function(object, block, context) {
 		resolve.forEach(object, block, context);
 	}
 };
-<<<<<<< HEAD
 
-=======
->>>>>>> 09df5a095428336b76233860731003e23e38ad3e
