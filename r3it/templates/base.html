@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<link rel="stylesheet" href="/static/css/style.css"> 
+	<link rel="stylesheet" href="/static/css/style.css">
 	{% block head %}{% endblock %}
 </head>
 <body>
@@ -22,7 +22,8 @@
 	{% block content %} {% endblock %}
 	{% if 'engineer' in current_user.roles %} {% block engineer %}{% endblock %}
 	{% elif 'memberServices' in current_user.roles %} {% block ms %}{% endblock %}
-	{% else %} {% block customer %}{% endblock %}
+	{% else %} {% if current_user.is_authenticated() %}
+		{% block customer %}{% endblock %}{% endif %}
 	{% endif %}
 	<hr>
 	<div id="footer">&copy; Copyright 2020 by <a href="http://nreca.coop">NRECA</a></div>
