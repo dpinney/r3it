@@ -38,8 +38,14 @@ utilityRoles = [
     'engineer',
     'memberServices'
 ]
-
+# Names of the document types attached to applications.
 appAttachments = ["One Line Diagram", "Site Plan", "Placard", "Insurance disclosures", "Inverter Specification Sheet"]
+
+# Email configuration
+r3itEmailAddress    = 'donotreply@r3it.ghw.io'
+emailUser           = 'donotreply'
+emailPassword       = 'verysecurepassword'
+smtpServer          = 'box.ghw.io:587'
 
 # All possible statuses an interconnection application may have.
 statuses = (
