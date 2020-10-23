@@ -43,7 +43,7 @@ appAttachments = ["One Line Diagram", "Site Plan", "Placard", "Insurance disclos
 
 # Email configuration
 r3itEmailAddress    = 'donotreply@r3it.ghw.io'
-emailUser           = 'donotreply'
+emailUser           = r3itEmailAddress
 emailPassword       = 'verysecurepassword'
 smtpServer          = 'box.ghw.io:587'
 
