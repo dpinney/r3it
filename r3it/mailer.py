@@ -12,6 +12,6 @@ def sendEmail(recipient, subject='', body=''):
     msg.set_content(body)
     # Send email.
     s = smtplib.SMTP(smtpServer)
-    s.SMTP.login(emailUser, emailPassword)
+    s.login(emailUser, emailPassword)
     s.send_message(msg)
     s.quit()
