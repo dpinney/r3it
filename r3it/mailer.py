@@ -12,7 +12,7 @@ def sendEmail(recipient, subject='', body=''):
     msg.set_content(body)
     # Send email.
     context = ssl.create_default_context()
-    with smtplib.SMTP(smtpServer) as server:
+    with smtplib.SMTP(smtpServer, 587) as server:
         server.ehlo()  # Can be omitted
         server.starttls(context=context)
         server.ehlo()  # Can be omitted

@@ -43,9 +43,9 @@ appAttachments = ["One Line Diagram", "Site Plan", "Placard", "Insurance disclos
 
 # Email configuration
 r3itEmailAddress    = 'donotreply@r3it.ghw.io'
-emailUser           = r3itEmailAddress
+emailUser           = 'donotreply@r3it.ghw.io'
 emailPassword       = 'verysecurepassword'
-smtpServer          = 'box.ghw.io:587'
+smtpServer          = 'box.ghw.io'
 
 # All possible statuses an interconnection application may have.
 statuses = (
