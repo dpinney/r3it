@@ -36,16 +36,26 @@
         </tr>
         {% endfor %}
     </table>
-    <H3>Submitted Documents</H3>
-    <table style='width:100%' border='1'>
-        {% for file in files %}
-        <tr>
-            <th>{{file}}</th>
-            <th style='font-weight: normal'><a href='{{"/download/" + data['ID']+'/'+file}}'>Download</a></th>
-        </tr>
-        {% endfor %}
-    </table>
-    <H3>Submitted Documents</H3>
+    <H3>Attachments</H3>
+    {% for doc in appAttachments %}
+      <hr>
+      <H3>{{doc}}</H3>
+      <table style='width:100%' border='1'>
+          {% for file in files.get(doc, None) %}
+          <tr>
+              <th>{{file}}</th>
+              <th style='font-weight: normal'><a href='{{"/download/" + data['ID']+'/'+doc+'/'+file}}'>Download</a></th>
+          </tr>
+          {% endfor %}
+      </table>
+      <form action="{{'/upload/' + data['ID'] + '/' + doc}}" method="post" enctype="multipart/form-data">
+          <input type="file" name="file">
+          <input type="submit" value="{{'Upload ' + doc}}">
+      </form>
+    {% endfor %}
+
+
+
     {% for update in updates %}
     <form action='{{"/update-status/" + data['ID'] + '/' + update}}'>
       <input type='submit' value='{{"Update status to " + update}}'>
@@ -54,15 +64,7 @@
 {% endblock %}
 
 {% block customer %}
-    {% for doc in ["One Line Diagram", "Site Plan", "Placard", "Insurance disclosures", "Inverter Specification Sheet"] %}
-    <hr>
-    <form action="{{'/upload/' + data['ID'] + '/' + doc}}" method="post" enctype="multipart/form-data">
-        <input type="file" name="file">
-        <input type="submit" value="{{'Upload ' + doc}}">
-    </form>
-    <hr>
-    {% endfor %}
-
+  <H3>"Withdraw Interconnection Application"</H3>
     <form action='{{"/update-status/" + data['ID'] + "/Withdrawn"}}'>
       <input type='submit' value='Withdraw Interconnection Application'/>
     </form>

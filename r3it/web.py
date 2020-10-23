@@ -18,7 +18,8 @@ def inject_config():
     return dict(
         logo          = config.logo,
         sizeThreshold = config.sizeThreshold,
-        utilityName   = config.utilityName
+        utilityName   = config.utilityName,
+        appAttachments= config.appAttachments
     )
 
 # instantiate queue processing lock, ensure only one que processing run happens at a time
@@ -157,11 +158,11 @@ def upload(id, doc):
         return redirect(url_for('index') + '?notification=Upload%20successful%2E')
     else: return redirect(request.referrer)
 
-@app.route('/download/<id>/<path:filename>')
+@app.route('/download/<id>/<doc>/<path:filename>')
 @flask_login.login_required
-def download(id, filename):
-    if authorizedToView(currentUser(), appDict(id)):
-        return send_from_directory(os.path.join(appDir(id),'uploads'), filename)
+def download(id, doc, filename):
+    if authorizedToView(currentUser(), appDict(id)) and doc in appAttachments:
+        return send_from_directory(os.path.join(appDir(id),'uploads',doc), filename)
     else:
         return redirect('/')
 

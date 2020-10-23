@@ -17,7 +17,7 @@ GEOCODE_KEY = '8f07c00f5f5c073567306f30f1f0ce07770886f'
 
 # Utility parameters.
 
-utilityName = 'Touchstone Energy'
+utilityName = 'Example Electric'
 logo = '/static/exampleElectric.png'
 sizeThreshold = 10
 roles = {
@@ -38,6 +38,8 @@ utilityRoles = [
     'engineer',
     'memberServices'
 ]
+
+appAttachments = ["One Line Diagram", "Site Plan", "Placard", "Insurance disclosures", "Inverter Specification Sheet"]
 
 # All possible statuses an interconnection application may have.
 statuses = (

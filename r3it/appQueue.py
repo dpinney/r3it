@@ -24,7 +24,9 @@ def allAppDirs(): return sorted(glob.glob(os.path.join(APPLICATIONS_DIR,'*')))
 '''Returns sorted list of interconnection application directories.'''
 
 def allAppUploads(id):
-    return sorted(os.path.basename(x) for x in glob.glob(os.path.join(appDir(id),'uploads','*')))
+    '''Returns a dict of lists of files by attachment type.'''
+    return {doc:sorted(os.path.basename(x) for x in glob.glob(os.path.join(appDir(id),'uploads',doc,'*')))\
+            for doc in appAttachments}
 
 def allAppPaths():
     '''Returns a list of paths to all interconnection application.'''
