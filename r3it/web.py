@@ -133,10 +133,15 @@ def report(id):
         updates = [update for update, role in next_statuses.items() \
                             if role in userRoles(currentUser(), report_data)]
     else: updates = []
+    return render_template('report.html', data=report_data, eng_data=eng_data, updates=updates, files=allAppUploads(id))
+
+@app.route('/upload/<id>/<doc>', methods=['GET','POST'])
+@flask_login.login_required
+def upload(id, doc):
     if request.method == 'POST': # File uploads
         # check if the post request has the file part
         if 'file' not in request.files:
-            return redirect('/report' + id + '?notification=No%20file%20part%2E')
+            return redirect('/report/' + id + '?notification=No%20file%20part%2E')
         file = request.files['file']
         # if user does not select file, browser also
         # submit an empty part without filename
@@ -145,12 +150,12 @@ def report(id):
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
         try:
-            os.makedirs(os.path.join(app.root_path, "data", 'applications', id, "uploads"))
+            os.makedirs(os.path.join(app.root_path, "data", 'applications', id, "uploads", doc))
         except OSError:
             pass
-        file.save(os.path.join(app.root_path, "data", 'applications', id, 'uploads', filename))
+        file.save(os.path.join(app.root_path, "data", 'applications', id, 'uploads', doc, filename))
         return redirect(url_for('index') + '?notification=Upload%20successful%2E')
-    return render_template('report.html', data=report_data, eng_data=eng_data, updates=updates, files=allAppUploads(id))
+    else: return redirect(request.referrer)
 
 @app.route('/download/<id>/<path:filename>')
 @flask_login.login_required
