@@ -11,7 +11,7 @@ def sendEmail(recipient, subject='', body=''):
     msg['Subject'] = subject
     msg.set_content(body)
     # Send email.
-    s = smtplib.SMTP(smtpServer)
+    s = smtplib.SMTP_SSL(smtpServer)
     s.login(emailUser, emailPassword)
     s.send_message(msg)
     s.quit()
