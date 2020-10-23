@@ -1,4 +1,4 @@
-import smtplib
+import smtplib, ssl
 from email.message import EmailMessage
 from config import *
 
@@ -11,7 +11,10 @@ def sendEmail(recipient, subject='', body=''):
     msg['Subject'] = subject
     msg.set_content(body)
     # Send email.
-    s = smtplib.SMTP_SSL(smtpServer)
-    s.login(emailUser, emailPassword)
-    s.send_message(msg)
-    s.quit()
+    context = ssl.create_default_context()
+    with smtplib.SMTP(smtp_server, port) as server:
+        server.ehlo()  # Can be omitted
+        server.starttls(context=context)
+        server.ehlo()  # Can be omitted
+        server.login(emailUser, emailPassword)
+        server.send_message(msg)
