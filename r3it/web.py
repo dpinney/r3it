@@ -17,6 +17,7 @@ app.secret_key = config.COOKIE_KEY
 def inject_config():
     return dict(
         logo          = config.logo,
+        bg          = config.bg,
         sizeThreshold = config.sizeThreshold,
         utilityName   = config.utilityName,
         appAttachments= config.appAttachments

@@ -1,13 +1,20 @@
 {% extends 'base.html' %}
 
+
 {% block anonymous %}
+<style type="text/css">#bg{background-image:url({{bg}})</style>
+<style type="text/css">#bg{height: 100%;}</style>
+<div id="login" >
     <form action='/login' method='post'>
-        <label for='email'>Email:</label><br>
-        <input type='text' id='email' name='email' required><br>
-        <label for='password'>Password:</label><br>
-        <input type='password' id='password' name='password' required><br><br>
-        {{ captcha() }} <br> <!-- This renders an <img> tag with the captcha img. -->
-	    <input type="text" name="captcha" required>
+        <input type='text' placeholder="    Email" id='email' name='email' required>
+        <br>
+        <input type='password' placeholder="    Password" id='password' name='password' required>
+        <br>
+        {{ captcha() }} <!-- This renders an <img> tag with the captcha img. -->
+	    <br>
+	    <input type="text" placeholder="    Captcha" name="captcha" required>
+	    <br>
         <button type="submit" formaction="/register" method="post">Register</button>
     </form>
+</div>
 {% endblock %}

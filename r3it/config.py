@@ -19,6 +19,8 @@ GEOCODE_KEY = '8f07c00f5f5c073567306f30f1f0ce07770886f'
 
 utilityName = 'Example Electric'
 logo = '/static/exampleElectric.png'
+bg = '/static/background.jpg'
+
 sizeThreshold = 10
 roles = {
     'engineer' : [

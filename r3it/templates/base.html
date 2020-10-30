@@ -1,31 +1,72 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 	<link rel="stylesheet" href="/static/css/style.css">
 	{% block head %}{% endblock %}
 </head>
-<body>
-	<img src={{ logo }} alt={{ utilityName }} width="95%">
 
-	{% if current_user.is_authenticated() %}
-		<a href='/'>Home</a>
-		<a href='/logout'>Logout</a>
-	{% else %}
-		<a href='/login'>Login</a>
-		<a href='/register'>Register</a>
-		{% block anonymous %}{% endblock %}
-	{% endif %}
-	<hr>
-	{% if notification%}
-	<H3> {{ notification }} </H3>
-	{% endif %}
-	{% block content %} {% endblock %}
-	{% if 'engineer' in current_user.roles %} {% block engineer %}{% endblock %}
-	{% elif 'memberServices' in current_user.roles %} {% block ms %}{% endblock %}
-	{% else %} {% if current_user.is_authenticated() %}
-		{% block customer %}{% endblock %}{% endif %}
-	{% endif %}
-	<hr>
-	<div id="footer">&copy; Copyright 2020 by <a href="http://nreca.coop">NRECA</a></div>
+<body>
+
+<div id="bg"></div>
+
+<div id="page">
+
+	<div id="menuBar">
+		<a href="/"><img id="logo" src={{ logo }} alt={{ utilityName }}></a>
+		<label id="menuButton" for="menuToggle"> 
+			<div></div>
+			<div></div>
+			<div></div> 
+		</label>
+		<input type="checkbox" id="menuToggle" />
+		<ul id="menu">
+			{% if current_user.is_authenticated() %}
+				<li><a class="menuItem" href='/logout'>LOGOUT</a></li>
+				<li><a class="menuItem" href='/'>HOME</a></li>
+			{% else %}
+				<li><a class="menuItem" href='/register'>REGISTER</a></li>
+				<li><a class="menuItem" href='/login'>LOGIN</a></li>
+				<li><a class="menuItem" href='/'>HOME</a></li>
+			{% endif %}
+		</ul>
+	</div> <div id="menuSpacer"></div>
+
+	<div class="content">
+		
+		{% if not current_user.is_authenticated() %}
+			{% block banner %}{% endblock %}
+			{% block anonymous %}{% endblock %}
+		{% endif %}
+
+		<!-- <hr> -->
+
+		{% if notification%}
+		<H3> {{ notification }} </H3>
+		{% endif %}
+
+		{% block content %} {% endblock %}
+		{% if 'engineer' in current_user.roles %} 
+			{% block engineer %}{% endblock %}
+		{% elif 'memberServices' in current_user.roles %} 
+			{% block ms %}{% endblock %}
+		{% else %} {% if current_user.is_authenticated() %}
+			{% block customer %}{% endblock %}{% endif %}
+		{% endif %}
+
+		<!-- <hr> -->
+
+	</div>
+
+	<div id="footerSpacer"></div> 
+
+</div>
+
+<div id="footer">
+	&copy; Copyright 2020 by 
+	<a href="http://nreca.coop">NRECA</a>
+</div>
+
 </body>
+
 </html>

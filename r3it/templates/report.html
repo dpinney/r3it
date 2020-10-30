@@ -72,11 +72,10 @@
 {% endblock %}
 
 {% block ms %}
-
 {% endblock %}
 
 {% block engineer %}
-	  <script src="/static/sorttable.js"></script>
+	<script src="/static/sorttable.js"></script>
     <hr>
     {% if 'Engineering Review' == data['Status'] %}
         <form action='{{"/update-status/" + data['ID'] + "/Interconnection%20Agreement%20Proffered"}}'>
@@ -495,5 +494,4 @@
     </div>
 
     </div>
-
 {% endblock %}

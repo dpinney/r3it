@@ -1,4 +1,13 @@
-html, body { height: 100%; }
+html, body { 
+    margin: 0px;
+    height: 100%;
+    width: 100%;
+    font-family: sans-serif; 
+    background-color: #eee;
+    word-wrap: break-word;
+    position: absolute;
+    z-index: 0;
+}
 
 table {
     border-collapse: collapse;
@@ -7,21 +16,175 @@ table {
     font-family: sans-serif;
     min-width: 400px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-}
-
-
-th, td {
+} th, td {
     padding: 12px 15px;
-}
-
-tr {
+} tr {
     border-bottom: 1px solid #dddddd;
-}
-
-tr:nth-of-type(even) {
+} tr:nth-of-type(even) {
     background-color: #f3f3f3;
+} tr:nth-of-type(odd) {
+    background-color: #fff;
+} tr:last-of-type {
+    border-bottom: 1px solid #000;
 }
 
-tr:last-of-type {
-    border-bottom: 1px solid #000;
+.content {
+    width: 90%;
+    max-width: 1000px;
+    display: block;
+    margin: 0 auto;
+}
+
+#bg {
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position-x: center;
+    background-position-y: top;
+    width: 100%;
+    height: 75%;
+    z-index: -1;
+    position: absolute;
+}
+
+#page {
+    min-height: 100%;
+    margin-bottom: -2em;
+}
+
+#logo {
+    height: 3em;
+    margin: 0.5em;
+    float: left;
+}
+
+#menuBar {        
+    z-index: 1;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background-color: #fff;
+    box-shadow: 0px -1px 10px #000;   
+} #menu {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: none;
+    float: right;
+    line-height: 4em;
+} #menu li {
+    float: right;
+    height: inherit;
+    line-height: inherit;
+} #menu a {
+    display: block;
+    padding: 0 1em;
+    text-decoration: none;
+    color: #000
+} #menu a:hover {
+    background-color: #000;
+    color:#fff;
+} #menuButton {
+    cursor: pointer;
+    float: right;
+    height: 2em;
+    padding: 1em;
+} #menuButton div {
+  width: 35px;
+  height: 5px;
+  background-color: black;
+  margin: 6px 0;
+} #menuToggle {
+    display: none;
+} #menuToggle:checked + #menu {
+    display: inline-block;
+} #menuSpacer {
+    height: 4em;
+} 
+
+#title {
+    font-size: 3em;
+    max-width: 60%;
+    padding: 50px;
+    color: white;
+    font-weight: lighter;
+    text-shadow: 2px 2px 3px #000;
+    margin: 0px;
+}
+
+#bannerButtons {
+    margin: 50px;
+    margin-top: 0px;
+} #bannerButtons a {
+    display: inline-block;
+    padding: 1em;
+    text-decoration: none;
+    background-color: #000;
+    color: #fff;
+    box-shadow:  2px 2px 3px #000;   
+} #bannerButtons a:hover {
+    background-color: #fff;
+    color:#000;
+    box-shadow: none;
+}
+
+.card {
+    margin: 0 auto 50px auto;
+    background-color: #fff;
+}.card h1, .card p {
+    margin: 0;
+    padding: 50px;
+} .card h1 {padding-bottom: 0px;}
+
+#login {
+    background-color: #fff;
+    min-width: 200px;
+    max-width: 500px;
+    width: 50%;
+    margin: auto;
+    padding: 1em;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0px 5px 10px #aaa;
+} #login input, #login button {
+    width: 100%;
+    height: 2em;
+    border-width: 0;
+    margin: 0.5em 0;
+    padding: 0;
+} #login input {
+    border-width: 1px;
+    border-color: #eee;
+    border-style: solid;
+    border-radius: 4px;
+} #login button {
+    background-color: #eee;
+} #login button:hover {
+    color: #fff;
+    background-color: #000;
+}
+
+#footerSpacer {
+    height: 2em;
+} #footer {
+    padding-left: 0.5em;
+    color: #fff;
+    background-color: #000;
+    height: 2em;
+    line-height: 2em;
+} #footer a { color: #fff;}
+
+
+
+
+
+@media screen and (max-width: 600px) {
+    #menu { 
+        width: 100%; 
+        text-align: center;
+    } #menu li {
+        float: none;
+        border-top: 1px solid #eee;
+    }
 }
