@@ -6,4 +6,3 @@ cachelib
 flask_sessionstore
 flask_session_captcha
 pygeocodio
-email
