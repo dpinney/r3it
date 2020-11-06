@@ -4,106 +4,120 @@
     <H1>New Interconnection Application</H1>
 
     <form action='/add-to-queue' method='post'>
-        <label for='applicationName'>Application Name:</label><br>
-        <input type='text' id='applicationName' name='Application Name' value="{{default.label}}"><br>
-        <H3>Tarriff</H3>
-        <input type="radio" id="Net Metering" name="Tariff" value="Net Metering" checked="checked">
-        <label for="Net Metering">Net Metering</label><br>
-        <input type="radio" id="Value of Solar" name="Tariff" value="Value of Solar">
-        <label for="Value of Solar">Value of Solar</label><br>
+        
+        <div class="card">
+            <H3>Application Name:</H3>
+            <input type='text' id='applicationName' name='Application Name' value="{{default.label}}"><br>
+            <H3>Tarriff</H3>
+            <input type="radio" id="Net Metering" name="Tariff" value="Net Metering" checked="checked">
+            <label for="Net Metering">Net Metering</label><br>
+            <input type="radio" id="Value of Solar" name="Tariff" value="Value of Solar">
+            <label for="Value of Solar">Value of Solar</label><br>
+        </div>
 
-        <H3>Customer</H3>
-        <label for='customer'>Customer:</label><br>
-        <input type='text' id='customer' name='Customer' value='{{default.name}}'><br>
-        <!Is name vs. contact confusing? How to clarify? Maybe ask for Organization?>
-        <label for='contactPersonCustomer'>Contact Person:</label><br>
-        <input type='text' id='contactPersonCustomer' name='Contact Person (Customer)' value='{{default.name}}'><br>
-        <label for='addressCustomer'>Address:</label><br>
-        <input type='text' id='addressCustomer' name='Address (Customer)' value="{{default.address}}"><br>
-        <label for='cityCustomer'>City:</label><br>
-        <input type='text' id='cityCustomer' name='City (Customer)' value='{{default.city}}'><br>
-        <label for='stateCustomer'>State:</label><br>
-        <input type='text' id='stateCustomer' name='State (Customer)' value='{{default.state}}'><br>
-        <label for='zipCustomer'>Zip Code:</label><br>
-        <input type='text' id='zipCustomer' name='Zip (Customer)' value='{{default.zip}}'><br>
-        <label for='dayTelephoneCustomer'>Telephone (Day):</label><br>
-        <input type='text' id='dayTelephoneCustomer' name='Telephone (Day, Customer)' value='{{default.phone}}'><br>
-        <label for='eveningTelephoneCustomer'>Telephone (Evening):</label><br>
-        <input type='text' id='eveningTelephoneCustomer' name='Telephone (Evening, Customer)' value='{{default.phone}}'><br>
-        <label for='emailCustomer'>Email Address:</label><br>
-        <input type='text' id='emailCustomer' name='Email (Customer)' value='{{default.email}}'><br>
+        <div class="card">
+            <H3>Customer</H3>
+            <label for='customer'>Customer:</label><br>
+            <input type='text' id='customer' name='Customer' value='{{default.name}}'><br>
+            <!Is name vs. contact confusing? How to clarify? Maybe ask for Organization?>
+            <label for='contactPersonCustomer'>Contact Person:</label><br>
+            <input type='text' id='contactPersonCustomer' name='Contact Person (Customer)' value='{{default.name}}'><br>
+            <label for='addressCustomer'>Address:</label><br>
+            <input type='text' id='addressCustomer' name='Address (Customer)' value="{{default.address}}"><br>
+            <label for='cityCustomer'>City:</label><br>
+            <input type='text' id='cityCustomer' name='City (Customer)' value='{{default.city}}'><br>
+            <label for='stateCustomer'>State:</label><br>
+            <input type='text' id='stateCustomer' name='State (Customer)' value='{{default.state}}'><br>
+            <label for='zipCustomer'>Zip Code:</label><br>
+            <input type='text' id='zipCustomer' name='Zip (Customer)' value='{{default.zip}}'><br>
+            <label for='dayTelephoneCustomer'>Telephone (Day):</label><br>
+            <input type='text' id='dayTelephoneCustomer' name='Telephone (Day, Customer)' value='{{default.phone}}'><br>
+            <label for='eveningTelephoneCustomer'>Telephone (Evening):</label><br>
+            <input type='text' id='eveningTelephoneCustomer' name='Telephone (Evening, Customer)' value='{{default.phone}}'><br>
+            <label for='emailCustomer'>Email Address:</label><br>
+            <input type='text' id='emailCustomer' name='Email (Customer)' value='{{default.email}}'><br>
+        </div>
+
         <!TODO: Figure out "same as above" button.>
         <!TODO: Decide if drop-down for partnered solar installers is good idea, maybe implement?>
-        <H3>Contact</H3>
-        <label for='contact'>Contact:</label><br>
-        <input type='text' id='contact' name='Contact' value='Solar Install, Inc.'><br>
-        <label for='contactPersonContact'>Contact Person:</label><br>
-        <input type='text' id='contactPersonContact' name='Contact Person (Contact)' value='John Henry'><br>
-        <label for='addressContact'>Address:</label><br>
-        <input type='text' id='addressContact' name='Address (Contact)' value='123 Ceder Circle'><br>
-        <label for='cityContact'>City:</label><br>
-        <input type='text' id='cityContact' name='City (Contact)' value='Chicago'><br>
-        <label for='stateContact'>State:</label><br>
-        <input type='text' id='stateContact' name='State (Contact)' value='IL'><br>
-        <label for='zipContact'>Zip Code:</label><br>
-        <input type='text' id='zipContact' name='Zip (Contact)' value='76543'><br>
-        <label for='dayTelephoneContact'>Telephone (Day):</label><br>
-        <input type='text' id='dayTelephoneContact' name='Daytime Telephone (Contact)' value='2345678987'><br>
-        <label for='eveningTelephoneContact'>Telephone (Evening):</label><br>
-        <input type='text' id='eveningTelephoneContact' name='Evening Telephone (Contact)' value='(234) 567 - 8987'><br>
-        <label for='emailContact'>Email Address:</label><br>
-        <input type='text' id='emailContact' name='Email (Contact)' value='installer@solarinstallerinc.tld'><br>
-        <H3>Interconnection Facility Information</H3>
-        <!TODO: Figure out how to add multiple owners.>
-        <H4>Owner</H4>
-        <label for='owner'>Owner:</label><br>
-        <input type='text' id='owner' name='owner' value='{{default.name}}'><br>
-        <H4>Location</H4>
-        <!TODO: Figure out "same as above" button.>
-        <label for='addressFacility'>Address:</label><br>
-        <input type='text' id='addressFacility' name='Address (Facility)' value='{{default.address}}'><br>
-        <label for='cityFacility'>City:</label><br>
-        <input type='text' id='cityFacility' name='City (Facility)' value='{{default.city}}'><br>
-        <label for='stateFacility'>State:</label><br>
-        <input type='text' id='stateFacility' name='State (Facility)' value="{{default.state}}"><br>
-        <label for='zipFacility'>Zip Code:</label><br>
-        <input type='text' id='zipFacility' name='Zip (Facility)' value="{{default.zip}}"><br>
-        <H4>Facility Information</H4>
-        <label for='utility'>Utility:</label><br>
-        <input type='text' id='utility' name='Utility' value='Dairyland Power'><br>
-        <label for='accountNumber'>Account Number:</label><br>
-        <input type='text' id='accountNumber' name='Account Number' value='23456789'><br>
-        <label for='meterID'>Meter ID:</label><br>
-        <input type='text' id='meterID' name='Meter ID' value="{{default.meterID}}"><br>
-        <!TODO: Allow drop-down for pre-certified inverters? Separate application?>
-        <label for='inverterManf'>Inverter Manufacturer:</label><br>
-        <input type='text' id='inverterManf' name='Inverter Manufacturer' value='Princeton Power'><br>
-        <label for='inverterModel'>Inverter Model:</label><br>
-        <input type='text' id='inverterModel' name='Inverter Model' value="T"><br>
-        <label for='nameplateRatingkW'>Nameplate Rating (kW):</label><br>
-        <input type='text' id='nameplateRatingkW' name='Nameplate Rating (kW)' value="{{default.size}}"><br>
-        <label for='nameplateRatingkVA'>Nameplate Rating (kVA):</label><br>
-        <input type='text' id='nameplateRatingkVA' name='Nameplate Rating (kVA)' value='{{default.size}}'><br>
-        <label for='nameplateRatingV'>Nameplate Rating (V):</label><br>
-        <input type='text' id='nameplateRatingV' name='Nameplate Rating (V)' value='{{default.voltage}}'><br>
-        <!TODO: Make dropdown or radio button>
-        <label for='phases'>Single or Three Phase:</label><br>
-        <input type='text' id='phases' name='Phases' value='3'><br>
-        <label for='primeMover'>Prime Mover:</label><br>
-        <input type='text' id='primeMover' name='Prime Mover' value='Photovoltaic'><br>
-        <!TODO: Make dropdown or radio button>
-        <label for='energySource'>Energy Source:</label><br>
-        <input type='text' id='energySource' name='Energy Source' value='Sunlight'><br>
-        <!TODO: Should be a bool>
-        <label for='ul741'>Is the equipment UL741 listed?:</label><br>
-        <input type='text' id='ul741' name='UL741' value='Yes'> <br>
-        <!TODO: Date pickers>
-        <label for='installDateEstimated'>Estimated Install Date:</label><br>
-        <input type='text' id='installDateEstimated' name='Estimated Install Date' value='11/11/2020'><br>
-        <label for='inServiceDateEstimated'>Estimated In-Service Date:</label><br>
-        <input type='text' id='inServiceDateEstimated' name='Estimated In-Service Date' value='9/11/2021'><br>
-        <!TODO: Table for Equipment - Certification>
-        <input type='submit' value='Submit'>
+        <div class="card">
+            <H3>Contact</H3>
+            <label for='contact'>Contact:</label><br>
+            <input type='text' id='contact' name='Contact' value='Solar Install, Inc.'><br>
+            <label for='contactPersonContact'>Contact Person:</label><br>
+            <input type='text' id='contactPersonContact' name='Contact Person (Contact)' value='John Henry'><br>
+            <label for='addressContact'>Address:</label><br>
+            <input type='text' id='addressContact' name='Address (Contact)' value='123 Ceder Circle'><br>
+            <label for='cityContact'>City:</label><br>
+            <input type='text' id='cityContact' name='City (Contact)' value='Chicago'><br>
+            <label for='stateContact'>State:</label><br>
+            <input type='text' id='stateContact' name='State (Contact)' value='IL'><br>
+            <label for='zipContact'>Zip Code:</label><br>
+            <input type='text' id='zipContact' name='Zip (Contact)' value='76543'><br>
+            <label for='dayTelephoneContact'>Telephone (Day):</label><br>
+            <input type='text' id='dayTelephoneContact' name='Daytime Telephone (Contact)' value='2345678987'><br>
+            <label for='eveningTelephoneContact'>Telephone (Evening):</label><br>
+            <input type='text' id='eveningTelephoneContact' name='Evening Telephone (Contact)' value='(234) 567 - 8987'><br>
+            <label for='emailContact'>Email Address:</label><br>
+            <input type='text' id='emailContact' name='Email (Contact)' value='installer@solarinstallerinc.tld'><br>
+        </div>
+
+        <div class="card">
+            <H3>Interconnection Facility Information</H3>
+            <!TODO: Figure out how to add multiple owners.>
+            <H4>Owner</H4>
+            <label for='owner'>Owner:</label><br>
+            <input type='text' id='owner' name='owner' value='{{default.name}}'><br>
+            <H4>Location</H4>
+            <!TODO: Figure out "same as above" button.>
+            <label for='addressFacility'>Address:</label><br>
+            <input type='text' id='addressFacility' name='Address (Facility)' value='{{default.address}}'><br>
+            <label for='cityFacility'>City:</label><br>
+            <input type='text' id='cityFacility' name='City (Facility)' value='{{default.city}}'><br>
+            <label for='stateFacility'>State:</label><br>
+            <input type='text' id='stateFacility' name='State (Facility)' value="{{default.state}}"><br>
+            <label for='zipFacility'>Zip Code:</label><br>
+            <input type='text' id='zipFacility' name='Zip (Facility)' value="{{default.zip}}"><br>
+            <H4>Facility Information</H4>
+            <label for='utility'>Utility:</label><br>
+            <input type='text' id='utility' name='Utility' value='Dairyland Power'><br>
+            <label for='accountNumber'>Account Number:</label><br>
+            <input type='text' id='accountNumber' name='Account Number' value='23456789'><br>
+            <label for='meterID'>Meter ID:</label><br>
+            <input type='text' id='meterID' name='Meter ID' value="{{default.meterID}}"><br>
+            <!TODO: Allow drop-down for pre-certified inverters? Separate application?>
+            <label for='inverterManf'>Inverter Manufacturer:</label><br>
+            <input type='text' id='inverterManf' name='Inverter Manufacturer' value='Princeton Power'><br>
+            <label for='inverterModel'>Inverter Model:</label><br>
+            <input type='text' id='inverterModel' name='Inverter Model' value="T"><br>
+            <label for='nameplateRatingkW'>Nameplate Rating (kW):</label><br>
+            <input type='text' id='nameplateRatingkW' name='Nameplate Rating (kW)' value="{{default.size}}"><br>
+            <label for='nameplateRatingkVA'>Nameplate Rating (kVA):</label><br>
+            <input type='text' id='nameplateRatingkVA' name='Nameplate Rating (kVA)' value='{{default.size}}'><br>
+            <label for='nameplateRatingV'>Nameplate Rating (V):</label><br>
+            <input type='text' id='nameplateRatingV' name='Nameplate Rating (V)' value='{{default.voltage}}'><br>
+            <!TODO: Make dropdown or radio button>
+            <label for='phases'>Single or Three Phase:</label><br>
+            <input type='text' id='phases' name='Phases' value='3'><br>
+            <label for='primeMover'>Prime Mover:</label><br>
+            <input type='text' id='primeMover' name='Prime Mover' value='Photovoltaic'><br>
+            <!TODO: Make dropdown or radio button>
+            <label for='energySource'>Energy Source:</label><br>
+            <input type='text' id='energySource' name='Energy Source' value='Sunlight'><br>
+            <!TODO: Should be a bool>
+            <label for='ul741'>Is the equipment UL741 listed?:</label><br>
+            <input type='text' id='ul741' name='UL741' value='Yes'> <br>
+            <!TODO: Date pickers>
+            <label for='installDateEstimated'>Estimated Install Date:</label><br>
+            <input type='text' id='installDateEstimated' name='Estimated Install Date' value='11/11/2020'><br>
+            <label for='inServiceDateEstimated'>Estimated In-Service Date:</label><br>
+            <input type='text' id='inServiceDateEstimated' name='Estimated In-Service Date' value='9/11/2021'><br>
+            <!TODO: Table for Equipment - Certification>
+        </div>
+
+        <div class="card">
+            <input type='submit' value='Submit'>
+        </div>
 
     </form>
 {% endblock %}
