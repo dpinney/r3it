@@ -6,16 +6,25 @@
     <form action='/add-to-queue' method='post'>
         
         <div class="card">
+            
+            <div class="leftForm">
             <H3>Application Name:</H3>
             <input type='text' id='applicationName' name='Application Name' value="{{default.label}}"><br>
+            </div>
+            
+            <div class="rightForm">
             <H3>Tarriff</H3>
             <input type="radio" id="Net Metering" name="Tariff" value="Net Metering" checked="checked">
             <label for="Net Metering">Net Metering</label><br>
             <input type="radio" id="Value of Solar" name="Tariff" value="Value of Solar">
             <label for="Value of Solar">Value of Solar</label><br>
+            </div>
+        
         </div>
 
         <div class="card">
+
+            <div class="leftForm">
             <H3>Customer</H3>
             <label for='customer'>Customer:</label><br>
             <input type='text' id='customer' name='Customer' value='{{default.name}}'><br>
@@ -36,11 +45,11 @@
             <input type='text' id='eveningTelephoneCustomer' name='Telephone (Evening, Customer)' value='{{default.phone}}'><br>
             <label for='emailCustomer'>Email Address:</label><br>
             <input type='text' id='emailCustomer' name='Email (Customer)' value='{{default.email}}'><br>
-        </div>
+            </div>
 
-        <!TODO: Figure out "same as above" button.>
-        <!TODO: Decide if drop-down for partnered solar installers is good idea, maybe implement?>
-        <div class="card">
+            <!TODO: Figure out "same as above" button.>
+            <!TODO: Decide if drop-down for partnered solar installers is good idea, maybe implement?>
+            <div class="rightForm">
             <H3>Contact</H3>
             <label for='contact'>Contact:</label><br>
             <input type='text' id='contact' name='Contact' value='Solar Install, Inc.'><br>
@@ -60,24 +69,14 @@
             <input type='text' id='eveningTelephoneContact' name='Evening Telephone (Contact)' value='(234) 567 - 8987'><br>
             <label for='emailContact'>Email Address:</label><br>
             <input type='text' id='emailContact' name='Email (Contact)' value='installer@solarinstallerinc.tld'><br>
+            </div>
         </div>
 
         <div class="card">
-            <H3>Interconnection Facility Information</H3>
-            <!TODO: Figure out how to add multiple owners.>
-            <H4>Owner</H4>
-            <label for='owner'>Owner:</label><br>
-            <input type='text' id='owner' name='owner' value='{{default.name}}'><br>
-            <H4>Location</H4>
-            <!TODO: Figure out "same as above" button.>
-            <label for='addressFacility'>Address:</label><br>
-            <input type='text' id='addressFacility' name='Address (Facility)' value='{{default.address}}'><br>
-            <label for='cityFacility'>City:</label><br>
-            <input type='text' id='cityFacility' name='City (Facility)' value='{{default.city}}'><br>
-            <label for='stateFacility'>State:</label><br>
-            <input type='text' id='stateFacility' name='State (Facility)' value="{{default.state}}"><br>
-            <label for='zipFacility'>Zip Code:</label><br>
-            <input type='text' id='zipFacility' name='Zip (Facility)' value="{{default.zip}}"><br>
+
+            <H3 style="width: 100%;">Interconnection Facility Information</H3>
+            
+            <div class="leftForm">
             <H4>Facility Information</H4>
             <label for='utility'>Utility:</label><br>
             <input type='text' id='utility' name='Utility' value='Dairyland Power'><br>
@@ -113,6 +112,25 @@
             <label for='inServiceDateEstimated'>Estimated In-Service Date:</label><br>
             <input type='text' id='inServiceDateEstimated' name='Estimated In-Service Date' value='9/11/2021'><br>
             <!TODO: Table for Equipment - Certification>
+            </div>
+
+            <!TODO: Figure out how to add multiple owners.>
+            <div class="rightForm">
+            <H4>Owner</H4>
+            <label for='owner'>Owner:</label><br>
+            <input type='text' id='owner' name='owner' value='{{default.name}}'><br>
+            <H4>Location</H4>
+            <!TODO: Figure out "same as above" button.>
+            <label for='addressFacility'>Address:</label><br>
+            <input type='text' id='addressFacility' name='Address (Facility)' value='{{default.address}}'><br>
+            <label for='cityFacility'>City:</label><br>
+            <input type='text' id='cityFacility' name='City (Facility)' value='{{default.city}}'><br>
+            <label for='stateFacility'>State:</label><br>
+            <input type='text' id='stateFacility' name='State (Facility)' value="{{default.state}}"><br>
+            <label for='zipFacility'>Zip Code:</label><br>
+            <input type='text' id='zipFacility' name='Zip (Facility)' value="{{default.zip}}"><br>
+            </div>
+        
         </div>
 
         <div class="card">

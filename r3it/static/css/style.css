@@ -132,6 +132,8 @@ table {
     background-color: #fff;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
     padding: 2em;
+    display: flex;
+    flex-wrap: wrap;
 }.card h1 {padding-bottom: 0px;}
 
 #login {
@@ -164,6 +166,16 @@ table {
     color: #fff;
     background-color: #000;
 }
+
+.leftForm {
+    float: left;
+    min-width: 50%;
+}
+.rightForm {
+    float: right;
+    min-width: 50%;
+}
+
 
 #footerSpacer {
     height: 2em;
