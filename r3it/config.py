@@ -3,14 +3,13 @@ import os
 
 # constants -------------------------------------------------------------------
 
-DATA_DIR = './data/'
+DATA_DIR = 'data'
 USERS_DIR = os.path.join(DATA_DIR,'Users')
-TEMPLATE_DIR = os.path.join(DATA_DIR,'templates')
+STATIC_DIR = 'static'
+GRIDLABD_DIR = 'gridlabd'
 INFO_FILENAME = 'application.json'
-OMD_FILENAME = 'Olin Barre Geo Modified DER.omd'
 INPUT_FILENAME = 'allInputData.json'
 OUTPUT_FILENAME = 'allOutputData.json'
-GRIDLABD_DIR = 'gridlabd/'
 APPLICATIONS_DIR = os.path.join(DATA_DIR,'applications')
 COOKIE_KEY = 'topsecretvalue'
 GEOCODE_KEY = '8f07c00f5f5c073567306f30f1f0ce07770886f'
@@ -18,10 +17,12 @@ GEOCODE_KEY = '8f07c00f5f5c073567306f30f1f0ce07770886f'
 # Utility parameters.
 
 utilityName = 'Example Electric'
-logo = '/static/exampleElectric.png'
-bg = '/static/background.jpg'
+logo = os.path.join('/',STATIC_DIR,'exampleElectric.png')
+bg = os.path.join('/',STATIC_DIR,'background.jpg')
+omdFilename = 'Olin Barre Geo Modified DER.omd'
 
 sizeThreshold = 10
+
 roles = {
     'engineer' : [
         'engineer@electric.coop',
@@ -36,10 +37,12 @@ roles = {
         'installer@secondsolar.com'
     ]
 }
+
 utilityRoles = [
     'engineer',
     'memberServices'
 ]
+
 # Names of the document types attached to applications.
 appAttachments = ["One Line Diagram", "Site Plan", "Placard", "Insurance disclosures", "Inverter Specification Sheet"]
 
@@ -120,7 +123,7 @@ actionItems = {
     )
 }
 
-# gridlabd inputs
+# gridlabd inputs see 
 gridlabdInputs = {
     'modelType': 'derInterconnection',
     'layoutAlgorithm': 'forceDirected',

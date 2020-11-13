@@ -17,14 +17,16 @@ app.secret_key = config.COOKIE_KEY
 def inject_config():
     return dict(
         logo          = config.logo,
-        bg          = config.bg,
+        bg            = config.bg,
         sizeThreshold = config.sizeThreshold,
         utilityName   = config.utilityName,
         appAttachments= config.appAttachments
     )
 
-# instantiate queue processing lock, ensure only one que processing run happens at a time
+# instantiate queue processing lock, and withdrawal lock
+# ensures only one que processing run happens at a time
 processQueueLock = Lock()
+withdrawLock = Lock()
 
 # Instantiate CAPTCHA
 app.config['CAPTCHA_ENABLE'] = True
@@ -209,7 +211,8 @@ def application():
         'size' : '{}'.format(random.choice(sizes)),
         'voltage' : '{}'.format(random.choice(voltages)),
         'email' : currentUser(),
-        'meterID' : '{}'.format(random.choice(interconnection.getMeterNameList(os.path.join(TEMPLATE_DIR,OMD_FILENAME))))
+        'meterID' : '{}'.format(random.choice(interconnection.getMeterNameList( \
+            os.path.join(config.STATIC_DIR,config.GRIDLABD_DIR,config.omdFilename))))
     }
     return render_template('application.html', default = default)
 
@@ -221,7 +224,10 @@ def update_status(id, status):
     data['Status'] = status
     with appFile(id, 'w') as file:
         json.dump(data, file)
-    return redirect(request.referrer)
+    if status == 'Withdrawn':
+        p = Process(target=interconnection.withdraw, args=(withdrawLock, processQueueLock, id))
+        p.start()
+    return redirect('/')
 
 def allowed_file(filename):
     return '.' in filename and \
