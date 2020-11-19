@@ -4,47 +4,9 @@ import random, json, os, glob
 from shutil import copy2, rmtree
 from omf.models import derInterconnection
 from omf import feeder
-from appQueue import allAppDirs
+from appQueue import allAppDirs, appDir
 from geocodio import GeocodioClient
 from math import sqrt
-
-'''
-DIRECTORY STRUCTURE
-/data/queue/
-	after_request_1/
-        <all derInterconnection files>
-        <all associated request inputs>
-	after_request_2/
-        ...
-	...
-	after_request_n/
-
-FUNCTIONS
-def push_model(new_request_data_dict):
-	current_omd = f'/data/queue/after_request_{id - 1}'
-	derInterconnection.new('/data/queue/after_request_{id},
-        {'omd_path':'/static/base_circuit.omd'})
-    if queue_blocked_by_fail:
-        pass # do something
-    else:
-        pass # do something else
-
-def get_frontend_data():
-    for req in os.listdir('/data/queue'):
-        pass #pull required data
-
-def upgrade_to_mitigate_fail(id, upgrade_info_dict):
-    pass # do stuff for base model
-    for req in os.listdir('/data/queue'):
-        pass # run with new mitigated data.
-
-def _test(number_to_push, random_inputs_or_not):
-    # Three major cases:
-    # pass, pass
-    # fail, pend
-    # pass, fail
-    pass
-'''
 
 # globals ---------------------------------------------------------------------
 
@@ -69,15 +31,16 @@ def processQueue(lock):
     allPreviousPassed = True
     for requestPosition in range(len(requestFolders)):
         # get current request
-        requestDir = requestFolders[requestPosition] + '/'
-        requestInfoFileName = requestDir+config.INFO_FILENAME
+        requestDir = requestFolders[requestPosition]
+        requestInfoFileName = os.path.join(requestDir,config.INFO_FILENAME)
         with open(requestInfoFileName) as infoFile:
             request = json.load(infoFile)
 
         # if we see a previously failing request,
         # or an unprocessed request that isnt after a failure
         # run the screens and update statuses
-        if (request.get('previousRequestWithdrawn',False) == True) or \
+        if ( (request.get('markedForRerunDueToWithdrawal') == True) and \
+            (request.get('Status') != 'Withdrawn') ) or \
             (request.get('Status') == 'Engineering Review') or \
             ( (request.get('Status') == 'Application Submitted') and \
                 allPreviousPassed ):
@@ -87,9 +50,7 @@ def processQueue(lock):
             runAllScreensAndUpdateStatus(requestPosition, requestFolders)
             if not request['Screen Results']['passedAll']:
                 allPreviousPassed = False
-
-            # update withrawn status
-            request['previousRequestWithdrawn'] = False
+            request['markedForRerunDueToWithdrawal'] = False
 
             # save request info to file
             with open(requestInfoFileName, 'w') as infoFile:
@@ -111,7 +72,6 @@ def processQueue(lock):
     if rerun:
         processQueue(lock)
 
-#TODO link to front-end
 def withdraw(withdrawLock, processQueueLock, requestPosition):
 
     withdrawLock.acquire()
@@ -123,8 +83,8 @@ def withdraw(withdrawLock, processQueueLock, requestPosition):
         if currentRequestPosition >= requestPosition:
 
             # get current request
-            requestDir = requestFolders[currentRequestPosition] + '/'
-            requestInfoFileName = requestDir+config.INFO_FILENAME
+            requestDir = requestFolders[currentRequestPosition]
+            requestInfoFileName = os.path.join(requestDir,config.INFO_FILENAME)
             with open(requestInfoFileName) as infoFile:
                 request = json.load(infoFile)
 
@@ -132,12 +92,54 @@ def withdraw(withdrawLock, processQueueLock, requestPosition):
             if currentRequestPosition == requestPosition:
                 request['Status'] = 'Withdrawn'
             else:
-                request['previousRequestWithdrawn'] = True
+                request['markedForRerunDueToWithdrawal'] = True
 
             # save request info to file
             with open(requestInfoFileName, 'w') as infoFile:
                 json.dump(request, infoFile)
 
+
+    # process queue
+    processQueue(processQueueLock)
+
+    withdrawLock.release()
+
+#TODO link to front-end
+def withdraw(withdrawLock, processQueueLock, requestID):
+
+    withdrawLock.acquire()
+
+    # get the withdrawn request directory 
+    withdrawnRequestPos = None
+    withdrawnRequestDir = appDir(requestID)
+
+    # get a list of all requests
+    requestFolders = allAppDirs()
+    for currentRequestPosition in range(len(requestFolders)):
+
+        # check to see if current request is the withdrawn request
+        requestDir = requestFolders[currentRequestPosition]
+        if withdrawnRequestDir == requestDir:
+            withdrawnRequestPos = currentRequestPosition
+
+        # mark every request after the withdrawn request to be rerun
+        if (withdrawnRequestPos is not None) and \
+            (currentRequestPosition >= withdrawnRequestPos):
+
+            # get current request info
+            requestInfoFileName = os.path.join(requestDir,config.INFO_FILENAME)
+            with open(requestInfoFileName) as infoFile:
+                request = json.load(infoFile)
+
+            # update withrawn status
+            if currentRequestPosition == withdrawnRequestPos:
+                request['Status'] = 'Withdrawn'
+            else:
+                request['markedForRerunDueToWithdrawal'] = True
+
+            # save request info to file
+            with open(requestInfoFileName, 'w') as infoFile:
+                json.dump(request, infoFile)
 
     # process queue
     processQueue(processQueueLock)
@@ -156,7 +158,8 @@ def runAllScreensAndUpdateStatus(requestPosition, requestFolders):
 
     # run the omf derInterconnection model
     derInterconnection.runForeground(gridlabdWorkingDir)
-    with open(gridlabdWorkingDir+config.OUTPUT_FILENAME) as modelOutputFile:
+    outputFilename = os.path.join(gridlabdWorkingDir,config.OUTPUT_FILENAME)
+    with open(outputFilename) as modelOutputFile:
         modelOutputs = json.load(modelOutputFile)
 
     # define screen names based on entries in omf model output
@@ -190,7 +193,7 @@ def runAllScreensAndUpdateStatus(requestPosition, requestFolders):
     screenResults['passedAll'] = passedAll
 
     # update current request results and status
-    requestInfoFileName = requestDir+config.INFO_FILENAME
+    requestInfoFileName = os.path.join(requestDir,config.INFO_FILENAME)
     with open(requestInfoFileName) as infoFile:
         request = json.load(infoFile)
     request['Screen Results'] = screenResults
@@ -228,32 +231,23 @@ def initializePowerflowModel(requestPosition, requestFolders):
         pass
     os.mkdir(gridlabdWorkingDir)
 
-    # if first request
-    if requestPosition == 0:
+    # get model from previously passing request and 
+    # copy it into current request
+    previousRequestPosition, previousRequestDir = \
+        getPreviouslyPassingRequestDir(requestPosition,requestFolders)
+    copy2(os.path.join(previousRequestDir, \
+        config.GRIDLABD_DIR,config.omdFilename), \
+        os.path.join(gridlabdWorkingDir,config.omdFilename))
 
-        # copy original templates
-        previousRequestPosition = -1
-        inputFileName = os.path.join(gridlabdWorkingDir,config.INPUT_FILENAME)
-        with open(inputFileName,'w') as inputFile:
-            json.dump(config.gridlabdInputs, inputFile)
-        copy2(os.path.join(config.TEMPLATE_DIR,config.OMD_FILENAME), \
-            os.path.join(gridlabdWorkingDir,config.OMD_FILENAME))
-
-    else: # otherwise get model from previously passing request and update it
-
-        # copy templates
-        previousRequestPosition, previousRequestDir = \
-            getPreviouslyPassingRequestDir(requestPosition,requestFolders)
-        copy2(os.path.join(previousRequestDir, \
-            config.GRIDLABD_DIR,config.OMD_FILENAME), \
-            os.path.join(gridlabdWorkingDir,config.OMD_FILENAME))
-        copy2(os.path.join(previousRequestDir,config.GRIDLABD_DIR, \
-            config.INPUT_FILENAME), \
-            os.path.join(gridlabdWorkingDir,config.INPUT_FILENAME))
+    # create gridlabd inputs file
+    gridlabdInputFile = \
+        os.path.join(gridlabdWorkingDir,config.INPUT_FILENAME)
+    with open(gridlabdInputFile, 'w') as inputFile:
+        json.dump(config.gridlabdInputs, inputFile)
 
     # load omd and rekey to make name lookups easier
     omdFileName = os.path.join(requestDir, \
-        config.GRIDLABD_DIR,config.OMD_FILENAME)
+        config.GRIDLABD_DIR,config.omdFilename)
     with open(omdFileName) as omdFile:
         omd = json.load(omdFile)
     tree = omd.get('tree', {})
@@ -380,8 +374,8 @@ def getPreviouslyPassingRequestDir(requestPosition, requestFolders):
     while previousRequestPosition >= 0:
 
         # get previous request status
-        previousRequestDir = requestFolders[previousRequestPosition] + '/'
-        infoFileName = previousRequestDir+config.INFO_FILENAME
+        previousRequestDir = requestFolders[previousRequestPosition]
+        infoFileName = os.path.join(previousRequestDir,config.INFO_FILENAME)
         with open(infoFileName) as infoFile:
             previousRequest = json.load(infoFile)
             previousStatus = previousRequest['Status']
@@ -392,17 +386,15 @@ def getPreviouslyPassingRequestDir(requestPosition, requestFolders):
         else: # keep looping till there are no more requests
             previousRequestPosition -= 1
 
-    # if we didnt find a previously passing request, something went wrong
+    # if we didnt find a previously passing request, 
+    # use the original templates
     if previousRequestPosition == -1:
-        raise Exception('this error should not be possible. \
-            We are processing a request that has not had any \
-            any passing requests before it and also isnt the \
-            1st request. processQueue() should prevent this \
-            from happening ')
-
+        print('no previously passing requests; using original omd.')
+        previousRequestDir = config.STATIC_DIR
+        
     return previousRequestPosition, previousRequestDir
 
-def rekeyGridlabDModelByName( tree ):
+def rekeyGridlabDModelByName(tree):
 
     # makes it easier to search for items
     nameKeyedTree = {}
@@ -413,7 +405,7 @@ def rekeyGridlabDModelByName( tree ):
 
     return nameKeyedTree
 
-def renameTreeItem( tree, nameKeyedTree, name, newName):
+def renameTreeItem(tree, nameKeyedTree, name, newName):
 
     nameKeyedTree[name]['item']['name'] = newName
     nameKeyedTree[newName] = nameKeyedTree[name]
@@ -423,7 +415,7 @@ def renameTreeItem( tree, nameKeyedTree, name, newName):
 
     return (tree, nameKeyedTree)
 
-def getMeterNameList( omdPath ):
+def getMeterNameList(omdPath):
 
     # load omd
     with open(omdPath) as omdFile:
@@ -488,7 +480,6 @@ def getLatLongFromAddress(address):
 
     return latitude,longitude
 
-
 # run tests when file is run --------------------------------------------------
 
 def _tests():
@@ -512,7 +503,7 @@ def _tests():
 
     # 4 -----------------------------------------------------------------------
     
-    # getMeterNameList(config.TEMPLATE_DIR+config.OMD_FILENAME)
+    # getMeterNameList(os.path.join(config.STATIC_DIR,config.GRIDLABD_DIR,config.omdFilename))
 
     # 5 -----------------------------------------------------------------------
     
@@ -526,7 +517,7 @@ def _tests():
     client = GeocodioClient( config.GEOCODE_KEY )
     
     # get model tree
-    omdFileName = os.path.join(config.TEMPLATE_DIR,config.OMD_FILENAME)
+    omdFileName = os.path.join(config.STATIC_DIR,config.GRIDLABD_DIR,config.omdFilename)
     with open(omdFileName) as omdFile:
         omd = json.load(omdFile)
     tree = omd.get('tree', {})
