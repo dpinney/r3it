@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block anonymous %}
+<style type="text/css">#bg{background-image:url({{bg}})</style>
+<style type="text/css">#bg{height: 100%;}</style>
+<div id="login" >
+    <h1>Enter the email address associated with your account, and then click the link in the email to reset your password.</h1>
+    <form action='/forgot' method='post'>
+        <input type='text' placeholder="    Email" id='email' name='email' required>
+        <button type="submit" formaction="/forgot" method="post">"Get Link"</button>
+    </form>
+</div>
+{% endblock %}
