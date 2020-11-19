@@ -1,0 +1,12 @@
+[Unit]
+Description=R3IT
+After=syslog.target network.target
+
+[Service]
+WorkingDirectory=/r3it/r3it/
+ExecStart=python3 web.py
+ExecStop=
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
