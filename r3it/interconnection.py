@@ -162,33 +162,46 @@ def runAllScreensAndUpdateStatus(requestPosition, requestFolders):
     with open(outputFilename) as modelOutputFile:
         modelOutputs = json.load(modelOutputFile)
 
-    # define screen names based on entries in omf model output
+    # keep track of screen results to present on the front-end
     screenResults = {
         # are voltages within +- 5% inclusive of nominal if nominal <600
         # and within -2.5% to +5% inclusive otherwise
-       'voltageViolations': False,
+       'Voltage Violations Screen': 'running...',
         # 100*(1-(derOffVoltage/derOnVoltage)) >= user provided threshold
-       'flickerViolations': False,
+       'Flicker Violations Screen': 'running...',
         # is the max current on line/ line rating >= user provided threshold
-       'thermalViolations': False,
+       'Thermal Violations Screen': 'running...',
         # is the power measurement on a regulator < 0
-       'reversePowerFlow': False,
+       'Reverse Power Flow Screen': 'running...',
         # is abs(tapPositionDerOn-tapPositionDerOff) >= user provided threshold
-       'tapViolations': False,
+       'Tap Change Violations Screen': 'running...',
         # is 100*(abs(preFaultCurrent-postFaultCurrent)/preFaultCurrent) >=
         # user provided threshold
-       'faultCurrentViolations': False,
+       'Fault Current Violations Screen': 'running...',
         # is 100*(postFaultValAtLinetoAddedBreaker/preFaultval) >=
         # user provided threshold
-       'faultPOIVolts': False
+       'POI Fault Voltage Screen': 'running...'
     }
 
+    # link screen names to entries in omf model output
+    screenNamesToGridlabVars = {
+        'Voltage Violations Screen': 'voltageViolations',
+        'Flicker Violations Screen': 'flickerViolations',
+        'Thermal Violations Screen': 'thermalViolations',
+        'Reverse Power Flow Screen': 'reversePowerFlow',
+        'Tap Change Violations Screen': 'tapViolations',
+        'Fault Current Violations Screen': 'faultCurrentViolations',
+        'POI Fault Voltage Screen': 'faultPOIVolts'
+    }
     # check screens for failures
     passedAll = True
     for screen in screenResults.keys():
-        screenPassed = runSingleScreen(modelOutputs[screen])
-        screenResults[screen] = screenPassed
-        if screenPassed == False:
+        gridlabVarForScreen = screenNamesToGridlabVars[screen]
+        screenPassed = runSingleScreen(modelOutputs[gridlabVarForScreen])
+        if screenPassed == True:
+            screenResults[screen] = 'Passed'
+        else:
+            screenResults[screen] = 'Failed'
             passedAll = False
     screenResults['passedAll'] = passedAll
 
