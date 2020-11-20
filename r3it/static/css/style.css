@@ -161,6 +161,8 @@ table {
     border-color: #eee;
     border-style: solid;
     border-radius: 4px;
+    padding-left: 1em;
+    box-sizing: border-box;
 } #login button {
     background-color: #eee;
 } #login button:hover {
