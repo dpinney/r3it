@@ -134,7 +134,8 @@ table {
     padding: 2em;
     display: flex;
     flex-wrap: wrap;
-}.card h1 {padding-bottom: 0px;}
+} .card h1 {padding-bottom: 0px;
+} .card p {width: 100%;}
 
 #login {
     background-color: #fff;
