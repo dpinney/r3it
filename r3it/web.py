@@ -261,15 +261,11 @@ def update_status(id, status):
     data['Status'] = status
     with appFile(id, 'w') as file:
         json.dump(data, file)
-<<<<<<< HEAD
     mailer.sendEmail(data.get('Email (Contact)', ''), 'The status of your interconnection request has changed.')
-    return redirect(request.referrer)
-=======
     if status == 'Withdrawn':
         p = Process(target=interconnection.withdraw, args=(withdrawLock, processQueueLock, id))
         p.start()
-    return redirect('/')
->>>>>>> 48f003e8033832f8786aadb44ff9ff6148fa2cad
+    return redirect(request.referrer)
 
 def allowed_file(filename):
     return '.' in filename and \
