@@ -4,7 +4,7 @@ import random, json, os, glob
 from shutil import copy2, rmtree
 from omf.models import derInterconnection
 from omf import feeder
-from appQueue import allAppDirs, appDir
+from appQueue import allAppDirs, appDir, allAppIDs, appDict
 from geocodio import GeocodioClient
 from math import sqrt
 
@@ -72,39 +72,6 @@ def processQueue(lock):
     if rerun:
         processQueue(lock)
 
-def withdraw(withdrawLock, processQueueLock, requestPosition):
-
-    withdrawLock.acquire()
-
-    # get a list of all requests
-    requestFolders = allAppDirs()
-    for currentRequestPosition in range(len(requestFolders)):
-
-        if currentRequestPosition >= requestPosition:
-
-            # get current request
-            requestDir = requestFolders[currentRequestPosition]
-            requestInfoFileName = os.path.join(requestDir,config.INFO_FILENAME)
-            with open(requestInfoFileName) as infoFile:
-                request = json.load(infoFile)
-
-            # update withrawn status
-            if currentRequestPosition == requestPosition:
-                request['Status'] = 'Withdrawn'
-            else:
-                request['markedForRerunDueToWithdrawal'] = True
-
-            # save request info to file
-            with open(requestInfoFileName, 'w') as infoFile:
-                json.dump(request, infoFile)
-
-
-    # process queue
-    processQueue(processQueueLock)
-
-    withdrawLock.release()
-
-#TODO link to front-end
 def withdraw(withdrawLock, processQueueLock, requestID):
 
     withdrawLock.acquire()
@@ -493,6 +460,19 @@ def getLatLongFromAddress(address):
 
     return latitude,longitude
 
+def calcCapacityUsed():
+
+    approvedGeneration = 0
+
+    apps = allAppIDs()
+    for app in apps:
+        application = appDict(app)
+        if application.get('Status') == 'Interconnection Agreement Proffered':
+            approvedGeneration += float( application.get( \
+                'Nameplate Rating (kW)',0) )
+
+    return approvedGeneration
+
 # run tests when file is run --------------------------------------------------
 
 def _tests():
@@ -526,35 +506,35 @@ def _tests():
     
     # 6 -----------------------------------------------------------------------
     
-    # init geocoding client
-    client = GeocodioClient( config.GEOCODE_KEY )
+    # # init geocoding client
+    # client = GeocodioClient( config.GEOCODE_KEY )
     
-    # get model tree
-    omdFileName = os.path.join(config.STATIC_DIR,config.GRIDLABD_DIR,config.omdFilename)
-    with open(omdFileName) as omdFile:
-        omd = json.load(omdFile)
-    tree = omd.get('tree', {})
+    # # get model tree
+    # omdFileName = os.path.join(config.STATIC_DIR,config.GRIDLABD_DIR,config.omdFilename)
+    # with open(omdFileName) as omdFile:
+    #     omd = json.load(omdFile)
+    # tree = omd.get('tree', {})
     
-    # get lat long mappings
-    geoFilename = os.path.join('..','test', \
-        'Olin Barre Real Coordinates Lat Lons.geojson')
-    with open(geoFilename) as geoFile:
-        coordinates = json.load(geoFile)
-        coordinates = coordinates['features']
+    # # get lat long mappings
+    # geoFilename = os.path.join('..','test', \
+    #     'Olin Barre Real Coordinates Lat Lons.geojson')
+    # with open(geoFilename) as geoFile:
+    #     coordinates = json.load(geoFile)
+    #     coordinates = coordinates['features']
 
-    # replace all of the gridlab coordinates with the correct ones
-    for key in tree.keys():
-        objName = tree[key].get('name',None)    
-        if objName is not None:
-            for item in coordinates: 
-                itemName = item['properties']['name']
-                if ( (objName+'_A') == itemName ) or \
-                ( (objName+'_B') == itemName ) or \
-                ( (objName+'_C') == itemName ) :
-                    longitude = item['geometry']['coordinates'][0]
-                    latitude = item['geometry']['coordinates'][1]
-                    tree[key]['latitude'] = latitude
-                    tree[key]['longitude'] = longitude
+    # # replace all of the gridlab coordinates with the correct ones
+    # for key in tree.keys():
+    #     objName = tree[key].get('name',None)    
+    #     if objName is not None:
+    #         for item in coordinates: 
+    #             itemName = item['properties']['name']
+    #             if ( (objName+'_A') == itemName ) or \
+    #             ( (objName+'_B') == itemName ) or \
+    #             ( (objName+'_C') == itemName ) :
+    #                 longitude = item['geometry']['coordinates'][0]
+    #                 latitude = item['geometry']['coordinates'][1]
+    #                 tree[key]['latitude'] = latitude
+    #                 tree[key]['longitude'] = longitude
         
     # # run through num attempts tests
     # minAcc = None

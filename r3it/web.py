@@ -1,3 +1,4 @@
+from datetime import datetime,timezone
 import config, interconnection
 from user import *
 from appQueue import *
@@ -119,9 +120,11 @@ def index():
         app.get('Status')] for key, app in enumerate(appQueue()) \
                                     if requiresUsersAction(currentUser(), app)
     ]
+    netMeteringUsed = 100*interconnection.calcCapacityUsed()/config.netMeteringCapacity
     return render_template('index.html', data=data, \
                                          priorities=priorities, \
-                                         notification=notification)
+                                         notification=notification, \
+                                         netMeteringUsed=netMeteringUsed)
 
 @app.route('/report/<id>', methods=['GET', 'POST'])
 @flask_login.login_required
@@ -232,6 +235,15 @@ def update_status(id, status):
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ['txt', 'pdf', 'doc', 'docx']
+
+def log(message):
+    
+    nowUTC = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S %Z')
+    toWrite = nowUTC + ', ' + '"' + message + '"' 
+
+    logFilePath = os.path.join(config.DATA_DIR,config.LOG_FILENAME)
+    with open(logFilePath,'a') as logFile:
+        logFile.write(toWrite)
 
 if __name__ == '__main__':
     app.run(debug=True, host= '0.0.0.0')
