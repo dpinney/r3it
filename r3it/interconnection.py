@@ -4,7 +4,7 @@ import random, json, os, glob
 from shutil import copy2, rmtree
 from omf.models import derInterconnection
 from omf import feeder
-from appQueue import allAppDirs, appDir
+from appQueue import allAppDirs, appDir, allAppIDs, appDict
 from geocodio import GeocodioClient
 from math import sqrt
 
@@ -72,39 +72,6 @@ def processQueue(lock):
     if rerun:
         processQueue(lock)
 
-def withdraw(withdrawLock, processQueueLock, requestPosition):
-
-    withdrawLock.acquire()
-
-    # get a list of all requests
-    requestFolders = allAppDirs()
-    for currentRequestPosition in range(len(requestFolders)):
-
-        if currentRequestPosition >= requestPosition:
-
-            # get current request
-            requestDir = requestFolders[currentRequestPosition]
-            requestInfoFileName = os.path.join(requestDir,config.INFO_FILENAME)
-            with open(requestInfoFileName) as infoFile:
-                request = json.load(infoFile)
-
-            # update withrawn status
-            if currentRequestPosition == requestPosition:
-                request['Status'] = 'Withdrawn'
-            else:
-                request['markedForRerunDueToWithdrawal'] = True
-
-            # save request info to file
-            with open(requestInfoFileName, 'w') as infoFile:
-                json.dump(request, infoFile)
-
-
-    # process queue
-    processQueue(processQueueLock)
-
-    withdrawLock.release()
-
-#TODO link to front-end
 def withdraw(withdrawLock, processQueueLock, requestID):
 
     withdrawLock.acquire()
@@ -162,33 +129,46 @@ def runAllScreensAndUpdateStatus(requestPosition, requestFolders):
     with open(outputFilename) as modelOutputFile:
         modelOutputs = json.load(modelOutputFile)
 
-    # define screen names based on entries in omf model output
+    # keep track of screen results to present on the front-end
     screenResults = {
         # are voltages within +- 5% inclusive of nominal if nominal <600
         # and within -2.5% to +5% inclusive otherwise
-       'voltageViolations': False,
+       'Voltage Violations Screen': 'running...',
         # 100*(1-(derOffVoltage/derOnVoltage)) >= user provided threshold
-       'flickerViolations': False,
+       'Flicker Violations Screen': 'running...',
         # is the max current on line/ line rating >= user provided threshold
-       'thermalViolations': False,
+       'Thermal Violations Screen': 'running...',
         # is the power measurement on a regulator < 0
-       'reversePowerFlow': False,
+       'Reverse Power Flow Screen': 'running...',
         # is abs(tapPositionDerOn-tapPositionDerOff) >= user provided threshold
-       'tapViolations': False,
+       'Tap Change Violations Screen': 'running...',
         # is 100*(abs(preFaultCurrent-postFaultCurrent)/preFaultCurrent) >=
         # user provided threshold
-       'faultCurrentViolations': False,
+       'Fault Current Violations Screen': 'running...',
         # is 100*(postFaultValAtLinetoAddedBreaker/preFaultval) >=
         # user provided threshold
-       'faultPOIVolts': False
+       'POI Fault Voltage Screen': 'running...'
     }
 
+    # link screen names to entries in omf model output
+    screenNamesToGridlabVars = {
+        'Voltage Violations Screen': 'voltageViolations',
+        'Flicker Violations Screen': 'flickerViolations',
+        'Thermal Violations Screen': 'thermalViolations',
+        'Reverse Power Flow Screen': 'reversePowerFlow',
+        'Tap Change Violations Screen': 'tapViolations',
+        'Fault Current Violations Screen': 'faultCurrentViolations',
+        'POI Fault Voltage Screen': 'faultPOIVolts'
+    }
     # check screens for failures
     passedAll = True
     for screen in screenResults.keys():
-        screenPassed = runSingleScreen(modelOutputs[screen])
-        screenResults[screen] = screenPassed
-        if screenPassed == False:
+        gridlabVarForScreen = screenNamesToGridlabVars[screen]
+        screenPassed = runSingleScreen(modelOutputs[gridlabVarForScreen])
+        if screenPassed == True:
+            screenResults[screen] = 'Passed'
+        else:
+            screenResults[screen] = 'Failed'
             passedAll = False
     screenResults['passedAll'] = passedAll
 
@@ -480,6 +460,19 @@ def getLatLongFromAddress(address):
 
     return latitude,longitude
 
+def calcCapacityUsed():
+
+    approvedGeneration = 0
+
+    apps = allAppIDs()
+    for app in apps:
+        application = appDict(app)
+        if application.get('Status') == 'Interconnection Agreement Proffered':
+            approvedGeneration += float( application.get( \
+                'Nameplate Rating (kW)',0) )
+
+    return approvedGeneration
+
 # run tests when file is run --------------------------------------------------
 
 def _tests():
@@ -513,35 +506,35 @@ def _tests():
     
     # 6 -----------------------------------------------------------------------
     
-    # init geocoding client
-    client = GeocodioClient( config.GEOCODE_KEY )
+    # # init geocoding client
+    # client = GeocodioClient( config.GEOCODE_KEY )
     
-    # get model tree
-    omdFileName = os.path.join(config.STATIC_DIR,config.GRIDLABD_DIR,config.omdFilename)
-    with open(omdFileName) as omdFile:
-        omd = json.load(omdFile)
-    tree = omd.get('tree', {})
+    # # get model tree
+    # omdFileName = os.path.join(config.STATIC_DIR,config.GRIDLABD_DIR,config.omdFilename)
+    # with open(omdFileName) as omdFile:
+    #     omd = json.load(omdFile)
+    # tree = omd.get('tree', {})
     
-    # get lat long mappings
-    geoFilename = os.path.join('..','test', \
-        'Olin Barre Real Coordinates Lat Lons.geojson')
-    with open(geoFilename) as geoFile:
-        coordinates = json.load(geoFile)
-        coordinates = coordinates['features']
+    # # get lat long mappings
+    # geoFilename = os.path.join('..','test', \
+    #     'Olin Barre Real Coordinates Lat Lons.geojson')
+    # with open(geoFilename) as geoFile:
+    #     coordinates = json.load(geoFile)
+    #     coordinates = coordinates['features']
 
-    # replace all of the gridlab coordinates with the correct ones
-    for key in tree.keys():
-        objName = tree[key].get('name',None)    
-        if objName is not None:
-            for item in coordinates: 
-                itemName = item['properties']['name']
-                if ( (objName+'_A') == itemName ) or \
-                ( (objName+'_B') == itemName ) or \
-                ( (objName+'_C') == itemName ) :
-                    longitude = item['geometry']['coordinates'][0]
-                    latitude = item['geometry']['coordinates'][1]
-                    tree[key]['latitude'] = latitude
-                    tree[key]['longitude'] = longitude
+    # # replace all of the gridlab coordinates with the correct ones
+    # for key in tree.keys():
+    #     objName = tree[key].get('name',None)    
+    #     if objName is not None:
+    #         for item in coordinates: 
+    #             itemName = item['properties']['name']
+    #             if ( (objName+'_A') == itemName ) or \
+    #             ( (objName+'_B') == itemName ) or \
+    #             ( (objName+'_C') == itemName ) :
+    #                 longitude = item['geometry']['coordinates'][0]
+    #                 latitude = item['geometry']['coordinates'][1]
+    #                 tree[key]['latitude'] = latitude
+    #                 tree[key]['longitude'] = longitude
         
     # # run through num attempts tests
     # minAcc = None

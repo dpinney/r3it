@@ -118,7 +118,7 @@
             <div class="rightForm">
             <H4>Owner</H4>
             <label for='owner'>Owner:</label><br>
-            <input type='text' id='owner' name='owner' value='{{default.name}}'><br>
+            <input type='text' id='owner' name='Owner' value='{{default.name}}'><br>
             <H4>Location</H4>
             <!TODO: Figure out "same as above" button.>
             <label for='addressFacility'>Address:</label><br>
@@ -134,6 +134,10 @@
         </div>
 
         <div class="card">
+            <p> By clicking the checkbox and typing their name below, the customer agrees to provide the Cooperative with any additional information required to complete the interconnection. The customer shall operate his equipment within the guidelines set forth by the cooperative. </p>
+            <p><input required type="checkbox" id="agreement" name="agreement">
+            <label for="agreement"> I accept the terms above</label> </p>
+            <p><input required type="text" placeholder="Please type your name here" id="signature" name="signature"></p>
             <input type='submit' value='Submit'>
         </div>
 

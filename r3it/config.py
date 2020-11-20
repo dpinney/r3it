@@ -10,6 +10,7 @@ GRIDLABD_DIR = 'gridlabd'
 INFO_FILENAME = 'application.json'
 INPUT_FILENAME = 'allInputData.json'
 OUTPUT_FILENAME = 'allOutputData.json'
+LOG_FILENAME = 'log.txt'
 APPLICATIONS_DIR = os.path.join(DATA_DIR,'applications')
 COOKIE_KEY = 'topsecretvalue'
 GEOCODE_KEY = '8f07c00f5f5c073567306f30f1f0ce07770886f'
@@ -22,6 +23,7 @@ bg = os.path.join('/',STATIC_DIR,'background.jpg')
 omdFilename = 'Olin Barre Geo Modified DER.omd'
 
 sizeThreshold = 10
+netMeteringCapacity = 10000 # in kW
 
 roles = {
     'engineer' : [
