@@ -1,27 +1,6 @@
 {% extends "base.html" %}
 
 {% block head %}
-    <style>
-        table {
-            width: 100%;
-            border-spacing: 2px;
-            table-layout: fixed;
-        }
-        td,
-        th {
-            border: 1px;
-            border-style: solid;
-            border-color: black;
-            text-align: center;
-            vertical-align: center;
-            overflow-wrap: break-word
-        }
-        .tableContainer {
-            max-height: 80%;
-            overflow-y: auto;
-        }
-    </style>
-
     <!-- Library Imports -->
     <script>sampleData = {{ eng_data | tojson }}</script>
 {% endblock %}
@@ -30,7 +9,7 @@
     
     <H1>Interconnection report for request {{data['ID']}}</H1>
     
-    <table style='width:100%' border='1'>
+    <table>
         {% for key in data %}
         {% if ( 
             (key != 'Screen Results') and 
@@ -48,7 +27,7 @@
     {% for doc in appAttachments %}
       <hr>
       <H3>{{doc}}</H3>
-      <table style='width:100%' border='1'>
+      <table>
           {% for file in files.get(doc, None) %}
           <tr>
               <th>{{file}}</th>
@@ -106,139 +85,135 @@
     <hr>
     <H2>Interconnection Details</H2>
     <!-- Tables -->
-    <p class="reportTitle" style="page-break-before:always">Maximum and Minimum Voltages</p>
-    <div div class="sorttable">
-        <table id="minMaxVolts">
-            <tr>
-                <th rowspan="2">DER Status</th>
-                <th rowspan="2">Load Condition</th>
-                <th colspan="2">Max Voltage</th>
-                <th colspan="2">Min Voltage</th>
-            </tr>
-            <tr>
-                <th>V</th>
-                <th>Location</th>
-                <th>V</th>
-                <th>Location</th>
-            </tr>
-            <tr>
-                <td>On</td>
-                <td>Peak</td>
-                <td id="derOnMaxVoltValPeak"></td>
-                <script type="text/javascript">
-                    document.getElementById("derOnMaxVoltValPeak").innerHTML = sampleData['maxVoltsPeakDerOn'][1]
-                </script>
-                <td id="derOnMaxVoltLocPeak"></td>
-                <script type="text/javascript">
-                    document.getElementById("derOnMaxVoltLocPeak").innerHTML = sampleData['maxVoltsPeakDerOn'][0]
-                </script>
-                <td id="derOnMinVoltValPeak"></td>
-                <script type="text/javascript">
-                    document.getElementById("derOnMinVoltValPeak").innerHTML = sampleData['minVoltsPeakDerOn'][1]
-                </script>
-                <td id="derOnMinVoltLocPeak"></td>
-                <script type="text/javascript">
-                    document.getElementById("derOnMinVoltLocPeak").innerHTML = sampleData['minVoltsPeakDerOn'][0]
-                </script>
-            </tr>
-            <tr>
-                <td>On</td>
-                <td>Min</td>
-                <td id="derOnMaxVoltValMin"></td>
-                <script type="text/javascript">
-                    document.getElementById("derOnMaxVoltValMin").innerHTML = sampleData['maxVoltsMinDerOn'][1]
-                </script>
-                <td id="derOnMaxVoltLocMin"></td>
-                <script type="text/javascript">
-                    document.getElementById("derOnMaxVoltLocMin").innerHTML = sampleData['maxVoltsMinDerOn'][0]
-                </script>
-                <td id="derOnMinVoltValMin"></td>
-                <script type="text/javascript">
-                    document.getElementById("derOnMinVoltValMin").innerHTML = sampleData['minVoltsMinDerOn'][1]
-                </script>
-                <td id="derOnMinVoltLocMin"></td>
-                <script type="text/javascript">
-                    document.getElementById("derOnMinVoltLocMin").innerHTML = sampleData['minVoltsMinDerOn'][0]
-                </script>
-            </tr>
-            <tr>
-                <td>Off</td>
-                <td>Peak</td>
-                <td id="derOffMaxVoltValPeak"></td>
-                <script type="text/javascript">
-                    document.getElementById("derOffMaxVoltValPeak").innerHTML = sampleData['maxVoltsPeakDerOff'][1]
-                </script>
-                <td id="derOffMaxVoltLocPeak"></td>
-                <script type="text/javascript">
-                    document.getElementById("derOffMaxVoltLocPeak").innerHTML = sampleData['maxVoltsPeakDerOff'][0]
-                </script>
-                <td id="derOffMinVoltValPeak"></td>
-                <script type="text/javascript">
-                    document.getElementById("derOffMinVoltValPeak").innerHTML = sampleData['minVoltsPeakDerOff'][1]
-                </script>
-                <td id="derOffMinVoltLocPeak"></td>
-                <script type="text/javascript">
-                    document.getElementById("derOffMinVoltLocPeak").innerHTML = sampleData['minVoltsPeakDerOff'][0]
-                </script>
-            </tr>
-            <tr>
-                <td>Off</td>
-                <td>Min</td>
-                <td id="derOffMaxVoltValMin"></td>
-                <script type="text/javascript">
-                    document.getElementById("derOffMaxVoltValMin").innerHTML = sampleData['maxVoltsMinDerOff'][1]
-                </script>
-                <td id="derOffMaxVoltLocMin"></td>
-                <script type="text/javascript">
-                    document.getElementById("derOffMaxVoltLocMin").innerHTML = sampleData['maxVoltsMinDerOff'][0]
-                </script>
-                <td id="derOffMinVoltValMin"></td>
-                <script type="text/javascript">
-                    document.getElementById("derOffMinVoltValMin").innerHTML = sampleData['minVoltsMinDerOff'][1]
-                </script>
-                <td id="derOffMinVoltLocMin"></td>
-                <script type="text/javascript">
-                    document.getElementById("derOffMinVoltLocMin").innerHTML = sampleData['minVoltsMinDerOff'][0]
-                </script>
-            </tr>
-        </table>
-    </div>
+    <p class="reportTitle">Maximum and Minimum Voltages</p>
+    <table id="minMaxVolts">
+        <tr>
+            <th rowspan="2">DER Status</th>
+            <th rowspan="2">Load Condition</th>
+            <th colspan="2">Max Voltage</th>
+            <th colspan="2">Min Voltage</th>
+        </tr>
+        <tr>
+            <th>V</th>
+            <th>Location</th>
+            <th>V</th>
+            <th>Location</th>
+        </tr>
+        <tr>
+            <td>On</td>
+            <td>Peak</td>
+            <td id="derOnMaxVoltValPeak"></td>
+            <script type="text/javascript">
+                document.getElementById("derOnMaxVoltValPeak").innerHTML = sampleData['maxVoltsPeakDerOn'][1]
+            </script>
+            <td id="derOnMaxVoltLocPeak"></td>
+            <script type="text/javascript">
+                document.getElementById("derOnMaxVoltLocPeak").innerHTML = sampleData['maxVoltsPeakDerOn'][0]
+            </script>
+            <td id="derOnMinVoltValPeak"></td>
+            <script type="text/javascript">
+                document.getElementById("derOnMinVoltValPeak").innerHTML = sampleData['minVoltsPeakDerOn'][1]
+            </script>
+            <td id="derOnMinVoltLocPeak"></td>
+            <script type="text/javascript">
+                document.getElementById("derOnMinVoltLocPeak").innerHTML = sampleData['minVoltsPeakDerOn'][0]
+            </script>
+        </tr>
+        <tr>
+            <td>On</td>
+            <td>Min</td>
+            <td id="derOnMaxVoltValMin"></td>
+            <script type="text/javascript">
+                document.getElementById("derOnMaxVoltValMin").innerHTML = sampleData['maxVoltsMinDerOn'][1]
+            </script>
+            <td id="derOnMaxVoltLocMin"></td>
+            <script type="text/javascript">
+                document.getElementById("derOnMaxVoltLocMin").innerHTML = sampleData['maxVoltsMinDerOn'][0]
+            </script>
+            <td id="derOnMinVoltValMin"></td>
+            <script type="text/javascript">
+                document.getElementById("derOnMinVoltValMin").innerHTML = sampleData['minVoltsMinDerOn'][1]
+            </script>
+            <td id="derOnMinVoltLocMin"></td>
+            <script type="text/javascript">
+                document.getElementById("derOnMinVoltLocMin").innerHTML = sampleData['minVoltsMinDerOn'][0]
+            </script>
+        </tr>
+        <tr>
+            <td>Off</td>
+            <td>Peak</td>
+            <td id="derOffMaxVoltValPeak"></td>
+            <script type="text/javascript">
+                document.getElementById("derOffMaxVoltValPeak").innerHTML = sampleData['maxVoltsPeakDerOff'][1]
+            </script>
+            <td id="derOffMaxVoltLocPeak"></td>
+            <script type="text/javascript">
+                document.getElementById("derOffMaxVoltLocPeak").innerHTML = sampleData['maxVoltsPeakDerOff'][0]
+            </script>
+            <td id="derOffMinVoltValPeak"></td>
+            <script type="text/javascript">
+                document.getElementById("derOffMinVoltValPeak").innerHTML = sampleData['minVoltsPeakDerOff'][1]
+            </script>
+            <td id="derOffMinVoltLocPeak"></td>
+            <script type="text/javascript">
+                document.getElementById("derOffMinVoltLocPeak").innerHTML = sampleData['minVoltsPeakDerOff'][0]
+            </script>
+        </tr>
+        <tr>
+            <td>Off</td>
+            <td>Min</td>
+            <td id="derOffMaxVoltValMin"></td>
+            <script type="text/javascript">
+                document.getElementById("derOffMaxVoltValMin").innerHTML = sampleData['maxVoltsMinDerOff'][1]
+            </script>
+            <td id="derOffMaxVoltLocMin"></td>
+            <script type="text/javascript">
+                document.getElementById("derOffMaxVoltLocMin").innerHTML = sampleData['maxVoltsMinDerOff'][0]
+            </script>
+            <td id="derOffMinVoltValMin"></td>
+            <script type="text/javascript">
+                document.getElementById("derOffMinVoltValMin").innerHTML = sampleData['minVoltsMinDerOff'][1]
+            </script>
+            <td id="derOffMinVoltLocMin"></td>
+            <script type="text/javascript">
+                document.getElementById("derOffMinVoltLocMin").innerHTML = sampleData['minVoltsMinDerOff'][0]
+            </script>
+        </tr>
+    </table>
 
-    <p class="reportTitle" style="page-break-before:always">Maximum Voltage Flicker when DER is turned off</p>
-    <div class="content tableContainer">
-        <table id="maxVoltFlicker">
-            <tr>
-                <th>Load Condition</th>
-                <th>&percnt;</th>
-                <th>Location</th>
-            </tr>
-            <tr>
-                <td>Peak</td>
-                <td id="flickerValPeak"></td>
-                <script type="text/javascript">
-                    document.getElementById("flickerValPeak").innerHTML = sampleData['maxFlickerPeak'][1].toFixed(2)
-                </script>
-                <td id="flickerLocPeak"></td>
-                <script type="text/javascript">
-                    document.getElementById("flickerLocPeak").innerHTML = sampleData['maxFlickerPeak'][0]
-                </script>
-            </tr>
-            <tr>
-                <td>Min</td>
-                <td id="flickerValMin"></td>
-                <script type="text/javascript">
-                    document.getElementById("flickerValMin").innerHTML = sampleData['maxFlickerMin'][1].toFixed(2)
-                </script>
-                <td id="flickerLocMin"></td>
-                <script type="text/javascript">
-                    document.getElementById("flickerLocMin").innerHTML = sampleData['maxFlickerMin'][0]
-                </script>
-            </tr>
-        </table>
-    </div>
+    <p class="reportTitle">Maximum Voltage Flicker when DER is turned off</p>
+    <table id="maxVoltFlicker">
+        <tr>
+            <th>Load Condition</th>
+            <th>&percnt;</th>
+            <th>Location</th>
+        </tr>
+        <tr>
+            <td>Peak</td>
+            <td id="flickerValPeak"></td>
+            <script type="text/javascript">
+                document.getElementById("flickerValPeak").innerHTML = sampleData['maxFlickerPeak'][1].toFixed(2)
+            </script>
+            <td id="flickerLocPeak"></td>
+            <script type="text/javascript">
+                document.getElementById("flickerLocPeak").innerHTML = sampleData['maxFlickerPeak'][0]
+            </script>
+        </tr>
+        <tr>
+            <td>Min</td>
+            <td id="flickerValMin"></td>
+            <script type="text/javascript">
+                document.getElementById("flickerValMin").innerHTML = sampleData['maxFlickerMin'][1].toFixed(2)
+            </script>
+            <td id="flickerLocMin"></td>
+            <script type="text/javascript">
+                document.getElementById("flickerLocMin").innerHTML = sampleData['maxFlickerMin'][0]
+            </script>
+        </tr>
+    </table>
 
-    <p class="reportTitle" style="page-break-before:always">Voltage Values</p>
-    <div class="content tableContainer">
+    <p class="reportTitle">Voltage Values</p>
+    <div class="tableContainer">
         <table class="sortable" id="voltageViolations">
             <thead>
                 <tr>
@@ -271,8 +246,8 @@
         <span style="color: red">Voltage values non-compliant with ANSI C84.1 Range A Service voltages are displayed in red</span>
     </div>
 
-    <p class="reportTitle" style="page-break-before:always">Voltage Flicker when DER is turned off</p>
-    <div class="content tableContainer">
+    <p class="reportTitle">Voltage Flicker when DER is turned off</p>
+    <div class="tableContainer">
         <table class="sortable" id="flickerViolations">
             <thead>
                 <tr>
@@ -299,8 +274,8 @@
         </span>
     </div>
 
-    <p class="reportTitle" style="page-break-before:always">Line Loading</p>
-    <div class="content tableContainer">
+    <p class="reportTitle">Line Loading</p>
+    <div class="tableContainer">
         <table class="sortable" id="thermalViolations">
             <thead>
                 <tr>
@@ -325,8 +300,8 @@
         <span style="color: red">Line loading values greater or equal to the input threshold are displayed in red</span>
     </div>
 
-    <p class="reportTitle" style="page-break-before:always">Regulator Power Flow</p>
-    <div class="content tableContainer">
+    <p class="reportTitle">Regulator Power Flow</p>
+    <div class="tableContainer">
         <table class="sortable" id="reversePowerFlow">
             <thead>
                 <tr>
@@ -353,8 +328,8 @@
         <span style="color: red">Reverse power flow violations displayed in red</span>
     </div>
 
-    <p class="reportTitle" style="page-break-before:always">Tap Changes</p>
-    <div class="content tableContainer">
+    <p class="reportTitle">Tap Changes</p>
+    <div class="tableContainer">
         <table class="sortable" id="tapChanges">
             <thead>
                 <tr>
@@ -384,8 +359,8 @@
             in red</span>
     </div>
 
-    <p class="reportTitle" style="page-break-before:always">Short Circuit Analysis</p>
-    <div class="content tableContainer">
+    <p class="reportTitle">Short Circuit Analysis</p>
+    <div class="tableContainer">
 
         <p>DER Breaker Fault Current</p>
         <table class="sortable" id="faultBreaker">
@@ -413,7 +388,7 @@
             document.getElementById("faultBreaker").innerHTML += totalContent;
         </script>
     </div>
-    <div class="content tableContainer">
+    <div class="tableContainer">
         <p>DER Transformer Fault Current</p>
         <table class="sortable" id="faultStepUp">
             <thead>
@@ -441,8 +416,8 @@
         </script>
     </div>
 
-    <p class="reportTitle" style="page-break-before:always">Fault Current Violations with DER On</p>
-    <div class="content tableContainer">
+    <p class="reportTitle">Fault Current Violations with DER On</p>
+    <div class="tableContainer">
         <table class="sortable" id="faultCurrentViolations">
             <thead>
                 <tr>
@@ -478,8 +453,8 @@
             equal to the input threshold are displayed in red</span>
     </div>
 
-    <p class="reportTitle" style="page-break-before:always">Effective Grounding Screening</p>
-    <div class="content tableContainer">
+    <p class="reportTitle">Effective Grounding Screening</p>
+    <div class="tableContainer">
         <p>Line to Ground Fault at the POI</p>
         <table class="sortable" id="faultPOIVolts">
             <thead>
