@@ -32,6 +32,13 @@ table {
     border-bottom: 1px solid #000;
 } tr:first-of-type {
     border-top: 1px solid #000;
+} 
+
+table.sortable th {
+    cursor: pointer;
+
+} table.sortable th:not(.sorttable_sorted):not(.sorttable_sorted_reverse):not(.sorttable_nosort):after {
+    content: " \25B4\25BE"  
 }
 
 .content {
@@ -62,6 +69,7 @@ table {
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
     padding: 2em;
     display: flex;
+    align-items: flex-start;
     flex-wrap: wrap;
 } .card h1 {padding-bottom: 0px;
 } .card p {width: 100%;}
