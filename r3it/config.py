@@ -1,7 +1,12 @@
 # config.py
 import os
 
-# constants -------------------------------------------------------------------
+# application processing options
+
+enableAutomaticScreening = True
+requireAllAppsToGoThroughEngineer = False
+
+# constants 
 
 DATA_DIR = 'data'
 USERS_DIR = os.path.join(DATA_DIR,'Users')
@@ -10,10 +15,10 @@ GRIDLABD_DIR = 'gridlabd'
 INFO_FILENAME = 'application.json'
 INPUT_FILENAME = 'allInputData.json'
 OUTPUT_FILENAME = 'allOutputData.json'
-LOG_FILENAME = 'log.txt'
+LOG_FILENAME = os.path.join(DATA_DIR,'log.txt')
 APPLICATIONS_DIR = os.path.join(DATA_DIR,'applications')
 COOKIE_KEY = 'topsecretvalue'
-GEOCODE_KEY = '8f07c00f5f5c073567306f30f1f0ce07770886f'
+GEOCODE_KEY = ''
 
 # Utility parameters.
 
