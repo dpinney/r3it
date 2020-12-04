@@ -16,8 +16,12 @@ table {
     font-family: sans-serif;
     min-width: 400px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    width: 100%;
+    word-wrap: anywhere;
 } th, td {
     padding: 12px 15px;
+    border-style: solid;
+    border-width: 0px 1px 0px 1px;
 } tr {
     border-bottom: 1px solid #dddddd;
 } tr:nth-of-type(even) {
@@ -26,6 +30,15 @@ table {
     background-color: #fff;
 } tr:last-of-type {
     border-bottom: 1px solid #000;
+} tr:first-of-type {
+    border-top: 1px solid #000;
+} 
+
+table.sortable th {
+    cursor: pointer;
+
+} table.sortable th:not(.sorttable_sorted):not(.sorttable_sorted_reverse):not(.sorttable_nosort):after {
+    content: " \25B4\25BE"  
 }
 
 .content {
@@ -33,6 +46,41 @@ table {
     max-width: 1000px;
     display: block;
     margin: 0 auto;
+    height: 100%
+}
+
+.tableContainer {
+    max-height: 80vh;
+    overflow-y: scroll;
+    margin: 0px;
+    margin-bottom: 0px;
+    margin-bottom: 25px;
+}
+
+.reportTitle {
+    font-size: 1.2em;
+    page-break-before:always;
+    margin: 0px;
+}
+
+.card {
+    margin: 0 auto 2em auto;
+    background-color: #fff;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    padding: 2em;
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+} .card h1 {padding-bottom: 0px;
+} .card p {width: 100%;}
+
+.leftForm {
+    float: left;
+    width: 50%;
+}
+.rightForm {
+    float: right;
+    width: 50%;
 }
 
 #bg {
@@ -127,16 +175,6 @@ table {
     box-shadow: none;
 }
 
-.card {
-    margin: 0 auto 2em auto;
-    background-color: #fff;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-    padding: 2em;
-    display: flex;
-    flex-wrap: wrap;
-} .card h1 {padding-bottom: 0px;
-} .card p {width: 100%;}
-
 #login {
     background-color: #fff;
     min-width: 200px;
@@ -161,6 +199,8 @@ table {
     border-color: #eee;
     border-style: solid;
     border-radius: 4px;
+    padding-left: 1em;
+    box-sizing: border-box;
 } #login button {
     background-color: #eee;
 } #login button:hover {
@@ -178,13 +218,10 @@ table {
     height: 100%;
 }
 
-.leftForm {
-    float: left;
-    min-width: 50%;
-}
-.rightForm {
-    float: right;
-    min-width: 50%;
+#application {
+    font-size: 1.1em;
+} #application input {
+    font-size: 1.1em;
 }
 
 #footerSpacer {

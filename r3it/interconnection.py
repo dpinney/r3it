@@ -36,25 +36,29 @@ def processQueue(lock):
         with open(requestInfoFileName) as infoFile:
             request = json.load(infoFile)
 
-        # if we see a previously failing request,
-        # or an unprocessed request that isnt after a failure
-        # run the screens and update statuses
-        if ( (request.get('markedForRerunDueToWithdrawal') == True) and \
-            (request.get('Status') != 'Withdrawn') ) or \
-            (request.get('Status') == 'Engineering Review') or \
-            ( (request.get('Status') == 'Application Submitted') and \
-                allPreviousPassed ):
+        if config.enableAutomaticScreening == True:
+            # if we see a previously failing request,
+            # or an unprocessed request that isnt after a failure
+            # run the screens and update statuses
+            if ( (request.get('markedForRerunDueToWithdrawal') == True) and \
+                (request.get('Status') != 'Withdrawn') ) or \
+                (request.get('Status') == 'Engineering Review') or \
+                ( (request.get('Status') == 'Application Submitted') and \
+                    allPreviousPassed ):
 
-            # run screens
-            request = \
-            runAllScreensAndUpdateStatus(requestPosition, requestFolders)
-            if not request['Screen Results']['passedAll']:
-                allPreviousPassed = False
-            request['markedForRerunDueToWithdrawal'] = False
+                # run screens
+                request = \
+                runAllScreensAndUpdateStatus(requestPosition, requestFolders)
+                if not request['Screen Results']['passedAll']:
+                    allPreviousPassed = False
+                request['markedForRerunDueToWithdrawal'] = False
 
-            # save request info to file
-            with open(requestInfoFileName, 'w') as infoFile:
-                json.dump(request, infoFile)
+                if config.requireAllAppsToGoThroughEngineer == True:
+                    request['Status'] = 'Engineering Review'
+
+                # save request info to file
+                with open(requestInfoFileName, 'w') as infoFile:
+                    json.dump(request, infoFile)
 
     # get a list of all requests again to see if 
     # any new requests have been submitted
@@ -133,21 +137,21 @@ def runAllScreensAndUpdateStatus(requestPosition, requestFolders):
     screenResults = {
         # are voltages within +- 5% inclusive of nominal if nominal <600
         # and within -2.5% to +5% inclusive otherwise
-       'Voltage Violations Screen': 'running...',
+       'Voltage Violations Screen': 'Running...',
         # 100*(1-(derOffVoltage/derOnVoltage)) >= user provided threshold
-       'Flicker Violations Screen': 'running...',
+       'Flicker Violations Screen': 'Running...',
         # is the max current on line/ line rating >= user provided threshold
-       'Thermal Violations Screen': 'running...',
+       'Thermal Violations Screen': 'Running...',
         # is the power measurement on a regulator < 0
-       'Reverse Power Flow Screen': 'running...',
+       'Reverse Power Flow Screen': 'Running...',
         # is abs(tapPositionDerOn-tapPositionDerOff) >= user provided threshold
-       'Tap Change Violations Screen': 'running...',
+       'Tap Change Violations Screen': 'Running...',
         # is 100*(abs(preFaultCurrent-postFaultCurrent)/preFaultCurrent) >=
         # user provided threshold
-       'Fault Current Violations Screen': 'running...',
+       'Fault Current Violations Screen': 'Running...',
         # is 100*(postFaultValAtLinetoAddedBreaker/preFaultval) >=
         # user provided threshold
-       'POI Fault Voltage Screen': 'running...'
+       'POI Fault Voltage Screen': 'Running...'
     }
 
     # link screen names to entries in omf model output
