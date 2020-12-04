@@ -1,4 +1,3 @@
-import inspect
 import config
 import random, json, os, glob
 from shutil import copy2, rmtree
@@ -7,6 +6,7 @@ from omf import feeder
 from appQueue import allAppDirs, appDir, allAppIDs, appDict
 from geocodio import GeocodioClient
 from math import sqrt
+from web import log
 
 # globals ---------------------------------------------------------------------
 
@@ -18,11 +18,16 @@ addedDerBreaker = config.gridlabdInputs['newGenerationBreaker']
 
 def processQueue(lock):
 
+    log('Processesing application queue')
+
     # processQueue is called asynchronously, the lock ensures only one instance
     # is running at a time so files arent being overwritten and breaking things
     acquired = lock.acquire(False)
     if not acquired:
+        log('Queue processing not initiated; queue lock unavailable')
         return
+
+    log('Queue processing initiated; queue lock acquired')
 
     # get a list of all requests
     requestFolders = allAppDirs()
@@ -35,6 +40,8 @@ def processQueue(lock):
         requestInfoFileName = os.path.join(requestDir,config.INFO_FILENAME)
         with open(requestInfoFileName) as infoFile:
             request = json.load(infoFile)
+
+        log('Processesing application ' + request['ID'])
 
         if config.enableAutomaticScreening == True:
             # if we see a previously failing request,
@@ -53,8 +60,8 @@ def processQueue(lock):
                     allPreviousPassed = False
                 request['markedForRerunDueToWithdrawal'] = False
 
-                if config.requireAllAppsToGoThroughEngineer == True:
-                    request['Status'] = 'Engineering Review'
+                # if config.requireAllAppsToGoThroughEngineer == True:
+                #     request['Status'] = 'Engineering Review'
 
                 # save request info to file
                 with open(requestInfoFileName, 'w') as infoFile:
@@ -71,6 +78,7 @@ def processQueue(lock):
 
     # release lock so the next iteration of processQueue can run
     lock.release()
+    log('Queue processing completed; queue lock released')
 
     # if there are new reuests process queue again
     if rerun:
@@ -78,7 +86,10 @@ def processQueue(lock):
 
 def withdraw(withdrawLock, processQueueLock, requestID):
 
+
+    log('Withdrawal initiated for application ' + requestID + '; acquiring withdrawal lock')
     withdrawLock.acquire()
+    log('Withdrawal lock acquired')
 
     # get the withdrawn request directory 
     withdrawnRequestPos = None
@@ -105,21 +116,28 @@ def withdraw(withdrawLock, processQueueLock, requestID):
             # update withrawn status
             if currentRequestPosition == withdrawnRequestPos:
                 request['Status'] = 'Withdrawn'
+                log('Application ' + request['ID'] + 'withdrawn')
             else:
                 request['markedForRerunDueToWithdrawal'] = True
+                log('Application ' + request['ID'] + \
+                    'marked for reurn due to a previous apllication being withdrawn')
 
             # save request info to file
             with open(requestInfoFileName, 'w') as infoFile:
                 json.dump(request, infoFile)
 
+    withdrawLock.release()
+    log('Withdrawal successful; withdrawal lock released')
+
     # process queue
     processQueue(processQueueLock)
 
-    withdrawLock.release()
 
 # helper functions ------------------------------------------------------------
 
 def runAllScreensAndUpdateStatus(requestPosition, requestFolders):
+
+    log('Running automated screens')
 
     # copy over model from the previous passing request and
     # add desired generation at given meter
@@ -128,10 +146,12 @@ def runAllScreensAndUpdateStatus(requestPosition, requestFolders):
     initializePowerflowModel(requestPosition, requestFolders)
 
     # run the omf derInterconnection model
+    log('Running Gridlab-D powerflow simulation')
     derInterconnection.runForeground(gridlabdWorkingDir)
     outputFilename = os.path.join(gridlabdWorkingDir,config.OUTPUT_FILENAME)
     with open(outputFilename) as modelOutputFile:
         modelOutputs = json.load(modelOutputFile)
+    log('Powerflow simulation completed')
 
     # keep track of screen results to present on the front-end
     screenResults = {
@@ -164,26 +184,45 @@ def runAllScreensAndUpdateStatus(requestPosition, requestFolders):
         'Fault Current Violations Screen': 'faultCurrentViolations',
         'POI Fault Voltage Screen': 'faultPOIVolts'
     }
-    # check screens for failures
+
+    # inintialize variable to track the result of all screens
     passedAll = True
+
+    # check screens for failures
     for screen in screenResults.keys():
         gridlabVarForScreen = screenNamesToGridlabVars[screen]
         screenPassed = runSingleScreen(modelOutputs[gridlabVarForScreen])
         if screenPassed == True:
             screenResults[screen] = 'Passed'
-        else:
+        else: # screen Failed
             screenResults[screen] = 'Failed'
             passedAll = False
-    screenResults['passedAll'] = passedAll
 
-    # update current request results and status
+    # load request
     requestInfoFileName = os.path.join(requestDir,config.INFO_FILENAME)
     with open(requestInfoFileName) as infoFile:
         request = json.load(infoFile)
+    
+    # screen to see if request exceeds capacity
+    usedCapacity = calcCapacityUsed() 
+    requestedCapacity = float( request.get('Nameplate Rating (kW)',0) )
+    totalCapacity = config.netMeteringCapacity
+    if (usedCapacity+requestedCapacity)<=totalCapacity:
+        screenResults['Net Metering Capacity Screen'] = 'Passed'
+    else: # above capacity, so we failed
+        screenResults['Net Metering Capacity Screen'] = 'Failed'
+        passedAll = False
+
+    # updated screen results
+    screenResults['passedAll'] = passedAll
+
+    # update current request results and status
     request['Screen Results'] = screenResults
     if screenResults['passedAll'] == True:
+        log('Automated screens passed; updating application status')
         request['Status'] = 'Interconnection Agreement Proffered'
     else: # if any of the screens failed
+        log('Automated screens failed; updating application status')
         request['Status'] = 'Engineering Review'
 
     return request
@@ -191,6 +230,7 @@ def runAllScreensAndUpdateStatus(requestPosition, requestFolders):
 def runSingleScreen(screeningData):
 
     screenPassed = True
+    
     for entry in screeningData:
         violation = entry[-1]
         if violation == True:
@@ -200,6 +240,8 @@ def runSingleScreen(screeningData):
     return screenPassed
 
 def initializePowerflowModel(requestPosition, requestFolders):
+
+    log('Initializing powerflow simulation model')
 
     # initialize vars
     requestDir = requestFolders[requestPosition] + '/'
@@ -224,6 +266,7 @@ def initializePowerflowModel(requestPosition, requestFolders):
         os.path.join(gridlabdWorkingDir,config.omdFilename))
 
     # create gridlabd inputs file
+    log('Creating powerflow inputs using the values specified in config.py')
     gridlabdInputFile = \
         os.path.join(gridlabdWorkingDir,config.INPUT_FILENAME)
     with open(gridlabdInputFile, 'w') as inputFile:
@@ -238,6 +281,8 @@ def initializePowerflowModel(requestPosition, requestFolders):
     nameKeyedTree = rekeyGridlabDModelByName( tree )
     
     # rename old der
+    log('Renaming added DER in previous model to ' + \
+        'differentiate it from the newly requested DER')
     if nameKeyedTree.get(addedDer,None) is not None:
         newName = addedDer+'ForRequest' + str(previousRequestPosition)
         tree, nameKeyedTree = renameTreeItem( tree, nameKeyedTree, \
@@ -256,6 +301,7 @@ def initializePowerflowModel(requestPosition, requestFolders):
     meter = nameKeyedTree[meterName]['item']
 
     # create inverter and set parent to meter, get phases from meter
+    log('Adding requested DER inverter to powerflow model')
     inverter = { 'object':'inverter',
         'name': 'inverterForRequest'+str(requestPosition),
         'parent': meterName,
@@ -272,6 +318,7 @@ def initializePowerflowModel(requestPosition, requestFolders):
     area = float(kW) * AREA_PER_KW
 
     # create solar and set parent to inverter
+    log('Adding requested solar DER to powerflow model')
     solar = { 'object':'solar',
         'name': addedDer,
         'parent': 'inverterForRequest'+str(requestPosition),
@@ -284,7 +331,7 @@ def initializePowerflowModel(requestPosition, requestFolders):
     solar['phases'] = inverter['phases']
     feeder.insert(tree, solar)
 
-    # get transformer from meter
+    # get transformer from meterS
     transformer = {}
     for key in tree.keys():
         objType = tree[key].get('object',None)
@@ -305,6 +352,8 @@ def initializePowerflowModel(requestPosition, requestFolders):
     namePrefix = addedDerStepUp+'ForRequest'
     transformerName = transformer.get('name','')
     if transformerName.startswith(namePrefix):
+        log('DER requested at prevously approved location; ' + \
+            'no breaker added to pwerflow model; prexisting breaker used')
         oldRequestNum = transformerName[len(namePrefix):]
         tree, nameKeyedTree = renameTreeItem( tree, nameKeyedTree, \
             transformerName, addedDerStepUp)
@@ -314,6 +363,8 @@ def initializePowerflowModel(requestPosition, requestFolders):
 
     # else if transformer is not the same as a previous run add a breaker
     else:
+
+        log('Adding breaker to powerflow model')
 
         # create new node to go between breaker and transformer
         poi = { 'object': 'node',
@@ -349,6 +400,8 @@ def initializePowerflowModel(requestPosition, requestFolders):
         omd['tree'] = tree
         json.dump(omd, omdFile, indent=4)
 
+    log('Powerflow simulation initialization successful')
+
     return gridlabdWorkingDir
 
 def getPreviouslyPassingRequestDir(requestPosition, requestFolders):
@@ -366,6 +419,7 @@ def getPreviouslyPassingRequestDir(requestPosition, requestFolders):
 
         # break out of loop at the first approved request
         if previousStatus == 'Interconnection Agreement Proffered':
+            log('Initializing powerflow model using previously passing application')
             break
         else: # keep looping till there are no more requests
             previousRequestPosition -= 1
@@ -373,7 +427,9 @@ def getPreviouslyPassingRequestDir(requestPosition, requestFolders):
     # if we didnt find a previously passing request, 
     # use the original templates
     if previousRequestPosition == -1:
-        print('no previously passing requests; using original omd.')
+        log('Initializing powerflow model using original model ' + \
+            'provided in config.py passing application; ' + \
+            'no previously passing requests')
         previousRequestDir = config.STATIC_DIR
         
     return previousRequestPosition, previousRequestDir
@@ -465,6 +521,8 @@ def getLatLongFromAddress(address):
     return latitude,longitude
 
 def calcCapacityUsed():
+
+    log('Calculating capacity used by passing applications')
 
     approvedGeneration = 0
 

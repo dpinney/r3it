@@ -1,4 +1,4 @@
-import config, interconnection, mailer
+import config, interconnection, mailer, logging
 from datetime import datetime, timezone
 from user import *
 from appQueue import *
@@ -27,6 +27,19 @@ def inject_config():
 # ensures only one que processing run happens at a time
 processQueueLock = Lock()
 withdrawLock = Lock()
+
+# instantiate logger
+# if is needed because Werkzeug apparently starts the server twice,
+# which ends up adding two handlers to the logger which ends up 
+# causing everything to be logged twice
+logger = logging.getLogger('interconnectionLogger')
+logger.setLevel(logging.DEBUG)
+if len(logger.handlers)==0:
+    handler = logging.FileHandler(config.LOG_FILENAME)
+    formatter = logging.Formatter('%(levelname)s,\t%(message)s')
+    logger.addHandler(handler)
+    handler.setFormatter(formatter)
+    handler.setLevel(logging.DEBUG)
 
 # Instantiate CAPTCHA
 app.config['CAPTCHA_ENABLE'] = True
@@ -62,19 +75,24 @@ def currentUser():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     '''Account registration with CAPTCHA verification'''
+    
     notification = request.args.get('notification', None)
     if request.method == "GET":
         return render_template("register.html", notification=notification)
     if request.method == "POST":
+        log('Registering new user')
         email, password = request.form['email'], request.form['password']
         userDict = {email : {'password' : hashPassword(email, password)}}
         if captcha.validate():
             try: os.makedirs(userHomeDir(email))
             except:
+                log('Registration for ' + email + 'failed; Account already exists')
                 return redirect('/register?notification=Account%20already%20exists%2E')
             with userAccountFile(email, 'w') as userFile: json.dump(userDict, userFile)
+            log('Registration successful for ' + email)
             return redirect('/login?notification=Registration%20successful%2E')
         else:
+            log('Registration for ' + email + 'failed; CAPTCHA error')
             return redirect('/register?notification=CAPTCHA%20error%2E')
 
 @app.route('/forgot', methods=['GET', 'POST'])
@@ -113,7 +131,6 @@ def newpassword():
         mailer.sendEmail(email,'R3IT Password Reset',link)
         return redirect('/forgot?notification=Password&20reset&20email&20sent%2E')
 
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     '''GET for the login page, POST to log in user with flask_login.'''
@@ -121,19 +138,24 @@ def login():
     if request.method == "GET":
         return render_template("login.html", notification=notification)
     if request.method == "POST":
+        log('User login attempt')
         if passwordCorrect(request.form['email'], request.form['password']):
             flask_login.login_user(load_user(request.form['email']))
+            log('User ' + request.form['email'] + 'logged in successfully')
             return redirect('/')
         else:
+            log('User login failed; incorrect username or password')
             return redirect('/login?notification=Username%20or%20password%20does%20not%20match%20our%20records%2E')
 
 @app.route('/logout')
 def logout():
     '''Logs the user out of their account.'''
+    log('User logging out')
     try:
         flask_login.logout_user()
     except:
         pass
+    log('User logged out')
     return redirect('/')
 
 @app.route('/')
@@ -156,6 +178,7 @@ def index():
         app.get('Status')] for key, app in enumerate(appQueue()) \
                                     if requiresUsersAction(currentUser(), app)
     ]
+    
     netMeteringUsed = 100*interconnection.calcCapacityUsed()/config.netMeteringCapacity
     return render_template('index.html', data=data, \
                                          priorities=priorities, \
@@ -182,13 +205,16 @@ def report(id):
 @flask_login.login_required
 def upload(id, doc):
     if request.method == 'POST': # File uploads
+        log('Uploading file')
         # check if the post request has the file part
         if 'file' not in request.files:
+            log('Document ' + doc + 'Upload for application ' + id + ' failed; no file part')
             return redirect('/report/' + id + '?notification=No%20file%20part%2E')
         file = request.files['file']
         # if user does not select file, browser also
         # submit an empty part without filename
         if file.filename == '':
+            log('Document ' + doc + 'Upload for application ' + id + ' failed; no file selected')
             return redirect('/report/' + id + '?notification=No%20file%20selected%2E')
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
@@ -197,15 +223,19 @@ def upload(id, doc):
         except OSError:
             pass
         file.save(os.path.join(app.root_path, "data", 'applications', id, 'uploads', doc, filename))
+        log('Document ' + doc + 'Upload for application ' + id + ' successful; document saved')
         return redirect(url_for('index') + '?notification=Upload%20successful%2E')
     else: return redirect(request.referrer)
 
 @app.route('/download/<id>/<doc>/<path:filename>')
 @flask_login.login_required
 def download(id, doc, filename):
+    log('Attempting to download document ' + doc + 'for application ' + id)
     if authorizedToView(currentUser(), appDict(id)) and doc in appAttachments:
+        log('Download initiated')
         return send_from_directory(os.path.join(appDir(id),'uploads',doc), filename)
     else:
+        log('Download not initiated; user not authorized to view document')
         return redirect('/')
 
 @app.route('/add-to-queue', methods=['GET', 'POST'])
@@ -220,6 +250,7 @@ def add_to_appQueue():
     except: pass
     with appFile(app['ID'], 'w') as appfile:
         json.dump(app, appfile)
+    log('Application ' + app['ID'] + 'submitted')
     # TODO: Figure out the fork-but-not-exec issue (below -> many errors)
     # run analysis on the queue as a separate process
     p = Process(target=interconnection.processQueue, args=(processQueueLock,))
@@ -253,16 +284,21 @@ def application():
         'meterID' : '{}'.format(random.choice(interconnection.getMeterNameList( \
             os.path.join(config.STATIC_DIR,config.GRIDLABD_DIR,config.omdFilename))))
     }
+    log('New application started')
     return render_template('application.html', default = default)
 
 @app.route('/update-status/<id>/<status>')
 @flask_login.login_required
 def update_status(id, status):
     data = appDict(id)
-    if status not in config.statuses: return 'Status invalid; no update made.'
+    log('Updating application ' + id + 'status to ' + status)
+    if status not in config.statuses: 
+        log('Status update failed; invalid status')
+        return 'Status invalid; no update made.'
     data['Status'] = status
     with appFile(id, 'w') as file:
         json.dump(data, file)
+    log('Status update successful')
     mailer.sendEmail(data.get('Email (Contact)', ''), 'The status of your interconnection request has changed.')
     if status == 'Withdrawn':
         p = Process(target=interconnection.withdraw, args=(withdrawLock, processQueueLock, id))
@@ -273,14 +309,25 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ['txt', 'pdf', 'doc', 'docx']
 
-def log(message):
+def log(message, level='info'):
 
-    nowUTC = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S %Z')
-    toWrite = nowUTC + ', ' + '"' + message + '"'
+    nowUTC = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S:%f %Z')
+    toWrite = nowUTC + ',\t' + '"' + message + '"'
+    
+    if level=='debug':
+        logger.debug('\t' + toWrite)
+    elif level=='info':
+        logger.info('\t' + toWrite)
+    elif level=='warning':
+        logger.warning(toWrite)
+    elif level=='error':
+        logger.error('\t' + toWrite)
+    elif level=='critical':
+        logger.critical(toWrite)
 
-    logFilePath = os.path.join(config.DATA_DIR,config.LOG_FILENAME)
-    with open(logFilePath,'a') as logFile:
-        logFile.write(toWrite)
+
+
+
 
 if __name__ == '__main__':
     app.run(debug=True, host= '0.0.0.0')
