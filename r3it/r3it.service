@@ -1,11 +1,11 @@
 [Unit]
-Description=R3IT
+Description=r3it
 After=syslog.target network.target
 
 [Service]
-WorkingDirectory=/r3it/r3it/
-ExecStart=python3 web.py
-ExecStop=
+User=ubuntu
+WorkingDirectory=/home/ubuntu/r3it/r3it/
+ExecStart=/usr/bin/sudo /usr/bin/python3 start_r3it.py
 Restart=on-failure
 
 [Install]
