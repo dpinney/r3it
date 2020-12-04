@@ -5,7 +5,7 @@ After=syslog.target network.target
 [Service]
 User=ubuntu
 WorkingDirectory=/home/ubuntu/r3it/r3it/
-ExecStart=/usr/bin/python3 web.py
+ExecStart=/usr/bin/python3 start_r3it.py
 Restart=on-failure
 
 [Install]
