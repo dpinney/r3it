@@ -1,5 +1,5 @@
 import config
-import random, json, os, glob
+import random, json, os, glob, mailer
 from shutil import copy2, rmtree
 from omf.models import derInterconnection
 from omf import feeder
@@ -43,16 +43,16 @@ def processQueue(lock):
 
         log('Processesing application ' + request['ID'])
 
-        if config.enableAutomaticScreening == True:
-            # if we see a previously failing request,
-            # or an unprocessed request that isnt after a failure
-            # run the screens and update statuses
-            if ( (request.get('markedForRerunDueToWithdrawal') == True) and \
-                (request.get('Status') != 'Withdrawn') ) or \
-                (request.get('Status') == 'Engineering Review') or \
-                ( (request.get('Status') == 'Application Submitted') and \
-                    allPreviousPassed ):
+        # if we see a reurn b/c of withdrawals, a  previously failing request, 
+        # or an unprocessed request that isnt after a failure
+        # run the screens and update statuses
+        if ( (request.get('markedForRerunDueToWithdrawal') == True) and \
+            (request.get('Status') != 'Withdrawn') ) or \
+            (request.get('Status') == 'Engineering Review') or \
+            ( (request.get('Status') == 'Application Submitted') and \
+                allPreviousPassed ):
 
+            if config.enableAutomaticScreening == True:
                 # run screens
                 request = \
                 runAllScreensAndUpdateStatus(requestPosition, requestFolders)
@@ -60,12 +60,16 @@ def processQueue(lock):
                     allPreviousPassed = False
                 request['markedForRerunDueToWithdrawal'] = False
 
-                # if config.requireAllAppsToGoThroughEngineer == True:
-                #     request['Status'] = 'Engineering Review'
+            if config.requireAllAppsToGoThroughEngineer == True:
+                request['Status'] = 'Engineering Review'
+                log('All request are required to go through engineer; updating application status to Engineering Review')
+                mailer.sendEmail(request.get('Email (Customer)', ''), 'R3IT application status updated', \
+                 "The status of your interconnection request has been updated to '" + \
+                    request['Status'] + "'. Login to your account for more information.")
 
-                # save request info to file
-                with open(requestInfoFileName, 'w') as infoFile:
-                    json.dump(request, infoFile)
+            # save request info to file
+            with open(requestInfoFileName, 'w') as infoFile:
+                json.dump(request, infoFile)
 
     # get a list of all requests again to see if 
     # any new requests have been submitted
@@ -225,6 +229,8 @@ def runAllScreensAndUpdateStatus(requestPosition, requestFolders):
         log('Automated screens failed; updating application status')
         request['Status'] = 'Engineering Review'
 
+    mailer.sendEmail(request.get('Email (Customer)', ''), 'R3IT application status updated', "The status of your interconnection request has been updated to '" + \
+        request['Status'] + "'. Login to your account for more information.")
     return request
 
 def runSingleScreen(screeningData):

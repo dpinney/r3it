@@ -52,7 +52,7 @@ def userAccountDict(email):
 
 def hashPassword(email, password):
     '''Returns password hash given an email (as a salt) and a password'''
-    return base64.b64encode(hashlib.pbkdf2_hmac('sha256', b'{password}', b'{email}', 100000)).decode('utf-8')
+    return base64.b64encode(hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), email.encode('utf-8'), 100000)).decode('utf-8')
 
 def passwordHash(email): return userAccountDict(email).get(email, {}).get('password')
 '''Returns the password hash of a user, given the user's email address'''
