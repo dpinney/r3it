@@ -1,5 +1,5 @@
 import config
-import random, json, os, glob
+import random, json, os, glob, mailer
 from shutil import copy2, rmtree
 from omf.models import derInterconnection
 from omf import feeder
