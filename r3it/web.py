@@ -110,7 +110,7 @@ def forgot():
             return redirect('/forgot?notification=The%20email%20address%20you%20entered%20does%20match%20our%20records%2E')
         userDict[email]['resetToken'] = str(random.randint(100000,1000000))
         with userAccountFile(email, 'w') as userFile: json.dump(userDict, userFile)
-        link = 'demo.r3it.ghw.coop/newpassword/' + email + '/' + userDict[email]['resetToken']
+        link = 'demo.r3it.ghw.io/newpassword/' + email + '/' + userDict[email]['resetToken']
         mailer.sendEmail(email,'R3IT Password Reset Link','Use the following link to reset your password: ' + link)
         log('Password reset link sent to ' + email)
         return redirect('/forgot?notification=Password%20reset%20email%20sent%2E')
@@ -255,7 +255,7 @@ def add_to_appQueue():
     with appFile(app['ID'], 'w') as appfile:
         json.dump(app, appfile)
     log('Application ' + app['ID'] + 'submitted')
-    mailer.sendEmail(app.get('Email (Contact)', ''), "Your application with ID " + \
+    mailer.sendEmail(app.get('Email (Customer)', ''), "R3IT application submitted","Your application with ID " + \
         app['ID'] + ' has been submitted.')
     # TODO: Figure out the fork-but-not-exec issue (below -> many errors)
     # run analysis on the queue as a separate process
@@ -305,7 +305,7 @@ def update_status(id, status):
     with appFile(id, 'w') as file:
         json.dump(data, file)
     log('Status update successful')
-    mailer.sendEmail( data.get('Email (Contact)', ''), 'R3IT application status updated', "The status of your interconnection request has been updated to '" + \
+    mailer.sendEmail( data.get('Email (Customer)', ''), 'R3IT application status updated', "The status of your interconnection request has been updated to '" + \
         status + "'. Login to your account for more information.")
     if status == 'Withdrawn':
         p = Process(target=interconnection.withdraw, args=(withdrawLock, processQueueLock, id))
