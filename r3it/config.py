@@ -19,7 +19,9 @@ LOG_FILENAME = os.path.join(DATA_DIR,'log.txt')
 APPLICATIONS_DIR = os.path.join(DATA_DIR,'applications')
 COOKIE_KEY = 'topsecretvalue'
 GEOCODE_KEY = ''
-
+STRIPE_PRIVATE_KEY = 'sk_test_2Mf8zBV1IqZkwtajeeK5lMCj00j0MxxuOu'
+STRIPE_PUBLIC_KEY = 'pk_test_LAZ0aEKWMLHbPSFIms7YzLkK00EHoWgCGB'
+DOMAIN = 'demo.r3it.ghw.io'
 # Utility parameters.
 
 utilityName = 'Example Electric'
@@ -130,7 +132,7 @@ actionItems = {
     )
 }
 
-# gridlabd inputs see 
+# gridlabd inputs see
 gridlabdInputs = {
     'modelType': 'derInterconnection',
     'layoutAlgorithm': 'forceDirected',

@@ -1,11 +1,11 @@
-import config, interconnection, mailer, logging
+import config, interconnection, mailer, logging, stripe
 from datetime import datetime, timezone
 from user import *
 from appQueue import *
 import base64, json, copy, csv, os, hashlib, random, uuid, glob
 import flask_login, flask_sessionstore, flask_session_captcha
 from multiprocessing import Process, Lock
-from flask import Flask, redirect, request, render_template, url_for, send_from_directory
+from flask import Flask, redirect, request, render_template, url_for, send_from_directory, jsonify
 from werkzeug.utils import secure_filename
 
 # Instantiate app
@@ -30,7 +30,7 @@ withdrawLock = Lock()
 
 # instantiate logger
 # if is needed because Werkzeug apparently starts the server twice,
-# which ends up adding two handlers to the logger which ends up 
+# which ends up adding two handlers to the logger which ends up
 # causing everything to be logged twice
 logger = logging.getLogger('interconnectionLogger')
 logger.setLevel(logging.DEBUG)
@@ -325,7 +325,33 @@ def log(message, level='info'):
     elif level=='critical':
         logger.critical(toWrite)
 
+stripe.api_key = STRIPE_PRIVATE_KEY
 
+@app.route('/create-checkout-session', methods=['POST'])
+def create_checkout_session():
+    try:
+        checkout_session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=[
+                {
+                    'price_data': {
+                        'currency': 'usd',
+                        'unit_amount': 50,
+                        'product_data': {
+                            'name': 'Interconnection Application Fee',
+                            'images': ['https://i.imgur.com/EHyR2nP.png'],
+                        },
+                    },
+                    'quantity': 1,
+                },
+            ],
+            mode='payment',
+            success_url=DOMAIN + '/success.html',
+            cancel_url=DOMAIN + '/cancel.html',
+        )
+        return jsonify({'id': checkout_session.id})
+    except Exception as e:
+        return jsonify(error=str(e)), 4
 
 
 
