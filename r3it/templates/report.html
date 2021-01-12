@@ -13,7 +13,8 @@
         {% for key in data %}
         {% if ( 
             (key != 'Screen Results') and 
-            (key != 'markedForRerunDueToWithdrawal')
+            (key != 'markedForRerunDueToWithdrawal') and
+            (key != 'Agreement')
         ) %}
             <tr>
                 <th>{{key}}</th>
