@@ -80,8 +80,8 @@ def register():
     if request.method == "GET":
         return render_template("register.html", notification=notification)
     if request.method == "POST":
-        log('Registering new user')
         email, password = request.form['email'], request.form['password']
+        log('Registering new user with email, ' + email)
         userDict = {email : {'password' : hashPassword(email, password)}}
         if captcha.validate():
             try: os.makedirs(userHomeDir(email))
@@ -97,7 +97,7 @@ def register():
 
 @app.route('/forgot', methods=['GET', 'POST'])
 def forgot():
-    '''Account registration with CAPTCHA verification'''
+    '''Sends email to user with a password reset link'''
     notification = request.args.get('notification', None)
     if request.method == "GET":
         return render_template("forgot.html", notification=notification)
@@ -105,31 +105,30 @@ def forgot():
         email = request.form['email']
         try:
             userDict = userAccountDict(email)
-        except: return redirect('/forgot?notification=The%20email&20address&20you&20entered&20does&20match&our&records%2E')
-        userDict[email]['resetToken'] = random.choice(9999999999)
+        except: return redirect('/forgot?notification=The%20email%20address%20you%20entered%20does%20match%20our%20records%2E')
+        userDict[email]['resetToken'] = str(random.randint(100000,1000000))
         with userAccountFile(email, 'w') as userFile: json.dump(userDict, userFile)
-        link = 'demo.r3it.ghw.coop/reset/' + email + '/' + userDict[email]['resetToken']
+        link = 'demo.r3it.ghw.coop/newpassword/' + email + '/' + userDict[email]['resetToken']
         mailer.sendEmail(email,'R3IT Password Reset',link)
-        return redirect('/forgot?notification=Password&20reset&20email&20sent%2E')
+        return redirect('/forgot?notification=Password%20reset%20email%20sent%2E')
 
 @app.route('/newpassword/<email>/<token>', methods=['GET', 'POST'])
-def newpassword():
-    '''Account registration with CAPTCHA verification'''
+def newpassword(email, token):
+    '''create new password for account'''
     notification = request.args.get('notification', None)
     if request.method == "GET":
-        if userDict[email]['resetToken'] == token:
-            return render_template("newpassword.html", notification=notification)
-        else: redirect('/?Not&20a&20valid&20password&20reset&20link.')
-    if request.method == "POST":
-        email = request.form['email']
         try:
             userDict = userAccountDict(email)
-        except: return redirect('/forgot?notification=The%20email&20address&20you&20entered&20does&20match&our&records%2E')
-        userDict[email]['resetToken'] = random.choice(9999999999)
+        except: return redirect('/forgot?notification=Not%20a%20valid%20password%20reset%20link.')
+        if userDict[email].get('resetToken','') == token:
+            return render_template("newpassword.html", email=email, token=token, notification=notification)
+        else: return redirect('/forgot?notification=Not%20a%20valid%20password%20reset%20link.')
+    
+    if request.method == "POST":
+        password = request.form['password']
+        userDict = {email : {'password' : hashPassword(email, password)}}
         with userAccountFile(email, 'w') as userFile: json.dump(userDict, userFile)
-        link = 'demo.r3it.ghw.coop/reset/' + email + '/' + userDict[email]['resetToken']
-        mailer.sendEmail(email,'R3IT Password Reset',link)
-        return redirect('/forgot?notification=Password&20reset&20email&20sent%2E')
+        return redirect('/login?notification=Password%20updated%20successfully%2E')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -303,7 +302,7 @@ def update_status(id, status):
     if status == 'Withdrawn':
         p = Process(target=interconnection.withdraw, args=(withdrawLock, processQueueLock, id))
         p.start()
-    return redirect(request.referrer)
+    return redirect('/')
 
 def allowed_file(filename):
     return '.' in filename and \
