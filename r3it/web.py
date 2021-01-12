@@ -105,11 +105,14 @@ def forgot():
         email = request.form['email']
         try:
             userDict = userAccountDict(email)
-        except: return redirect('/forgot?notification=The%20email%20address%20you%20entered%20does%20match%20our%20records%2E')
+        except: 
+            log('Password reset requested for ' + email + '; account not found')
+            return redirect('/forgot?notification=The%20email%20address%20you%20entered%20does%20match%20our%20records%2E')
         userDict[email]['resetToken'] = str(random.randint(100000,1000000))
         with userAccountFile(email, 'w') as userFile: json.dump(userDict, userFile)
         link = 'demo.r3it.ghw.coop/newpassword/' + email + '/' + userDict[email]['resetToken']
-        mailer.sendEmail(email,'R3IT Password Reset',link)
+        mailer.sendEmail(email,'R3IT Password Reset Link','Use the following link to reset your password: ' + link)
+        log('Password reset link sent to ' + email)
         return redirect('/forgot?notification=Password%20reset%20email%20sent%2E')
 
 @app.route('/newpassword/<email>/<token>', methods=['GET', 'POST'])
@@ -128,6 +131,8 @@ def newpassword(email, token):
         password = request.form['password']
         userDict = {email : {'password' : hashPassword(email, password)}}
         with userAccountFile(email, 'w') as userFile: json.dump(userDict, userFile)
+        mailer.sendEmail(email,'R3IT Password Reset successfully','Your R3IT password has been reset successfully.')
+        log('Password reset successfully for ' + email)
         return redirect('/login?notification=Password%20updated%20successfully%2E')
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -250,6 +255,8 @@ def add_to_appQueue():
     with appFile(app['ID'], 'w') as appfile:
         json.dump(app, appfile)
     log('Application ' + app['ID'] + 'submitted')
+    mailer.sendEmail(app.get('Email (Contact)', ''), "Your application with ID " + \
+        app['ID'] + ' has been submitted.')
     # TODO: Figure out the fork-but-not-exec issue (below -> many errors)
     # run analysis on the queue as a separate process
     p = Process(target=interconnection.processQueue, args=(processQueueLock,))
@@ -298,7 +305,8 @@ def update_status(id, status):
     with appFile(id, 'w') as file:
         json.dump(data, file)
     log('Status update successful')
-    mailer.sendEmail(data.get('Email (Contact)', ''), 'The status of your interconnection request has changed.')
+    mailer.sendEmail( data.get('Email (Contact)', ''), 'R3IT application status updated', "The status of your interconnection request has been updated to '" + \
+        status + "'. Login to your account for more information.")
     if status == 'Withdrawn':
         p = Process(target=interconnection.withdraw, args=(withdrawLock, processQueueLock, id))
         p.start()

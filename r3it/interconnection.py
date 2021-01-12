@@ -62,6 +62,10 @@ def processQueue(lock):
 
             if config.requireAllAppsToGoThroughEngineer == True:
                 request['Status'] = 'Engineering Review'
+                log('All request are required to go through engineer; updating application status to Engineering Review')
+                mailer.sendEmail(request.get('Email (Contact)', ''), 'R3IT application status updated', \
+                 "The status of your interconnection request has been updated to '" + \
+                    request['Status'] + "'. Login to your account for more information.")
 
             # save request info to file
             with open(requestInfoFileName, 'w') as infoFile:
@@ -225,6 +229,8 @@ def runAllScreensAndUpdateStatus(requestPosition, requestFolders):
         log('Automated screens failed; updating application status')
         request['Status'] = 'Engineering Review'
 
+    mailer.sendEmail(request.get('Email (Contact)', ''), 'R3IT application status updated', "The status of your interconnection request has been updated to '" + \
+        request['Status'] + "'. Login to your account for more information.")
     return request
 
 def runSingleScreen(screeningData):

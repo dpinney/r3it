@@ -18,3 +18,5 @@ def sendEmail(recipient, subject='', body=''):
         server.ehlo()  # Can be omitted
         server.login(emailUser, emailPassword)
         server.send_message(msg)
+
+    log("Email with subject '" + subject + "' sent to " + recipient)
