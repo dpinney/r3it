@@ -43,16 +43,16 @@ def processQueue(lock):
 
         log('Processesing application ' + request['ID'])
 
-        if config.enableAutomaticScreening == True:
-            # if we see a previously failing request,
-            # or an unprocessed request that isnt after a failure
-            # run the screens and update statuses
-            if ( (request.get('markedForRerunDueToWithdrawal') == True) and \
-                (request.get('Status') != 'Withdrawn') ) or \
-                (request.get('Status') == 'Engineering Review') or \
-                ( (request.get('Status') == 'Application Submitted') and \
-                    allPreviousPassed ):
+        # if we see a reurn b/c of withdrawals, a  previously failing request, 
+        # or an unprocessed request that isnt after a failure
+        # run the screens and update statuses
+        if ( (request.get('markedForRerunDueToWithdrawal') == True) and \
+            (request.get('Status') != 'Withdrawn') ) or \
+            (request.get('Status') == 'Engineering Review') or \
+            ( (request.get('Status') == 'Application Submitted') and \
+                allPreviousPassed ):
 
+            if config.enableAutomaticScreening == True:
                 # run screens
                 request = \
                 runAllScreensAndUpdateStatus(requestPosition, requestFolders)
@@ -60,12 +60,12 @@ def processQueue(lock):
                     allPreviousPassed = False
                 request['markedForRerunDueToWithdrawal'] = False
 
-                # if config.requireAllAppsToGoThroughEngineer == True:
-                #     request['Status'] = 'Engineering Review'
+            if config.requireAllAppsToGoThroughEngineer == True:
+                request['Status'] = 'Engineering Review'
 
-                # save request info to file
-                with open(requestInfoFileName, 'w') as infoFile:
-                    json.dump(request, infoFile)
+            # save request info to file
+            with open(requestInfoFileName, 'w') as infoFile:
+                json.dump(request, infoFile)
 
     # get a list of all requests again to see if 
     # any new requests have been submitted
