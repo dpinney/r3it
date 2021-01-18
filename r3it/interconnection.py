@@ -6,7 +6,7 @@ from omf import feeder
 from appQueue import allAppDirs, appDir, allAppIDs, appDict
 from geocodio import GeocodioClient
 from math import sqrt
-from web import log
+from logger import log
 
 # globals ---------------------------------------------------------------------
 
