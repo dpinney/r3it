@@ -1,4 +1,4 @@
-import config, interconnection, mailer, logging, stripe
+import config, interconnection, mailer, stripe
 from datetime import datetime, timezone
 from user import *
 from appQueue import *
@@ -7,6 +7,7 @@ import flask_login, flask_sessionstore, flask_session_captcha
 from multiprocessing import Process, Lock
 from flask import Flask, redirect, request, render_template, url_for, send_from_directory, jsonify
 from werkzeug.utils import secure_filename
+from logger import log
 
 # Instantiate app
 app = Flask(__name__)
@@ -27,19 +28,6 @@ def inject_config():
 # ensures only one que processing run happens at a time
 processQueueLock = Lock()
 withdrawLock = Lock()
-
-# instantiate logger
-# if is needed because Werkzeug apparently starts the server twice,
-# which ends up adding two handlers to the logger which ends up
-# causing everything to be logged twice
-logger = logging.getLogger('interconnectionLogger')
-logger.setLevel(logging.DEBUG)
-if len(logger.handlers)==0:
-    handler = logging.FileHandler(config.LOG_FILENAME)
-    formatter = logging.Formatter('%(levelname)s,\t%(message)s')
-    logger.addHandler(handler)
-    handler.setFormatter(formatter)
-    handler.setLevel(logging.DEBUG)
 
 # Instantiate CAPTCHA
 app.config['CAPTCHA_ENABLE'] = True
@@ -315,22 +303,6 @@ def update_status(id, status):
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ['txt', 'pdf', 'doc', 'docx']
-
-def log(message, level='info'):
-
-    nowUTC = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S:%f %Z')
-    toWrite = nowUTC + ',\t' + '"' + message + '"'
-    
-    if level=='debug':
-        logger.debug('\t' + toWrite)
-    elif level=='info':
-        logger.info('\t' + toWrite)
-    elif level=='warning':
-        logger.warning(toWrite)
-    elif level=='error':
-        logger.error('\t' + toWrite)
-    elif level=='critical':
-        logger.critical(toWrite)
 
 stripe.api_key = STRIPE_PRIVATE_KEY
 
