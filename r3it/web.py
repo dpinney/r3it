@@ -336,7 +336,7 @@ stripe.api_key = STRIPE_PRIVATE_KEY
 
 @app.route('/payment')
 def payment():
-    return render_template('application.html')
+    return render_template('payment.html')
 
 @app.route('/create-checkout-session', methods=['POST'])
 def create_checkout_session():
