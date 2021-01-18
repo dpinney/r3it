@@ -334,6 +334,10 @@ def log(message, level='info'):
 
 stripe.api_key = STRIPE_PRIVATE_KEY
 
+@app.route('/payment', methods=['GET'])
+def create_checkout_session():
+    return render_template('application.html')
+
 @app.route('/create-checkout-session', methods=['POST'])
 def create_checkout_session():
     try:
