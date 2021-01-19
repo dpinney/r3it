@@ -320,7 +320,7 @@ def create_checkout_session():
                 {
                     'price_data': {
                         'currency': 'usd',
-                        'unit_amount': 50,
+                        'unit_amount': 5000,
                         'product_data': {
                             'name': 'Interconnection Application Fee',
                             'images': ['https://i.imgur.com/EHyR2nP.png'],
