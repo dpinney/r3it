@@ -23,7 +23,7 @@
           var checkoutButton = document.getElementById("checkout-button");
       
           checkoutButton.addEventListener("click", function () {
-            fetch("/create-checkout-session/{{ id }}/{{ token }}", {
+            fetch("/create-checkout-session/{{ id }}", {
               method: "POST",
             })
               .then(function (response) {
