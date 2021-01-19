@@ -237,7 +237,7 @@ def add_to_appQueue():
     app = {key:item for key, item in request.form.items()}
     app['ID'] = str(int(datetime.timestamp(datetime.now()) * 10**7) + random.choice(range(999)))
     app['Time of Request'] = str(datetime.now())
-    app['Status'] = 'Application Submitted'
+    app['Status'] = 'Payment Required'
     try: os.makedirs(appDir(app['ID']))
     except: pass
     with appFile(app['ID'], 'w') as appfile:
@@ -249,7 +249,7 @@ def add_to_appQueue():
     # run analysis on the queue as a separate process
     p = Process(target=interconnection.processQueue, args=(processQueueLock,))
     p.start()
-    return redirect('/?notification=Application%20submitted%2E')
+    return redirect('/payment/' + app['ID'])
 
 @app.route('/application')
 @flask_login.login_required
@@ -307,12 +307,21 @@ def allowed_file(filename):
 stripe.api_key = STRIPE_PRIVATE_KEY
 
 @flask_login.login_required
-@app.route('/payment')
-def payment():
-    return render_template('payment.html')
+@app.route('/payment/<id>')
+def payment(id):
+    return render_template('payment.html', id=id)
 
-@app.route('/create-checkout-session', methods=['POST'])
-def create_checkout_session():
+@flask_login.login_required
+@app.route('/success/<id>/<token>')
+def success(id, token):
+    if token != hashPassword(id, COOKIE_KEY) : return redirect('/?notification=Payment&20failed&2E')
+    if appDict(id).get('Email (Customer)', '') == appDict(id).get('Email (Contact)', 'a'):
+        update_status(id, 'Application Submitted')
+    else: update_status(id, 'Delegation Required')
+    return redirect('/?notification=Application&20submitted&2E')
+
+@app.route('/create-checkout-session/<id>', methods=['POST'])
+def create_checkout_session(id):
     try:
         checkout_session = stripe.checkout.Session.create(
             payment_method_types=['card'],
@@ -330,14 +339,12 @@ def create_checkout_session():
                 },
             ],
             mode='payment',
-            success_url='https://' + DOMAIN + '/application',
+            success_url='https://' + DOMAIN + '/success/' + id + '/' hashPassword(id,COOKIE_KEY),
             cancel_url='https://' + DOMAIN + '/?notification=Payment%20failed%2E',
         )
         return jsonify({'id': checkout_session.id})
     except Exception as e:
         return jsonify(error=str(e)), 4
-
-
 
 if __name__ == '__main__':
     app.run(debug=True, host= '0.0.0.0')

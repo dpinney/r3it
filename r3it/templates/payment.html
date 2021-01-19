@@ -4,7 +4,7 @@
     <script src="https://polyfill.io/v3/polyfill.min.js?version=3.52.1&features=fetch"></script>
     <script src="https://js.stripe.com/v3/"></script>
 
-    <H1>New Interconnection Application</H1>
+    <H1>Interconnection Application Payment</H1>
 
         <div class="product">
           <img
@@ -23,7 +23,7 @@
           var checkoutButton = document.getElementById("checkout-button");
       
           checkoutButton.addEventListener("click", function () {
-            fetch("/create-checkout-session", {
+            fetch("/create-checkout-session/{{ id }}/{{ token }}", {
               method: "POST",
             })
               .then(function (response) {

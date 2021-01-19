@@ -63,6 +63,8 @@ smtpServer          = 'box.ghw.io'
 
 # All possible statuses an interconnection application may have.
 statuses = (
+    'Payment Required',
+    'Delegation Required',
     'Application Submitted', # Attn: Member services, upon submission.
     'Engineering Review', # Attn: Engineering, if above size threshold
     'Customer Options Meeting Required', # Attn: Member Services
@@ -78,6 +80,13 @@ statuses = (
 )
 
 allowedStatusChanges = {
+    'Payment Required' : {
+        'Delegation Required' : 'memberServices',
+        'Application Submitted' : 'memberServices'
+    },
+    'Delegation Required' : {
+        'Application Submitted' : 'memberServices'
+    },
     'Application Submitted' : {
         'Engineering Review' : 'memberServices',
         'Interconnection Agreement Proffered' : 'memberServices'
