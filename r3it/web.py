@@ -339,7 +339,7 @@ def create_checkout_session(id):
                 },
             ],
             mode='payment',
-            success_url='https://' + DOMAIN + '/success/' + id + '/' hashPassword(id,COOKIE_KEY),
+            success_url='https://' + DOMAIN + '/success/' + id + '/' + hashPassword(id,COOKIE_KEY),
             cancel_url='https://' + DOMAIN + '/?notification=Payment%20failed%2E',
         )
         return jsonify({'id': checkout_session.id})
