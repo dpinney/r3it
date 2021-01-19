@@ -306,6 +306,7 @@ def allowed_file(filename):
 
 stripe.api_key = STRIPE_PRIVATE_KEY
 
+@flask_login.login_required
 @app.route('/payment')
 def payment():
     return render_template('payment.html')
@@ -319,7 +320,7 @@ def create_checkout_session():
                 {
                     'price_data': {
                         'currency': 'usd',
-                        'unit_amount': 50,
+                        'unit_amount': 50.00,
                         'product_data': {
                             'name': 'Interconnection Application Fee',
                             'images': ['https://i.imgur.com/EHyR2nP.png'],
@@ -329,8 +330,8 @@ def create_checkout_session():
                 },
             ],
             mode='payment',
-            success_url='https://' + DOMAIN + '/success.html',
-            cancel_url='https://' + DOMAIN + '/cancel.html',
+            success_url='https://' + DOMAIN + '/application',
+            cancel_url='https://' + DOMAIN + '/?notification=Payment%20failed%2E',
         )
         return jsonify({'id': checkout_session.id})
     except Exception as e:
