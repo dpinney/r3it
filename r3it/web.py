@@ -302,7 +302,7 @@ def update_status(id, status):
 
 def allowed_file(filename):
     return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ['txt', 'pdf', 'doc', 'docx']
+           filename.rsplit('.', 1)[1].lower() in ['txt', 'pdf', 'doc', 'docx', 'jpg', 'png', 'gif', 'bmp', 'heic']
 
 stripe.api_key = STRIPE_PRIVATE_KEY
 
