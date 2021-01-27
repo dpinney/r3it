@@ -1,4 +1,4 @@
-Dear {{customer}},
+Dear {{member}},
 {{developer}} is requesting permission to act on your behalf with {{utility}} in
 regards to your interconnection request at {{address}}. Click {{approvalLink}} to
 approve the request. If you believe you have received this in error, or you have

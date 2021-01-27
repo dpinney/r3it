@@ -67,13 +67,13 @@ statuses = (
     'Delegation Required',
     'Application Submitted', # Attn: Member services, upon submission.
     'Engineering Review', # Attn: Engineering, if above size threshold
-    'Customer Options Meeting Required', # Attn: Member Services
-    'Customer Options Meeting Proposed', # Attn: Consumer, when proposed by member services.
-    'Customer Options Meeting Scheduled', # Attn: ???,
-    'Interconnection Agreement Proffered', # Attn: Customer
-    'Interconnection Agreement Executed', # Attn: Customer
-    'Permission to Operate Proffered', # Attn: Customer
-    'Commissioning Test Needed', # Attn: Engineering, Customer
+    'Member Options Meeting Required', # Attn: Member Services
+    'Member Options Meeting Proposed', # Attn: Consumer, when proposed by member services.
+    'Member Options Meeting Scheduled', # Attn: ???,
+    'Interconnection Agreement Proffered', # Attn: Member
+    'Interconnection Agreement Executed', # Attn: Member
+    'Permission to Operate Proffered', # Attn: Member
+    'Commissioning Test Needed', # Attn: Engineering, Member
     'Commissioned',
     'Out of Service',
     'Withdrawn'
@@ -92,16 +92,16 @@ allowedStatusChanges = {
         'Interconnection Agreement Proffered' : 'memberServices'
     },
     'Engineering Review' : {
-        'Customer Options Meeting Required' : 'engineer',
+        'Member Options Meeting Required' : 'engineer',
         'Interconnection Agreement Proffered' : 'engineer'
     },
-    'Customer Options Meeting Required' : {
-        'Customer Options Meeting Proposed' : 'memberServices'
+    'Member Options Meeting Required' : {
+        'Member Options Meeting Proposed' : 'memberServices'
     },
-    'Customer Options Meeting Proposed' : {
-        'Customer Options Meeting Scheduled' : 'memberServices'
+    'Member Options Meeting Proposed' : {
+        'Member Options Meeting Scheduled' : 'memberServices'
     },
-    'Customer Options Meeting Scheduled' : {
+    'Member Options Meeting Scheduled' : {
         'Interconnection Agreement Proffered' : 'engineer'
     },
     'Interconnection Agreement Proffered' : {
@@ -128,8 +128,8 @@ actionItems = {
         'Engineering Review',
         'Commissioning Test Needed'
     ),
-    'customer': (
-        'Customer Options Meeting Proposed',
+    'member': (
+        'Member Options Meeting Proposed',
         'Interconnection Agreement Proffered',
         'Interconnection Agreement Executed',
         'Permission to Operate Proffered',
@@ -137,7 +137,7 @@ actionItems = {
     ),
     'memberServices': (
         'Application Submitted',
-        'Customer Options Meeting Required'
+        'Member Options Meeting Required'
     )
 }
 

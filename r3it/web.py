@@ -158,7 +158,7 @@ def index():
         [str(key+1), # queue position
         app.get('Time of Request'),
         app.get('ID'),
-        app.get('Address (Facility)'),
+        app.get('Billing Address'),
         app.get('Status')] for key, app in enumerate(appQueue()) \
                                     if authorizedToView(currentUser(), app)
     ]
@@ -166,7 +166,7 @@ def index():
         [str(key+1),
         app.get('Time of Request'),
         app.get('ID'),
-        app.get('Address (Facility)'),
+        app.get('Billing Address'),
         app.get('Status')] for key, app in enumerate(appQueue()) \
                                     if requiresUsersAction(currentUser(), app)
     ]
@@ -243,7 +243,7 @@ def add_to_appQueue():
     with appFile(app['ID'], 'w') as appfile:
         json.dump(app, appfile)
     log('Application ' + app['ID'] + 'submitted')
-    mailer.sendEmail(app.get('Email (Customer)', ''), "R3IT application submitted","Your application with ID " + \
+    mailer.sendEmail(app.get('Email (Member)', ''), "R3IT application submitted","Your application with ID " + \
         app['ID'] + ' has been submitted.')
     # TODO: Figure out the fork-but-not-exec issue (below -> many errors)
     # run analysis on the queue as a separate process
@@ -293,7 +293,7 @@ def update_status(id, status):
     with appFile(id, 'w') as file:
         json.dump(data, file)
     log('Status update successful')
-    mailer.sendEmail( data.get('Email (Customer)', ''), 'R3IT application status updated', "The status of your interconnection request has been updated to '" + \
+    mailer.sendEmail( data.get('Email (Member)', ''), 'R3IT application status updated', "The status of your interconnection request has been updated to '" + \
         status + "'. Login to your account for more information.")
     if status == 'Withdrawn':
         p = Process(target=interconnection.withdraw, args=(withdrawLock, processQueueLock, id))
@@ -315,7 +315,7 @@ def payment(id):
 @app.route('/success/<id>/<token>')
 def success(id, token):
     if token != hashPassword(id, COOKIE_KEY) : return redirect('/?notification=Payment&20failed&2E')
-    if appDict(id).get('Email (Customer)', '') == appDict(id).get('Email (Contact)', 'a'):
+    if appDict(id).get('Email (Member)', '') == appDict(id).get('Email (Contact)', 'a'):
         update_status(id, 'Application Submitted')
     else: update_status(id, 'Delegation Required')
     return redirect('/?notification=Application&20submitted&2E')

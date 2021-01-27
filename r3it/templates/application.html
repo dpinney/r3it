@@ -16,10 +16,10 @@
             </div>
             
             <div class="rightForm">
-            <H3>Tariff</H3>
-            <input type="radio" id="Net Metering" name="Tariff" value="Net Metering" checked="checked">
+            <H3>Tarif</H3>
+            <input type="radio" id="Net Metering" name="Tarif" value="Net Metering" checked="checked">
             <label for="Net Metering">Net Metering</label><br>
-            <input type="radio" id="Value of Solar" name="Tariff" value="Value of Solar">
+            <input type="radio" id="Value of Solar" name="Tarif" value="Value of Solar">
             <label for="Value of Solar">Value of Solar</label><br>
             </div>
         
@@ -28,26 +28,26 @@
         <div class="card">
 
             <div class="leftForm">
-            <H3>Customer</H3>
-            <label for='customer'>Customer:</label><br>
-            <input type='text' id='customer' name='Customer' value='{{default.name}}'><br>
+            <H3>Member</H3>
+            <label for='member'>Member:</label><br>
+            <input type='text' id='member' name='Member' value='{{default.name}}'><br>
             <!Is name vs. contact confusing? How to clarify? Maybe ask for Organization?>
-            <label for='contactPersonCustomer'>Contact Person:</label><br>
-            <input type='text' id='contactPersonCustomer' name='Contact Person (Customer)' value='{{default.name}}'><br>
-            <label for='addressCustomer'>Address:</label><br>
-            <input type='text' id='addressCustomer' name='Address (Customer)' value="{{default.address}}"><br>
-            <label for='cityCustomer'>City:</label><br>
-            <input type='text' id='cityCustomer' name='City (Customer)' value='{{default.city}}'><br>
-            <label for='stateCustomer'>State:</label><br>
-            <input type='text' id='stateCustomer' name='State (Customer)' value='{{default.state}}'><br>
-            <label for='zipCustomer'>Zip Code:</label><br>
-            <input type='text' id='zipCustomer' name='Zip (Customer)' value='{{default.zip}}'><br>
-            <label for='dayTelephoneCustomer'>Telephone (Day):</label><br>
-            <input type='text' id='dayTelephoneCustomer' name='Telephone (Day, Customer)' value='{{default.phone}}'><br>
-            <label for='eveningTelephoneCustomer'>Telephone (Evening):</label><br>
-            <input type='text' id='eveningTelephoneCustomer' name='Telephone (Evening, Customer)' value='{{default.phone}}'><br>
-            <label for='emailCustomer'>Email Address:</label><br>
-            <input type='text' id='emailCustomer' name='Email (Customer)' value='{{default.email}}'><br>
+            <label for='contactPersonMember'>Contact Person:</label><br>
+            <input type='text' id='contactPersonMember' name='Contact Person (Member)' value='{{default.name}}'><br>
+            <label for='addressBilling'>Address:</label><br>
+            <input type='text' id='addressBilling' name='Address (Billing)' value="{{default.address}}"><br>
+            <label for='cityBilling'>City:</label><br>
+            <input type='text' id='cityBilling' name='City (Billing)' value='{{default.city}}'><br>
+            <label for='stateBilling'>State:</label><br>
+            <input type='text' id='stateBilling' name='State (Billing)' value='{{default.state}}'><br>
+            <label for='zipBilling'>Zip Code:</label><br>
+            <input type='text' id='zipBilling' name='Zip (Billing)' value='{{default.zip}}'><br>
+            <label for='primaryTelephoneMember'>Telephone (Primary):</label><br>
+            <input type='text' id='primaryTelephoneMember' name='Telephone (Primary, Member)' value='{{default.phone}}'><br>
+            <label for='secondaryTelephoneMember'>Telephone (Secondary):</label><br>
+            <input type='text' id='secondaryTelephoneMember' name='Telephone (Secondary, Member)' value='{{default.phone}}'><br>
+            <label for='emailMember'>Email Address:</label><br>
+            <input type='text' id='emailMember' name='Email (Member)' value='{{default.email}}'><br>
             </div>
 
             <!TODO: Figure out "same as above" button.>
@@ -66,10 +66,10 @@
             <input type='text' id='stateContact' name='State (Contact)' value='IL'><br>
             <label for='zipContact'>Zip Code:</label><br>
             <input type='text' id='zipContact' name='Zip (Contact)' value='76543'><br>
-            <label for='dayTelephoneContact'>Telephone (Day):</label><br>
-            <input type='text' id='dayTelephoneContact' name='Daytime Telephone (Contact)' value='2345678987'><br>
-            <label for='eveningTelephoneContact'>Telephone (Evening):</label><br>
-            <input type='text' id='eveningTelephoneContact' name='Evening Telephone (Contact)' value='(234) 567 - 8987'><br>
+            <label for='primaryTelephoneContact'>Telephone (Primary):</label><br>
+            <input type='text' id='primaryTelephoneContact' name='Primary Telephone (Contact)' value='2345678987'><br>
+            <label for='secondaryTelephoneContact'>Telephone (Secondary):</label><br>
+            <input type='text' id='secondaryTelephoneContact' name='Secondary Telephone (Contact)' value='(234) 567 - 8987'><br>
             <label for='emailContact'>Email Address:</label><br>
             <input type='text' id='emailContact' name='Email (Contact)' value='installer@solarinstallerinc.tld'><br>
             </div>
@@ -77,10 +77,10 @@
 
         <div class="card">
 
-            <H3 style="width: 100%;">Interconnection Facility Information</H3>
+            <H3 style="width: 100%;">Interconnection Service Information</H3>
             
             <div class="leftForm">
-            <H4>Facility Information</H4>
+            <H4>Service Information</H4>
             <label for='utility'>Utility:</label><br>
             <input type='text' id='utility' name='Utility' value='Dairyland Power'><br>
             <label for='accountNumber'>Account Number:</label><br>
@@ -124,19 +124,19 @@
             <input type='text' id='owner' name='Owner' value='{{default.name}}'><br>
             <H4>Location</H4>
             <!TODO: Figure out "same as above" button.>
-            <label for='addressFacility'>Address:</label><br>
-            <input type='text' id='addressFacility' name='Address (Facility)' value='{{default.address}}'><br>
-            <label for='cityFacility'>City:</label><br>
-            <input type='text' id='cityFacility' name='City (Facility)' value='{{default.city}}'><br>
-            <label for='stateFacility'>State:</label><br>
-            <input type='text' id='stateFacility' name='State (Facility)' value="{{default.state}}"><br>
-            <label for='zipFacility'>Zip Code:</label><br>
-            <input type='text' id='zipFacility' name='Zip (Facility)' value="{{default.zip}}"><br>
+            <label for='addressService'>Address:</label><br>
+            <input type='text' id='addressService' name='Address (Service)' value='{{default.address}}'><br>
+            <label for='cityService'>City:</label><br>
+            <input type='text' id='cityService' name='City (Service)' value='{{default.city}}'><br>
+            <label for='stateService'>State:</label><br>
+            <input type='text' id='stateService' name='State (Service)' value="{{default.state}}"><br>
+            <label for='zipService'>Zip Code:</label><br>
+            <input type='text' id='zipService' name='Zip (Service)' value="{{default.zip}}"><br>
             </div>
         </div>
         
         <div class="card">
-            <p> By clicking the checkbox and typing their name below, the customer agrees to provide the Cooperative with any additional information required to complete the interconnection. The customer shall operate his equipment within the guidelines set forth by the cooperative. </p>
+            <p> By clicking the checkbox and typing their name below, the member agrees to provide the Cooperative with any additional information required to complete the interconnection. The member shall operate his equipment within the guidelines set forth by the cooperative. </p>
             <p><input required type="checkbox" id="agreement" name="Agreement">
             <label for="agreement"> I accept the terms above</label> </p>
             <p><input required type="text" placeholder="Please type your name here" id="signed" name="Signed"></p>

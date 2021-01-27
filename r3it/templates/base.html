@@ -51,7 +51,7 @@
 		{% elif 'memberServices' in current_user.roles %} 
 			{% block ms %}{% endblock %}
 		{% else %} {% if current_user.is_authenticated() %}
-			{% block customer %}{% endblock %}{% endif %}
+			{% block member %}{% endblock %}{% endif %}
 		{% endif %}
 
 		<!-- <hr> -->

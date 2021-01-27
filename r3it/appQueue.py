@@ -35,11 +35,11 @@ def allAppPaths():
 def requiresUsersAction(email, app):
     '''Returns true if interconnection application requires action from user.'''
     status = app.get('Status')
-    customerPriority = userOwnsApp(email, app) and status in actionItems['customer']
+    memberPriority = userOwnsApp(email, app) and status in actionItems['member']
     employeePriority = False
     for role in userRoles(email):
         if status in actionItems.get(role,[]): employeePriority = True
-    return customerPriority or employeePriority
+    return memberPriority or employeePriority
 
 def appDir(id):
     '''Returns path for application directory given app id'''

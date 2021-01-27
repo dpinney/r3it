@@ -3,8 +3,8 @@
 import glob, config, os, json, base64, hashlib
 
 def userOwnsApp(email, app):
-    '''Returns true if the user is the customer or the solar installer.'''
-    return email == app.get('Email (Customer)') \
+    '''Returns true if the user is the member or the solar installer.'''
+    return email == app.get('Email (Member)') \
         or email == app.get('Email (Contact)')
 
 def users():
@@ -30,7 +30,7 @@ def utilityUsers():
 def userRoles(email, app={}):
     '''Returns list of roles assigned to a user, identified by email.'''
     roles = [role for role, emails in config.roles.items() if email in emails]
-    if userOwnsApp(email,app): roles.append('customer')
+    if userOwnsApp(email,app): roles.append('member')
     return roles
 
 def userHasRole(email, role): return role in userRoles(email)
