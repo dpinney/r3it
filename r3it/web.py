@@ -191,7 +191,8 @@ def report(id):
         updates = [update for update, role in next_statuses.items() \
                             if role in userRoles(currentUser(), report_data)]
     else: updates = []
-    return render_template('report.html', data=report_data, eng_data=eng_data, updates=updates, files=allAppUploads(id))
+    return render_template('report.html', data=report_data, 
+        eng_data=eng_data, updates=updates, files=allAppUploads(id))
 
 @app.route('/upload/<id>/<doc>', methods=['GET','POST'])
 @flask_login.login_required
@@ -345,6 +346,15 @@ def create_checkout_session(id):
         return jsonify({'id': checkout_session.id})
     except Exception as e:
         return jsonify(error=str(e)), 4
+
+
+@app.route('/save-notes/<id>', methods=['POST'])
+def save_notes(id):
+    app = appDict(id)
+    app['Notes'] = request.form['notesText']
+    with appFile(app['ID'], 'w') as appfile:
+        json.dump(app, appfile)
+    return redirect(request.referrer)
 
 if __name__ == '__main__':
     app.run(debug=True, host= '0.0.0.0')

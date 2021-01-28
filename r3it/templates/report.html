@@ -2,18 +2,29 @@
 
 {% block head %}
     <!-- Library Imports -->
-    <script>sampleData = {{ eng_data | tojson }}</script>
+    <script>sampleData = {{ eng_data | tojson }} </script>
 {% endblock %}
 
 {% block content %}
     
     <H1>Interconnection report for request {{data['ID']}}</H1>
+
+    {% if (
+        ('engineer' in current_user.roles) or 
+        ('memberServices' in current_user.roles)
+    ) %}
+        {{notes()}}
+    {% endif %}
     
+    <h3>Application details</h3>
+
     <table>
         {% for key in data %}
         {% if ( 
+            (key != 'Notes') and 
             (key != 'Screen Results') and 
             (key != 'markedForRerunDueToWithdrawal') and
+            (key != 'previousRequestWithdrawn') and
             (key != 'Agreement')
         ) %}
             <tr>
@@ -43,6 +54,7 @@
     {% endfor %}
 
     <hr>
+    
     <H3>Automated Screening Results</H3>
     <table>
         {% for key in data['Screen Results'] %}
@@ -55,12 +67,13 @@
         {% endfor %}
     </table>
 
-    <hr>
     {% for update in updates %}
     <form action='{{"/update-status/" + data['ID'] + '/' + update}}'>
       <input type='submit' value='{{"Update status to " + update}}'>
     </form>
     {% endfor %}
+
+    <hr>
 
 {% endblock %}
 
@@ -77,14 +90,17 @@
 
 {% block engineer %}
 	<script src="/static/sorttable.js"></script>
-    <hr>
+    
+<!--     <hr>
     {% if 'Engineering Review' == data['Status'] %}
         <form action='{{"/update-status/" + data['ID'] + "/Interconnection%20Agreement%20Proffered"}}'>
         <input type='submit' value='Proffer Interconnection Agreement'/>
         </form>
     {% endif %}
     <hr>
+ -->    
     <H2>Interconnection Details</H2>
+
     <!-- Tables -->
     <p class="reportTitle">Maximum and Minimum Voltages</p>
     <table id="minMaxVolts">
@@ -492,3 +508,34 @@
 
     </div>
 {% endblock %}
+
+{% macro notes() %}
+
+<script type="text/javascript">
+    function editNotes() {
+
+        // display save button hide edit button
+        document.getElementById("notesSave").style.display = "inline";
+        document.getElementById("notesEdit").style.display = "none";
+        
+        // update notes text area styling to allow editing
+        notesText = document.getElementById("notesText")
+        notesText.disabled = false;
+        notesText.style.boxShadow = 'none';
+        notesText.style.borderStyle = 'solid';
+        notesText.style.borderWidth = '1px';
+        notesText.style.borderColor = '#000';
+
+    }
+</script>
+
+<hr><div id="notesContainer">
+<form id="notes" action='{{"/save-notes/" + data["ID"]}}' method='post'>
+    <H3>Notes:</H3>
+    <textarea id="notesText" name="notesText" rows=10 disabled="True">{{data['Notes']}}</textarea>
+    <button  name="save" id="notesSave">Save</button>
+</form>
+<button id="notesEdit" onclick="editNotes()">Edit</button>
+<hr></div>
+
+{% endmacro %}

@@ -220,9 +220,21 @@ table.sortable th {
 
 #application {
     font-size: 1.1em;
-} #application input {
+} #application select, #application input {
     font-size: 1.1em;
 }
+
+#notesContainer button {
+    margin: 10px 0px;
+} #notesText {
+    resize: none;
+    width: 100%;
+    box-sizing: border-box;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    border: none;
+    background-color: #fff;
+    padding: 10px;
+} #notesSave { display: none; }
 
 #footerSpacer {
     height: 2em;
