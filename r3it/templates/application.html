@@ -16,12 +16,12 @@
             </div>
             
             <div class="rightForm">
-            <H3>Tarif</H3>
-            <input type="dropdown" name="Tariff">
-            <input type="radio" id="Net Metering" name="Tarif" value="Net Metering" checked="checked">
-            <label for="Net Metering">Net Metering</label><br>
-            <input type="radio" id="Value of Solar" name="Tarif" value="Value of Solar">
-            <label for="Value of Solar">Value of Solar</label><br>
+            <H3>Tarriff</H3>
+            <select id="tariff" name="Tariff">
+                <option>Net metering April kWh reset</option>
+                <option>Net metering November kWh reset</option>
+                <option>Value of energy</option>
+            </select> 
             </div>
         
         </div>
@@ -54,7 +54,7 @@
             <!TODO: Figure out "same as above" button.>
             <!TODO: Decide if drop-down for partnered solar installers is good idea, maybe implement?>
             <div class="rightForm">
-            <H3>Contact</H3>
+            <H3>Installer</H3>
             <label for='contact'>Contact:</label><br>
             <input type='text' id='contact' name='Contact' value='Solar Install, Inc.'><br>
             <label for='contactPersonContact'>Contact Person:</label><br>
@@ -73,6 +73,8 @@
             <input type='text' id='secondaryTelephoneContact' name='Secondary Telephone (Contact)' value='(234) 567 - 8987'><br>
             <label for='emailContact'>Email Address:</label><br>
             <input type='text' id='emailContact' name='Email (Contact)' value='installer@solarinstallerinc.tld'><br>
+            <label for='docketNum'>Docket Number:</label><br>
+            <input type='text' id='docketNum' name='Docket Num' value='145558'><br>
             </div>
         </div>
 
@@ -93,11 +95,11 @@
             <input type='text' id='inverterManf' name='Inverter Manufacturer' value='Princeton Power'><br>
             <label for='inverterModel'>Inverter Model:</label><br>
             <input type='text' id='inverterModel' name='Inverter Model' value="T"><br>
-            <label for='nameplateRatingkW'>Nameplate Rating (kW):</label><br>
+            <label for='nameplateRatingkW'>Nameplate Rating (kW-AC):</label><br>
             <input type='text' id='nameplateRatingkW' name='Nameplate Rating (kW)' value="{{default.size}}"><br>
-            <label for='nameplateRatingkVA'>Nameplate Rating (kVA):</label><br>
+            <label for='nameplateRatingkVA'>Nameplate Rating (kVA-AC):</label><br>
             <input type='text' id='nameplateRatingkVA' name='Nameplate Rating (kVA)' value='{{default.size}}'><br>
-            <label for='nameplateRatingV'>Nameplate Rating (V):</label><br>
+            <label for='nameplateRatingV'>Nameplate Rating (V-AC):</label><br>
             <input type='text' id='nameplateRatingV' name='Nameplate Rating (V)' value='{{default.voltage}}'><br>
             <!TODO: Make dropdown or radio button>
             <label for='phases'>Single or Three Phase:</label><br>
@@ -108,8 +110,8 @@
             <label for='energySource'>Energy Source:</label><br>
             <input type='text' id='energySource' name='Energy Source' value='Sunlight'><br>
             <!TODO: Should be a bool>
-            <label for='ul741'>Is the equipment UL741 listed?:</label><br>
-            <input type='text' id='ul741' name='UL741' value='Yes'> <br>
+            <label for='ul1741'>Is the equipment UL1741 listed?:</label><br>
+            <input type='text' id='ul1741' name='UL1741' value='Yes'> <br>
             <!TODO: Date pickers>
             <label for='installDateEstimated'>Estimated Install Date:</label><br>
             <input type='text' id='installDateEstimated' name='Estimated Install Date' value='11/11/2020'><br>
