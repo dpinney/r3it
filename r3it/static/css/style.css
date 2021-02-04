@@ -222,6 +222,8 @@ table.sortable th {
     font-size: 1.1em;
 } #application select, #application input {
     font-size: 1.1em;
+} #electrician {
+    display: none;
 }
 
 #notesContainer button {

@@ -1,8 +1,36 @@
 {% extends "base.html" %}
 
 {% block content %}
+
     <script src="https://polyfill.io/v3/polyfill.min.js?version=3.52.1&features=fetch"></script>
     <script src="https://js.stripe.com/v3/"></script>
+    
+    <script type="text/javascript">
+
+        function showCorrectFormParts() {
+
+            appType = document.getElementById("appType").value;
+            contractor = document.getElementById("contractor");
+            electrician = document.getElementById("electrician");
+
+            switch (appType){
+                case 'Contractor only':
+                    contractor.style.display = 'inline';
+                    electrician.style.display = 'none';
+                    break;
+                case 'Contractor and Electrician':
+                    contractor.style.display = 'inline';
+                    electrician.style.display = 'inline';
+                    break;
+                case 'Self-install':
+                    contractor.style.display = 'none';
+                    electrician.style.display = 'none';
+                    break;
+            }
+
+        }
+
+    </script>
 
     <H1>New Interconnection Application</H1>
 
@@ -11,7 +39,7 @@
         <div class="card">
             
             <div class="leftForm">
-            <H3>Application Name:</H3>
+            <H3>Application Name</H3>
             <input type='text' id='applicationName' name='Application Name' value="{{default.label}}"><br>
             </div>
             
@@ -28,7 +56,64 @@
 
         <div class="card">
 
+            <!TODO: Figure out "same as member" button.>
+            <!TODO: Decide if drop-down for partnered solar installers is good idea, maybe implement?>
             <div class="leftForm">
+            <H3>Installation Type</H3>
+            <select id="appType" name="Application Type" onchange="showCorrectFormParts()">
+                <option>Contractor only</option>
+                <option>Contractor and Electrician</option>
+                <option>Self-install</option>
+            </select> 
+            
+            <div id='contractor'>
+            <H3>Contractor</H3>
+            <label for='contact'>Contact:</label><br>
+            <input type='text' id='contact' name='Contractor' value='Solar Install, Inc.'><br>
+            <label for='contactPersonContact'>Contact Person:</label><br>
+            <input type='text' id='contactPersonContact' name='Contact Person (Contact)' value='John Henry'><br>
+            <label for='addressContact'>Address:</label><br>
+            <input type='text' id='addressContact' name='Address (Contractor)' value='123 Ceder Circle'><br>
+            <label for='cityContact'>City:</label><br>
+            <input type='text' id='cityContact' name='City (Contractor)' value='Chicago'><br>
+            <label for='stateContact'>State:</label><br>
+            <input type='text' id='stateContact' name='State (Contractor)' value='IL'><br>
+            <label for='zipContact'>Zip Code:</label><br>
+            <input type='text' id='zipContact' name='Zip (Contractor)' value='76543'><br>
+            <label for='primaryTelephoneContact'>Telephone (Primary):</label><br>
+            <input type='text' id='primaryTelephoneContact' name='Primary Telephone (Contractor)' value='2345678987'><br>
+            <label for='secondaryTelephoneContact'>Telephone (Secondary):</label><br>
+            <input type='text' id='secondaryTelephoneContact' name='Secondary Telephone (Contractor)' value='(234) 567 - 8987'><br>
+            <label for='emailContact'>Email Address:</label><br>
+            <input type='text' id='emailContact' name='Email (Contractor)' value='installer@solarinstallerinc.tld'><br>
+            <label for='docketNum'>Docket Number:</label><br>
+            <input type='text' id='docketNum' name='Docket Num' value='145558'><br>
+            </div>
+            
+            <div id='electrician'>
+            <H3>Electrician</H3>
+            <label for='contact2'>Contact:</label><br>
+            <input type='text' id='contact2' name='Electrician' value='Solar Install, Inc.'><br>
+            <label for='contactPersonContact2'>Contact Person:</label><br>
+            <input type='text' id='contactPersonContact2' name='Contact Person (Electrician)' value='John Henry'><br>
+            <label for='addressContact2'>Address:</label><br>
+            <input type='text' id='addressContact2' name='Address (Electrician)' value='123 Ceder Circle'><br>
+            <label for='cityContact'>City:</label><br>
+            <input type='text' id='cityContact2' name='City (Electrician)' value='Chicago'><br>
+            <label for='stateContact2'>State:</label><br>
+            <input type='text' id='stateContact2' name='State (Electrician)' value='IL'><br>
+            <label for='zipContact2'>Zip Code:</label><br>
+            <input type='text' id='zipContact2' name='Zip (Electrician)' value='76543'><br>
+            <label for='primaryTelephoneContact2'>Telephone (Primary):</label><br>
+            <input type='text' id='primaryTelephoneContact2' name='Primary Telephone (Electrician)' value='2345678987'><br>
+            <label for='secondaryTelephoneContact2'>Telephone (Secondary):</label><br>
+            <input type='text' id='secondaryTelephoneContact2' name='Secondary Telephone (Electrician)' value='(234) 567 - 8987'><br>
+            <label for='emailContact2'>Email Address:</label><br>
+            <input type='text' id='emailContact2' name='Email (Electrician)' value='installer@solarinstallerinc.tld'><br>
+            </div>
+            </div>
+
+            <div class="rightForm">
             <H3>Member</H3>
             <label for='member'>Member:</label><br>
             <input type='text' id='member' name='Member' value='{{default.name}}'><br>
@@ -51,31 +136,6 @@
             <input type='text' id='emailMember' name='Email (Member)' value='{{default.email}}'><br>
             </div>
 
-            <!TODO: Figure out "same as above" button.>
-            <!TODO: Decide if drop-down for partnered solar installers is good idea, maybe implement?>
-            <div class="rightForm">
-            <H3>Installer</H3>
-            <label for='contact'>Contact:</label><br>
-            <input type='text' id='contact' name='Contact' value='Solar Install, Inc.'><br>
-            <label for='contactPersonContact'>Contact Person:</label><br>
-            <input type='text' id='contactPersonContact' name='Contact Person (Contact)' value='John Henry'><br>
-            <label for='addressContact'>Address:</label><br>
-            <input type='text' id='addressContact' name='Address (Contact)' value='123 Ceder Circle'><br>
-            <label for='cityContact'>City:</label><br>
-            <input type='text' id='cityContact' name='City (Contact)' value='Chicago'><br>
-            <label for='stateContact'>State:</label><br>
-            <input type='text' id='stateContact' name='State (Contact)' value='IL'><br>
-            <label for='zipContact'>Zip Code:</label><br>
-            <input type='text' id='zipContact' name='Zip (Contact)' value='76543'><br>
-            <label for='primaryTelephoneContact'>Telephone (Primary):</label><br>
-            <input type='text' id='primaryTelephoneContact' name='Primary Telephone (Contact)' value='2345678987'><br>
-            <label for='secondaryTelephoneContact'>Telephone (Secondary):</label><br>
-            <input type='text' id='secondaryTelephoneContact' name='Secondary Telephone (Contact)' value='(234) 567 - 8987'><br>
-            <label for='emailContact'>Email Address:</label><br>
-            <input type='text' id='emailContact' name='Email (Contact)' value='installer@solarinstallerinc.tld'><br>
-            <label for='docketNum'>Docket Number:</label><br>
-            <input type='text' id='docketNum' name='Docket Num' value='145558'><br>
-            </div>
         </div>
 
         <div class="card">
