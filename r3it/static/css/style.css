@@ -83,6 +83,64 @@ table.sortable th {
     width: 50%;
 }
 
+.tooltip {
+    position: relative;
+    display: inline-block;
+}.tooltipText {
+    position: absolute;
+    visibility: hidden;
+    text-align: center;
+    margin-top: 1em;
+    padding: 0.5em;
+    border-radius: 0.5em;
+    background-color: black;
+    color: #fff;
+    z-index: 1;
+    top: 100%;
+} .tooltip:hover .tooltipText {
+    visibility: visible;
+} .tooltipText::after { 
+    /*adds arrow*/
+    content: " ";
+    position: absolute;
+    bottom: 100%;
+    left: 20%;
+    border-width: 0.5em;
+    border-style: solid;
+    border-color: transparent transparent black transparent;
+}
+
+/*
+.tooltip {
+    border-bottom: 1px dotted #000000; 
+    color: #000000; 
+    outline: none;
+    cursor: help; 
+    text-decoration: none;
+    position: relative;
+} .tooltip span {
+    margin-left: -999em;
+    position: absolute;
+    display: inline-block;
+} .tooltip:hover span {
+    border-radius: 5px 5px; 
+    -moz-border-radius: 5px; 
+    -webkit-border-radius: 5px; 
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.1); 
+    -webkit-box-shadow: 5px 5px rgba(0, 0, 0, 0.1); 
+    -moz-box-shadow: 5px 5px rgba(0, 0, 0, 0.1);
+    position: absolute; 
+    left: 0.5em; 
+    top: 1.5em; 
+    z-index: 99;
+    margin-left: 0; 
+    width: 200px;
+} .tootipText {background: #A9A9A9; 
+    color: white; 
+    padding: 5px 5px;
+}
+*/
+
 #bg {
     background-repeat: no-repeat;
     background-size: cover;
