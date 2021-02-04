@@ -181,6 +181,7 @@ def index():
 @flask_login.login_required
 def report(id):
     '''Given interconnection ID, render detailed report page'''
+    notification = request.args.get('notification', None)
     report_data = appDict(id)
     try:
         with open(os.path.join(appDir(id),GRIDLABD_DIR,OUTPUT_FILENAME)) as data:
@@ -192,32 +193,39 @@ def report(id):
                             if role in userRoles(currentUser(), report_data)]
     else: updates = []
     return render_template('report.html', data=report_data, 
-        eng_data=eng_data, updates=updates, files=allAppUploads(id))
+        eng_data=eng_data, updates=updates, files=allAppUploads(id), 
+        notification=notification)
 
 @app.route('/upload/<id>/<doc>', methods=['GET','POST'])
 @flask_login.login_required
 def upload(id, doc):
+  
     if request.method == 'POST': # File uploads
         log('Uploading file')
+  
         # check if the post request has the file part
         if 'file' not in request.files:
             log('Document ' + doc + 'Upload for application ' + id + ' failed; no file part')
             return redirect('/report/' + id + '?notification=No%20file%20part%2E')
         file = request.files['file']
+  
         # if user does not select file, browser also
-        # submit an empty part without filename
+        # submits an empty part without filename
         if file.filename == '':
             log('Document ' + doc + 'Upload for application ' + id + ' failed; no file selected')
             return redirect('/report/' + id + '?notification=No%20file%20selected%2E')
+  
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
         try:
             os.makedirs(os.path.join(app.root_path, "data", 'applications', id, "uploads", doc))
         except OSError:
             pass
+  
         file.save(os.path.join(app.root_path, "data", 'applications', id, 'uploads', doc, filename))
         log('Document ' + doc + 'Upload for application ' + id + ' successful; document saved')
-        return redirect(url_for('index') + '?notification=Upload%20successful%2E')
+        return redirect('/report/' + id + '?notification=Upload%20successful%2E')
+  
     else: return redirect(request.referrer)
 
 @app.route('/download/<id>/<doc>/<path:filename>')
