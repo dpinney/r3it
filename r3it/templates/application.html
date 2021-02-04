@@ -30,6 +30,23 @@
 
         }
 
+        function ensureMemberIsNotContractor(lastChangedID) {
+            
+            console.log(lastChangedID)
+
+            member = document.getElementById("emailMember").value;
+            contractor = document.getElementById("emailContact").value;
+            if (member == contractor) {
+                
+                alert("Member and contractor must be separate entities. If the member is performing the install, please selct 'Self-install' as the installation type")
+                
+                differentBlankVal = '';
+                if (member == '') {differentBlankVal = ' ';}
+                document.getElementById(lastChangedID).value = differentBlankVal;
+            }
+
+        }
+
     </script>
 
     <H1>New Interconnection Application</H1>
@@ -85,7 +102,7 @@
             <label for='secondaryTelephoneContact'>Telephone (Secondary):</label><br>
             <input type='text' id='secondaryTelephoneContact' name='Secondary Telephone (Contractor)' value='(234) 567 - 8987'><br>
             <label for='emailContact'>Email Address:</label><br>
-            <input type='text' id='emailContact' name='Email (Contractor)' value='installer@solarinstallerinc.tld'><br>
+            <input type='email' id='emailContact' name='Email (Contractor)' value='installer@solarinstallerinc.tld' onchange="ensureMemberIsNotContractor(this.id)"><br>
             <label for='docketNum'>Docket Number:</label><br>
             <input type='text' id='docketNum' name='Docket Num' value='145558'><br>
             </div>
@@ -109,7 +126,7 @@
             <label for='secondaryTelephoneContact2'>Telephone (Secondary):</label><br>
             <input type='text' id='secondaryTelephoneContact2' name='Secondary Telephone (Electrician)' value='(234) 567 - 8987'><br>
             <label for='emailContact2'>Email Address:</label><br>
-            <input type='text' id='emailContact2' name='Email (Electrician)' value='installer@solarinstallerinc.tld'><br>
+            <input type='email' id='emailContact2' name='Email (Electrician)' value='installer@solarinstallerinc.tld'><br>
             </div>
             </div>
 
@@ -133,7 +150,7 @@
             <label for='secondaryTelephoneMember'>Telephone (Secondary):</label><br>
             <input type='text' id='secondaryTelephoneMember' name='Telephone (Secondary, Member)' value='{{default.phone}}'><br>
             <label for='emailMember'>Email Address:</label><br>
-            <input type='text' id='emailMember' name='Email (Member)' value='{{default.email}}'><br>
+            <input type='email' id='emailMember' name='Email (Member)' value='{{default.email}}' onchange="ensureMemberIsNotContractor(this.id)"><br>
             </div>
 
         </div>
