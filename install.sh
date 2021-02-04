@@ -22,12 +22,13 @@ apt-get upgrade
 apt-get install python3.6 letsencrypt
 
 # install omf
+cd ~/
 git clone https://github.com/dpinney/omf.git
 cd omf
 python3 install.py
 
 # download repo
-cd ..
+cd ~/
 git clone https://github.com/dpinney/r3it
 
 # install requirements
