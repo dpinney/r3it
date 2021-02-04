@@ -19,17 +19,13 @@ apt-get upgrade
 
 # install python3.8, pip, gunicorn, cron
 
-apt-get install python3.6 letsencrypt
+apt-get install python3.6 letsencrypt python3-pip
 
 # install omf
 cd ~/
 git clone https://github.com/dpinney/omf.git
 cd omf
 python3 install.py
-
-# download repo
-cd ~/
-git clone https://github.com/dpinney/r3it
 
 # install requirements
 cd r3it
