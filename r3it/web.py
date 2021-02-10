@@ -258,7 +258,8 @@ def add_to_appQueue():
     # run analysis on the queue as a separate process
     p = Process(target=interconnection.processQueue, args=(processQueueLock,))
     p.start()
-    return redirect('/payment/' + app['ID'])
+    return redirect('/payment/' + app['ID'] + 
+        "?notification=Application%20submitted%20successfully!%20Please%20click%20'checkout'%20to%20complete%20payment.")
 
 @app.route('/application')
 @flask_login.login_required
@@ -318,7 +319,8 @@ stripe.api_key = STRIPE_PRIVATE_KEY
 @flask_login.login_required
 @app.route('/payment/<id>')
 def payment(id):
-    return render_template('payment.html', id=id)
+    notification = request.args.get('notification', None)
+    return render_template('payment.html', id=id, notification=notification)
 
 @flask_login.login_required
 @app.route('/success/<id>/<token>')
