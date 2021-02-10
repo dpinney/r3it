@@ -341,7 +341,6 @@ def create_checkout_session(id):
                         'unit_amount': 5000,
                         'product_data': {
                             'name': 'Interconnection Application Fee',
-                            'images': ['https://i.imgur.com/EHyR2nP.png'],
                         },
                     },
                     'quantity': 1,
