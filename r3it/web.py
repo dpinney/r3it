@@ -327,7 +327,7 @@ def success(id, token):
     if appDict(id).get('Email (Member)', '') == appDict(id).get('Email (Contact)', 'a'):
         update_status(id, 'Application Submitted')
     else: update_status(id, 'Delegation Required')
-    return redirect('/?notification=Application&20submitted&2E')
+    return redirect('/report/' + id + '?notification=Application&20submitted&2E')
 
 @app.route('/create-checkout-session/<id>', methods=['POST'])
 def create_checkout_session(id):
