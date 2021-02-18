@@ -252,8 +252,12 @@ def add_to_appQueue():
     with appFile(app['ID'], 'w') as appfile:
         json.dump(app, appfile)
     log('Application ' + app['ID'] + 'submitted')
-    mailer.sendEmail(app.get('Email (Member)', ''), "R3IT application submitted","Your application with ID " + \
-        app['ID'] + ' has been submitted.')
+    mailer.sendEmail(app.get('Email (Member)', ''), "R3IT application submitted",
+        "Your application with ID " + app['ID'] + ' has been submitted.')
+    link = 'demo.r3it.ghw.io/report/' + app['ID']
+    mailer.mailEngineers('New R3IT application', 
+        'New application with ID ' + app['ID'] + 
+        ' submitted. Use the following link for details: ' + link)    
     # TODO: Figure out the fork-but-not-exec issue (below -> many errors)
     # run analysis on the queue as a separate process
     p = Process(target=interconnection.processQueue, args=(processQueueLock,))

@@ -22,3 +22,9 @@ def sendEmail(recipient, subject='', body=''):
         server.send_message(msg)
 
     log("Email with subject '" + subject + "' sent to " + recipient)
+
+
+def mailEngineers(subject='',body=''):
+    print(subject, body)
+    for email in roles.get('engineer',[]):
+        sendEmail(email,subject,body)
