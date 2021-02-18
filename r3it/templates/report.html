@@ -15,7 +15,7 @@
     ) %}
         {{notes()}}
     {% endif %}
-    
+
     <h3>Application details</h3>
 
     <table>
@@ -78,6 +78,11 @@
 {% endblock %}
 
 {% block member %}
+{% if data['Status'] == 'Payment Required' %}
+    <H3>Payment required</H3>
+    <a href='{{"/payment/" + data['ID']}}'>Pay Application Fee</a>
+{% endif %}
+
   <H3>Click below to Withdraw Interconnection Application</H3>
     <form action='{{"/update-status/" + data['ID'] + "/Withdrawn"}}'>
       <input type='submit' value='Withdraw Interconnection Application'/>
