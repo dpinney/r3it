@@ -158,7 +158,7 @@ def index():
         [str(key+1), # queue position
         app.get('Time of Request'),
         app.get('ID'),
-        app.get('Billing Address'),
+        app.get('Address (Service)'),
         app.get('Status')] for key, app in enumerate(appQueue()) \
                                     if authorizedToView(currentUser(), app)
     ]
@@ -166,7 +166,7 @@ def index():
         [str(key+1),
         app.get('Time of Request'),
         app.get('ID'),
-        app.get('Billing Address'),
+        app.get('Address (Service)'),
         app.get('Status')] for key, app in enumerate(appQueue()) \
                                     if requiresUsersAction(currentUser(), app)
     ]
