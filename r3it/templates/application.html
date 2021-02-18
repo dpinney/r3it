@@ -7,9 +7,9 @@
     
     <script type="text/javascript">
 
-        function showCorrectFormParts() {
+        function showCorrectFormParts(radio) {
 
-            appType = document.getElementById("appType").value;
+            appType = radio.value;
             contractor = document.getElementById("contractor");
             electrician = document.getElementById("electrician");
 
@@ -56,17 +56,26 @@
         <div class="card">
             
             <div class="leftForm">
-            <H3>Application Name</H3>
-            <input type='text' id='applicationName' name='Application Name' value="{{default.label}}"><br>
+                <H3>Application Name</H3>
+                <input type='text' id='applicationName' name='Application Name' value="{{default.label}}"><br>
             </div>
             
             <div class="rightForm">
-            <H3>Tarriff</H3>
-            <select id="tariff" name="Tariff">
-                <option>Net metering April kWh reset</option>
-                <option>Net metering November kWh reset</option>
-                <option>Value of energy</option>
-            </select> 
+            
+                <H3>Tarriff</H3>
+                
+                <input id="aprilRadio" type="radio" name="Tarriff" value="Net metering April kWh reset" checked="True">
+                <label for="aprilRadio">Net metering April kWh reset</label>
+                <br>
+
+                <input id="novemberRadio" type="radio" name="Tarriff" value="Net metering November kWh reset">
+                <label for="novemberRadio">Net metering November kWh reset</label>
+                <br>
+
+                <input id="valueRadio" type="radio" name="Tarriff" value="Value of energy">
+                <label for="valueRadio">Value of energy</label>
+                <br>
+            
             </div>
         
         </div>
@@ -76,13 +85,23 @@
             <!TODO: Figure out "same as member" button.>
             <!TODO: Decide if drop-down for partnered solar installers is good idea, maybe implement?>
             <div class="leftForm">
-            <H3>Installation Type</H3>
-            <select id="appType" name="Application Type" onchange="showCorrectFormParts()">
-                <option>Contractor only</option>
-                <option>Contractor and Electrician</option>
-                <option>Self-install</option>
-            </select> 
             
+            <H3>Installation Type</H3>
+            
+            <input onclick="showCorrectFormParts(this)" id="contractorRadio" type="radio" name="Application Type" value="Contractor only" checked="True">
+            <label for="contractorRadio">Contractor only</label>
+            <br>
+
+            <input onclick="showCorrectFormParts(this)" id="contractorElecRadio" type="radio" name="Application Type" value="Contractor and Electrician">
+            <label for="contractorElecRadio">Contractor and Electrician</label>
+            <br>
+           
+
+            <input onclick="showCorrectFormParts(this)" id="selfRadio" type="radio" name="Application Type" value="Self-install">
+            <label for="selfRadio">Self-install</label>
+            <br>
+            
+
             <div id='contractor'>
             <H3>Contractor</H3>
             <label for='contact'>Contact:</label><br>
