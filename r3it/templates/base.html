@@ -3,6 +3,12 @@
 
 <head>
 	<link rel="stylesheet" href="/static/css/style.css">
+	<script type="text/javascript">
+		var ua = window.navigator.userAgent;
+	    if ( (ua.indexOf("MSIE") !== -1) || (ua.indexOf("Trident") !== -1)) {
+	    	alert("Internet explorer is not supported and may lead to problems with using the Rapid, Rural, and Resilient Interconnection Toolkit. Please switch to an upgraded browser.")
+			};
+	</script>
 	{% block head %}{% endblock %}
 </head>
 
