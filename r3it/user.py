@@ -81,13 +81,7 @@ def getMockData(dataType):
 
     # define data types based on cobination of the above lists
     mockData = ''
-    if dataType == 'app name': 
-        mockData = '{} {}\'s Solar Project'.format(memberFirstName, 
-            memberLastName)
-    elif dataType == 'member':
-        mockData = '{} {}'.format(memberFirstName, 
-            memberLastName)
-    elif dataType == 'name': 
+    if dataType == 'name': 
         mockData = '{} {}'.format(random.choice(firstNames), 
             random.choice(lastNames))
     elif dataType == 'address': 
