@@ -74,13 +74,13 @@ def register():
         if captcha.validate():
             try: os.makedirs(userHomeDir(email))
             except:
-                log('Registration for ' + email + 'failed; Account already exists')
+                log('Registration for ' + email + ' failed; Account already exists')
                 return redirect('/register?notification=Account%20already%20exists%2E')
             with userAccountFile(email, 'w') as userFile: json.dump(userDict, userFile)
             log('Registration successful for ' + email)
             return redirect('/login?notification=Registration%20successful%2E')
         else:
-            log('Registration for ' + email + 'failed; CAPTCHA error')
+            log('Registration for ' + email + ' failed; CAPTCHA error')
             return redirect('/register?notification=CAPTCHA%20error%2E')
 
 @app.route('/forgot', methods=['GET', 'POST'])
@@ -133,7 +133,7 @@ def login():
         log('User login attempt')
         if passwordCorrect(request.form['email'], request.form['password']):
             flask_login.login_user(load_user(request.form['email']))
-            log('User ' + request.form['email'] + 'logged in successfully')
+            log('User ' + request.form['email'] + ' logged in successfully')
             return redirect('/')
         else:
             log('User login failed; incorrect username or password')
@@ -180,19 +180,27 @@ def index():
 @app.route('/report/<id>', methods=['GET', 'POST'])
 @flask_login.login_required
 def report(id):
+    
     '''Given interconnection ID, render detailed report page'''
+    
     notification = request.args.get('notification', None)
     report_data = appDict(id)
+
+    try: edits = appEditsDict(id)
+    except: edits = {}        
+
     try:
         with open(os.path.join(appDir(id),GRIDLABD_DIR,OUTPUT_FILENAME)) as data:
             eng_data = json.load(data)
     except: eng_data = []
+
     next_statuses = allowedStatusChanges.get(report_data.get('Status'))
     if next_statuses:
         updates = [update for update, role in next_statuses.items() \
                             if role in userRoles(currentUser(), report_data)]
     else: updates = []
-    return render_template('report.html', data=report_data, 
+    
+    return render_template('report.html', data=report_data, edits=edits, 
         eng_data=eng_data, updates=updates, files=allAppUploads(id), 
         notification=notification)
 
@@ -242,58 +250,199 @@ def download(id, doc, filename):
 @app.route('/add-to-queue', methods=['GET', 'POST'])
 @flask_login.login_required
 def add_to_appQueue():
+    
     '''Adds an interconnection application to the queue'''
+    
     app = {key:item for key, item in request.form.items()}
-    app['ID'] = str(int(datetime.timestamp(datetime.now()) * 10**7) + random.choice(range(999)))
     app['Time of Request'] = str(datetime.now())
     app['Status'] = 'Payment Required'
+    app['ID'] = str(int(datetime.timestamp(datetime.now()) * 10**7) + 
+        random.choice(range(999)))
+    
     try: os.makedirs(appDir(app['ID']))
     except: pass
+    
     with appFile(app['ID'], 'w') as appfile:
         json.dump(app, appfile)
-    log('Application ' + app['ID'] + 'submitted')
-    mailer.sendEmail(app.get('Email (Member)', ''), "R3IT application submitted",
-        "Your application with ID " + app['ID'] + ' has been submitted.')
+    
+    log('Application ' + app['ID'] + ' submitted')
+    
     link = 'demo.r3it.ghw.io/report/' + app['ID']
     mailer.mailEngineers('New R3IT application', 
         'New application with ID ' + app['ID'] + 
         ' submitted. Use the following link for details: ' + link)    
+    mailer.sendEmail(app.get('Email (Member)', ''), 
+        "R3IT application submitted",
+        "Your application with ID " + app['ID'] + ' has been submitted.')
+    
     # TODO: Figure out the fork-but-not-exec issue (below -> many errors)
     # run analysis on the queue as a separate process
-    p = Process(target=interconnection.processQueue, args=(processQueueLock,))
+    p = Process(target=interconnection.processQueue, 
+        args=(processQueueLock,))
     p.start()
-    return redirect('/payment/' + app['ID'] + 
-        "?notification=Application%20submitted%20successfully!%20Please%20click%20'checkout'%20to%20complete%20payment.")
+    
+    return redirect('/payment/' + app['ID'] + "?notification=" + 
+        "Application%20submitted%20successfully!%20" + 
+        "Please%20click%20'checkout'%20to%20complete%20payment.")
 
 @app.route('/application')
 @flask_login.login_required
 def application():
     '''GET returns form for new interconnection application.'''
-    firstNames = ['James', 'John', 'Robert', 'Michael', 'William', 'David', 'Richard', 'Charles', 'Mary', 'Patricia', 'Linda', 'Barbara', 'Elizabeth', 'Jennifer', 'Maria', 'Susan', 'Margaret']
-    lastNames = ['Smith', 'Jones', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis']
-    trees = ['Oak', 'Birch', 'Cypress', 'Maple', 'Pine', 'Hickory', 'Ash', 'Aspen', 'Elder Berry']
-    suffixes = ['Ave.', 'Ln.', 'St.', 'Way', 'Blvd']
-    zips = range(54601, 54650)
-    phases = ['One', 'Three']
-    sizes = range(1,20)
-    voltages = ['110', '220', '600']
-    firstname, lastname = random.choice(firstNames), random.choice(lastNames)
+    
+    memberName = getMockData('name')
+    generationSize = getMockData('size')
+
     default = {
-        'label' : '{} {}\'s Solar Project'.format(firstname, lastname),
-        'name' : '{} {}'.format(firstname, lastname),
-        'address' : "{} {} {}".format(str(random.choice(range(9999))), random.choice(trees), random.choice(suffixes)),
-        'zip' : '{}'.format(random.choice(zips)),
-        'city': 'LaCrosse',
-        'state' : 'WI',
-        'phone' : '({}{}) {}{} - {}'.format(random.choice(range(2,9)), random.choice(range(10,99)), random.choice(range(2,9)), random.choice(range(10,99)), random.choice(range(1000,9999))),
-        'size' : '{}'.format(random.choice(sizes)),
-        'voltage' : '{}'.format(random.choice(voltages)),
-        'email' : currentUser(),
-        'meterID' : '{}'.format(random.choice(interconnection.getMeterNameList( \
-            os.path.join(config.STATIC_DIR,config.GRIDLABD_DIR,config.omdFilename))))
+      "Application Name": '{}\'s Solar Project'.format(memberName),
+      "Tariff": "Net metering April kWh reset",
+      "Installation Type": "Contractor and Electrician",
+      "Contractor": "Solar Install, Inc.",
+      "Contact Person (Contact)": getMockData('name'),
+      "Address (Contractor)": getMockData('address'),
+      "City (Contractor)": getMockData('city'),
+      "State (Contractor)": getMockData('state'),
+      "Zip (Contractor)": getMockData('zip'),
+      "Primary Telephone (Contractor)": getMockData('phone'),
+      "Secondary Telephone (Contractor)": getMockData('phone'),
+      "Email (Contractor)": "installer@solarinstallerinc.tld",
+      "Docket Num": "145558",
+      "Electrician": "Solar Install, Inc.",
+      "Contact Person (Electrician)":  getMockData('name'),
+      "Address (Electrician)": getMockData('address'),
+      "City (Electrician)": getMockData('city'),
+      "State (Electrician)": getMockData('state'),
+      "Zip (Electrician)": getMockData('zip'),
+      "Primary Telephone (Electrician)": getMockData('phone'),
+      "Secondary Telephone (Electrician)": getMockData('phone'),
+      "Email (Electrician)": "installer@solarinstallerinc.tld",
+      "Member": memberName,
+      "Contact Person (Member)": memberName,
+      "Address (Billing)": getMockData('address'),
+      "City (Billing)": getMockData('city'),
+      "State (Billing)": getMockData('state'),
+      "Zip (Billing)": getMockData('zip'),
+      "Telephone (Primary, Member)": getMockData('phone'),
+      "Telephone (Secondary, Member)": getMockData('phone'),
+      "Email (Member)": currentUser(),
+      "Utility": "Dairyland Power",
+      "Account Number": "23456789",
+      "Meter ID": getMockData('meterID'),
+      "Inverter Manufacturer": "Princeton Power",
+      "Inverter Model": "T",
+      "Nameplate Rating (kW)": generationSize,
+      "Nameplate Rating (kVA)": generationSize,
+      "Nameplate Rating (V)": getMockData('voltage'),
+      "Phases": "Three",
+      "Prime Mover": "Photovoltaic",
+      "Energy Source": "Sunlight",
+      "UL1741 listed": "Yes",
+      "Estimated Install Date": "2021-11-11",
+      "Estimated In-Service Date": "2022-08-11",
+      "Owner": "Jennifer Davis",
+      "Address (Service)": getMockData('address'),
+      "City (Service)": getMockData('city'),
+      "State (Service)": getMockData('state'),
+      "Zip (Service)": getMockData('zip')
     }
+
     log('New application started')
-    return render_template('application.html', default = default)
+    return render_template('application.html', 
+        formAction='/add-to-queue', default = default)
+
+@app.route('/edit/<id>')
+@flask_login.login_required
+def edit(id):
+    '''GET returns form for editing interconnection application.'''
+    data = appDict(id)
+    log('New application edits started')
+    return render_template('application.html', 
+        default = data, formAction='/updateApp/'+id)
+
+@app.route('/updateApp/<id>', methods=['GET', 'POST'])
+@flask_login.login_required
+def updateApp(id):
+    
+    # get original and edited apps
+    app = appDict(id)
+    appEdits = {key:item for key, item in request.form.items()}
+
+    # compare original and edited apps and 
+    # track values that are unchanged
+    unchanged = []
+    for key in appEdits.keys():
+        if key in app.keys():
+            originalVal = app[key]
+            editedVal = appEdits[key]
+            if originalVal == editedVal:
+                unchanged.append(key)
+    
+    # only keep the values that are different as edits
+    for key in unchanged:
+        del appEdits[key]
+
+    # save differences into edits.json
+    with appEditsFile(app['ID'], 'w') as editsfile:
+        json.dump(appEdits, editsfile, indent=4)
+
+    # log event
+    log('Application ' + app['ID'] + 'edited')
+    
+    # mail engineers the edits
+    link = 'demo.r3it.ghw.io/report/' + app['ID']
+    mailer.mailEngineers('R3IT application edited', 
+        'Application with ID ' + app['ID'] + 
+        ' has been edited. Use the following link for details: ' + link)    
+    mailer.sendEmail(app.get('Email (Member)', ''), 
+        "R3IT application edited",
+        "Your edits to the application with ID " + app['ID'] + ' ' +
+        'have been submitted.')
+
+    # redirect to the report but with the edits displayed 
+    return redirect('/report/' + id + '?notification=' + \
+        'Application%20edits%20submitted%20successfully%2E' +
+        '%20Awaiting%20engineer%20approval')
+
+@app.route('/reviewEdits/<id>/<decision>')
+@flask_login.login_required
+def reviewEdits(id, decision):
+    
+    if decision == 'accept':
+        
+        # update application info
+        app = appDict(id)
+        edits = appEditsDict(id)
+        for key in edits.keys():
+            app[key] = edits[key]
+        
+        # save appliction info
+        with appFile(app['ID'], 'w') as appfile:
+            json.dump(app, appfile, indent=4)
+        
+        # delete edits file
+        os.remove(appEditsPath(id))
+
+        # log event
+        log('Edits accepted for application ' + id)
+
+        # return to report with 'approved' message
+        return redirect('/report/' + id + '?notification=' + \
+            'Application%20edits%20accepted%2E')
+
+    if decision == 'reject':
+        
+        # delete edits file
+        os.remove(appEditsPath(id))
+
+        # log event
+        log('Edits rejected for application ' + id)
+
+        # return to report with 'reject' message
+        return redirect('/report/' + id + '?notification=' + \
+            'Application%20edits%20rejected%2E')
+
+
+
 
 @app.route('/update-status/<id>/<status>')
 @flask_login.login_required
@@ -359,7 +508,6 @@ def create_checkout_session(id):
         return jsonify({'id': checkout_session.id})
     except Exception as e:
         return jsonify(error=str(e)), 4
-
 
 @app.route('/save-notes/<id>', methods=['POST'])
 def save_notes(id):

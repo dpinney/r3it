@@ -1,3 +1,5 @@
+/*----------------------------------------------------------------------------*/
+
 html, body { 
     margin: 0px;
     height: 100%;
@@ -40,6 +42,8 @@ table.sortable th {
 } table.sortable th:not(.sorttable_sorted):not(.sorttable_sorted_reverse):not(.sorttable_nosort):after {
     content: " \25B4\25BE"  
 }
+
+/*----------------------------------------------------------------------------*/
 
 .content {
     width: 90%;
@@ -110,6 +114,8 @@ table.sortable th {
     border-style: solid;
     border-color: transparent transparent black transparent;
 }
+
+/*----------------------------------------------------------------------------*/
 
 #notification{
     padding: 1em;
@@ -258,8 +264,6 @@ table.sortable th {
     font-size: 1.1em;
 } #application select, #application input {
     font-size: 1.1em;
-} #electrician {
-    display: none;
 }
 
 #notesContainer button {
@@ -274,6 +278,16 @@ table.sortable th {
     padding: 10px;
 } #notesSave { display: none; }
 
+#pay, #withdraw, #editDetails, #acceptEdits, #rejectEdits {
+    width: 100%;
+}
+
+#attachments {
+    background: #fff;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    padding: 2em;
+}
+
 #footerSpacer {
     height: 2em;
 } #footer {
@@ -285,8 +299,7 @@ table.sortable th {
 } #footer a { color: #fff;}
 
 
-
-
+/*----------------------------------------------------------------------------*/
 
 @media screen and (max-width: 600px) {
     #menu { 

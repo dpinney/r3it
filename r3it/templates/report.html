@@ -8,6 +8,8 @@
 {% block content %}
     
     <H1>Interconnection report for request {{data['ID']}}</H1>
+   
+    <h3><hr><h3>
 
     {% if (
         ('engineer' in current_user.roles) or 
@@ -19,42 +21,94 @@
     <h3>Application details</h3>
 
     <table>
-        {% for key in data %}
-        {% if ( 
-            (key != 'Notes') and 
-            (key != 'Screen Results') and 
-            (key != 'markedForRerunDueToWithdrawal') and
-            (key != 'previousRequestWithdrawn') and
-            (key != 'Agreement')
-        ) %}
+    
+        {% if(edits != {}) %}
             <tr>
-                <th>{{key}}</th>
-                <th style='font-weight: normal'>{{data[key]}}</th>
+                <th></th>
+                <th>Original</th>
+                <th>Updated</th>
             </tr>
         {% endif %}
+
+        {% for key in data %}
+            
+            {% if ( 
+                (key != 'Notes') and 
+                (key != 'Screen Results') and 
+                (key != 'markedForRerunDueToWithdrawal') and
+                (key != 'previousRequestWithdrawn') and
+                (key != 'Agreement')
+            ) %}
+
+                <tr>
+                    <th>{{key}}</th>
+                    <td>{{data[key]}}</td>
+
+                    {% if(edits != {}) %}
+                        {% if(key in edits) %}
+                            <td>{{edits[key]}}</td>
+                        {% else %} <td></td>
+                        {% endif %}
+                    {% endif %}
+
+                </tr>
+
+            {% endif %}
+        
         {% endfor %}
     </table>
 
-    <H3>Attachments</H3>
-    {% for doc in appAttachments %}
-      <hr>
-      <H3>{{doc}}</H3>
-      <table>
-          {% for file in files.get(doc, None) %}
-          <tr>
-              <th>{{file}}</th>
-              <th style='font-weight: normal'><a href='{{"/download/" + data['ID']+'/'+doc+'/'+file}}'>Download</a></th>
-          </tr>
-          {% endfor %}
-      </table>
-      <form action="{{'/upload/' + data['ID'] + '/' + doc}}" method="post" enctype="multipart/form-data">
-          <input type="file" name="file">
-          <input type="submit" value="{{'Upload ' + doc}}">
-      </form>
-    {% endfor %}
+    {% if (data['Status'] in ['Payment Required', 'Delegation Required', 'Application Submitted', 'Engineering Review']) %}
 
-    <hr>
+        {% if(current_user.roles == []) %}
+            <a href="{{'/edit/' + data['ID'] }}"><button id="editDetails">Edit Application Details</button></a>
+        {% endif %}
+        
+        {% if(edits != {}) %}
+        {% if('engineer' in current_user.roles) %}
+            <a href="{{'/reviewEdits/' + data['ID'] + '/accept' }}"><button id="acceptEdits">Accept Application Changes</button></a>
+            <a href="{{'/reviewEdits/' + data['ID'] + '/reject' }}"><button id="rejectEdits">Reject Application Changes</button></a>
+        {% endif %}
+        {% endif %}
+
+    {% endif %}
+
+    <h3><hr></h3>
+
+    <H3>Attachments</H3>
     
+    <div id='attachments'>
+
+        {% for doc in appAttachments %}
+        
+            <hr>
+            
+            <H3>{{doc}}</H3>
+            
+            <table>
+                {% for file in files.get(doc, None) %}
+                    <tr>
+                    <th>{{file}}</th>
+                    <th style='font-weight: normal'>
+                        <a href='{{"/download/" + data['ID']+'/'+doc+'/'+file}}'>Download</a>
+                    </th>
+                    </tr>
+                {% endfor %}
+          </table>
+
+          <form action="{{'/upload/' + data['ID'] + '/' + doc}}" method="post" enctype="multipart/form-data">
+              <input type="file" name="file">
+              <input type="submit" value="{{'Upload ' + doc}}">
+          </form>
+
+        {% endfor %}
+
+        <hr>
+
+    </div>
+    
+    <h3><hr><h3>
+
     <H3>Automated Screening Results</H3>
     <table>
         {% for key in data['Screen Results'] %}
@@ -78,16 +132,23 @@
 {% endblock %}
 
 {% block member %}
-{% if data['Status'] == 'Payment Required' %}
-    <H3>Payment required</H3>
-    <a href='{{"/payment/" + data['ID']}}'>Pay Application Fee</a>
-{% endif %}
-
-  <H3>Click below to Withdraw Interconnection Application</H3>
-    <form action='{{"/update-status/" + data['ID'] + "/Withdrawn"}}'>
-      <input type='submit' value='Withdraw Interconnection Application'/>
-    </form>
+    
+    {% if data['Status'] == 'Payment Required' %}
+        <H3>Payment required</H3>
+        <a href='{{"/payment/" + data['ID']}}'>
+            <button id='pay'>Pay Application Fee</button>
+        </a>
+    {% endif %}
+    
     <hr>
+
+    <H3>Click below to Withdraw Interconnection Application</H3>
+    <form action='{{"/update-status/" + data['ID'] + "/Withdrawn"}}'>
+        <input id='withdraw' type='submit' value='Withdraw Interconnection Application'/>
+    </form>
+    
+    <hr>
+
 {% endblock %}
 
 {% block ms %}
@@ -534,7 +595,7 @@
     }
 </script>
 
-<hr><div id="notesContainer">
+<div id="notesContainer">
 <form id="notes" action='{{"/save-notes/" + data["ID"]}}' method='post'>
     <H3>Notes:</H3>
     <textarea id="notesText" name="notesText" rows=10 disabled="True">{{data['Notes']}}</textarea>

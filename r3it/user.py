@@ -1,6 +1,6 @@
 # user.py
 # Functions returning information about users and their files.
-import glob, config, os, json, base64, hashlib
+import glob, config, os, json, base64, hashlib, interconnection, random
 
 def userOwnsApp(email, app):
     '''Returns true if the user is the member or the solar installer.'''
@@ -61,3 +61,62 @@ def passwordCorrect(email, passwordAttempt):
     '''Returns true if password attempt matches password.'''
     try: return passwordHash(email) == hashPassword(email, passwordAttempt)
     except: return False
+
+def getMockData(dataType):
+
+    # define list of data to chose from
+    voltages = ['110', '220', '600']
+    sizes = range(1,20)
+    cities = ['LaCrosse']
+    states = ['WI']
+    zips = range(54601, 54650)
+    suffixes = ['Ave.', 'Ln.', 'St.', 'Way', 'Blvd']
+    trees = ['Oak', 'Birch', 'Cypress', 'Maple', 'Pine', 'Hickory', 'Ash', 
+        'Aspen', 'Elder Berry']
+    firstNames = ['James', 'John', 'Robert', 'Michael', 'William', 'David', 
+        'Richard', 'Charles', 'Mary', 'Patricia', 'Linda', 'Barbara', 
+        'Elizabeth', 'Jennifer', 'Maria', 'Susan', 'Margaret']
+    lastNames = ['Smith', 'Jones', 'Williams', 'Brown', 'Jones', 'Garcia', 
+        'Miller', 'Davis']
+
+    # define data types based on cobination of the above lists
+    mockData = ''
+    if dataType == 'app name': 
+        mockData = '{} {}\'s Solar Project'.format(memberFirstName, 
+            memberLastName)
+    elif dataType == 'member':
+        mockData = '{} {}'.format(memberFirstName, 
+            memberLastName)
+    elif dataType == 'name': 
+        mockData = '{} {}'.format(random.choice(firstNames), 
+            random.choice(lastNames))
+    elif dataType == 'address': 
+        mockData = "{} {} {}".format(str(random.choice(range(9999))), 
+            random.choice(trees), random.choice(suffixes))
+    elif dataType == 'city': 
+        mockData = '{}'.format(random.choice(cities))
+    elif dataType == 'state': 
+        mockData = '{}'.format(random.choice(states))
+    elif dataType == 'zip': 
+        mockData = '{}'.format(random.choice(zips))
+    elif dataType == 'phone': 
+        mockData = '({}{}) {}{} - {}'.format(
+            random.choice(range(2,9)), 
+            random.choice(range(10,99)), 
+            random.choice(range(2,9)), 
+            random.choice(range(10,99)), 
+            random.choice(range(1000,9999)))
+    elif dataType == 'size' : 
+        mockData = '{}'.format(random.choice(sizes))
+    elif dataType == 'voltage' : 
+        mockData = random.choice(voltages)
+    elif dataType == 'meterID' : 
+        mockData = '{}'.format( 
+            random.choice(
+                interconnection.getMeterNameList( 
+                    os.path.join(
+                        config.STATIC_DIR, 
+                        config.GRIDLABD_DIR,
+                        config.omdFilename))))
+
+    return mockData
