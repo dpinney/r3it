@@ -1,28 +1,34 @@
-# config.py
+# config.py -------------------------------------------------------------------
+
 import os
 
-# application processing options
-
-enableAutomaticScreening = True
-requireAllAppsToGoThroughEngineer = False
-
-# constants 
+# constants--------------------------------------------------------------------
 
 DATA_DIR = 'data'
-USERS_DIR = os.path.join(DATA_DIR,'Users')
 STATIC_DIR = 'static'
 GRIDLABD_DIR = 'gridlabd'
+
 INFO_FILENAME = 'application.json'
 INPUT_FILENAME = 'allInputData.json'
 OUTPUT_FILENAME = 'allOutputData.json'
+
 LOG_FILENAME = os.path.join(DATA_DIR,'log.txt')
+USERS_DIR = os.path.join(DATA_DIR,'users')
 APPLICATIONS_DIR = os.path.join(DATA_DIR,'applications')
+
 COOKIE_KEY = 'topsecretvalue'
 GEOCODE_KEY = ''
 STRIPE_PRIVATE_KEY = 'sk_test_2Mf8zBV1IqZkwtajeeK5lMCj00j0MxxuOu'
 STRIPE_PUBLIC_KEY = 'pk_test_LAZ0aEKWMLHbPSFIms7YzLkK00EHoWgCGB'
+
 DOMAIN = 'demo.r3it.ghw.io'
-# Utility parameters.
+
+# application processing options ----------------------------------------------
+
+enableAutomaticScreening = True
+requireAllAppsToGoThroughEngineer = False
+
+# utility parameters ----------------------------------------------------------
 
 utilityName = 'Example Electric'
 logo = os.path.join('/',STATIC_DIR,'exampleElectric.png')
@@ -53,7 +59,13 @@ utilityRoles = [
 ]
 
 # Names of the document types attached to applications.
-appAttachments = ["One Line Diagram", "Site Plan", "Placard", "Insurance disclosures", "Inverter Specification Sheet"]
+appAttachments = [
+    "One Line Diagram", 
+    "Site Plan", 
+    "Placard", 
+    "Insurance disclosures", 
+    "Inverter Specification Sheet"
+]
 
 # Email configuration
 r3itEmailAddress    = 'donotreply@r3it.ghw.io'
@@ -65,15 +77,24 @@ smtpServer          = 'box.ghw.io'
 statuses = (
     'Payment Required',
     'Delegation Required',
-    'Application Submitted', # Attn: Member services, upon submission.
-    'Engineering Review', # Attn: Engineering, if above size threshold
-    'Member Options Meeting Required', # Attn: Member Services
-    'Member Options Meeting Proposed', # Attn: Consumer, when proposed by member services.
-    'Member Options Meeting Scheduled', # Attn: ???,
-    'Interconnection Agreement Proffered', # Attn: Member
-    'Interconnection Agreement Executed', # Attn: Member
-    'Permission to Operate Proffered', # Attn: Member
-    'Commissioning Test Needed', # Attn: Engineering, Member
+    # Attn: Member services, upon submission.
+    'Application Submitted', 
+    # Attn: Engineering, if above size threshold
+    'Engineering Review', 
+    # Attn: Member Services
+    'Member Options Meeting Required',
+    # Attn: Consumer, when proposed by member services. 
+    'Member Options Meeting Proposed', 
+    # Attn: ???
+    'Member Options Meeting Scheduled', 
+    # Attn: Member
+    'Interconnection Agreement Proffered',
+    # Attn: Member 
+    'Interconnection Agreement Executed',
+    # Attn: Member 
+    'Permission to Operate Proffered', 
+    # Attn: Engineering, Member
+    'Commissioning Test Needed', 
     'Commissioned',
     'Out of Service',
     'Withdrawn'
@@ -141,7 +162,8 @@ actionItems = {
     )
 }
 
-# gridlabd inputs see
+# gridlabd power flow sim params ----------------------------------------------
+
 gridlabdInputs = {
     'modelType': 'derInterconnection',
     'layoutAlgorithm': 'forceDirected',
@@ -157,3 +179,5 @@ gridlabdInputs = {
     'faultVoltsThreshold': '138',
     'newGenerationInsolation': '30'
 }
+
+# -----------------------------------------------------------------------------
