@@ -123,6 +123,17 @@ def newpassword(email, token):
         log('Password reset successfully for ' + email)
         return redirect('/login?notification=Password%20updated%20successfully%2E')
 
+@app.route('/delegate/<id>/<token>')
+def delegate(id, token):
+    '''Delegate account permissions'''
+    notification = request.args.get('notification', None)
+    if appDict(id)['Status'] == 'Delegation Required':
+        if appDict(id)['Delegation Token'] == token:
+            update_status(id, 'Application Submitted')
+            return redirect('/?notification=Account%20permission%20delegated%2E')
+        else: return redirect('/?notification=Delegation%20error%2E')
+    else: return redirect('/?notification=Delegation%20complete%2E')
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     '''GET for the login page, POST to log in user with flask_login.'''
@@ -247,6 +258,7 @@ def add_to_appQueue():
     app['ID'] = str(int(datetime.timestamp(datetime.now()) * 10**7) + random.choice(range(999)))
     app['Time of Request'] = str(datetime.now())
     app['Status'] = 'Payment Required'
+    app['Delegation Token'] = hashPassword('delegation', app['ID'])
     try: os.makedirs(appDir(app['ID']))
     except: pass
     with appFile(app['ID'], 'w') as appfile:
