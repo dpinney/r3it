@@ -260,7 +260,6 @@ def add_to_appQueue():
     app['ID'] = str(int(datetime.timestamp(datetime.now()) * 10**7) + random.choice(range(999)))
     app['Time of Request'] = str(datetime.now())
     app['Status'] = 'Payment Required'
-    app['Delegation Token'] = hashPassword('delegation', app['ID'])
     try: os.makedirs(appDir(app['ID']))
     except: pass
     with appFile(app['ID'], 'w') as appfile:
