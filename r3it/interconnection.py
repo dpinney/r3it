@@ -43,16 +43,21 @@ def processQueue(lock):
 
         log('Processesing application ' + request['ID'])
 
-        # if we see a reurn b/c of withdrawals, a  previously failing request, 
+        # if we see a reurn b/c of withdrawals, a  request under review, 
         # or an unprocessed request that isnt after a failure
         # run the screens and update statuses
-        if ( (request.get('markedForRerunDueToWithdrawal') == True) and \
-            (request.get('Status') != 'Withdrawn') ) or \
+        
+        previousWithdrawn = \
+            (request.get('markedForRerunDueToWithdrawal') == True) and \
+            (request.get('Status') != 'Withdrawn')
+        
+        if ( previousWithdrawn ) or \
             (request.get('Status') == 'Engineering Review') or \
             ( (request.get('Status') == 'Application Submitted') and \
                 allPreviousPassed ):
 
             if config.enableAutomaticScreening == True:
+                
                 # run screens
                 request = \
                 runAllScreensAndUpdateStatus(requestPosition, requestFolders)
@@ -60,12 +65,16 @@ def processQueue(lock):
                     allPreviousPassed = False
                 request['markedForRerunDueToWithdrawal'] = False
 
-            if config.requireAllAppsToGoThroughEngineer == True:
+            # if new app, update status to engineering review 
+            if (request.get('Status') == 'Application Submitted'):
                 request['Status'] = 'Engineering Review'
-                log('All request are required to go through engineer; updating application status to Engineering Review')
-                mailer.sendEmail(request.get('Email (Member)', ''), 'R3IT application status updated', \
-                 "The status of your interconnection request has been updated to '" + \
-                    request['Status'] + "'. Login to your account for more information.")
+                log('All request are required to go through engineer; ' + \
+                    'updating application status to Engineering Review')
+                mailer.sendEmail(request.get('Email (Member)', ''), 
+                    'R3IT application status updated', \
+                    'The status of your interconnection request has ' + \
+                    "been updated to '" + request['Status'] + "'. " + \
+                    'Login to your account for more information.')
 
             # save request info to file
             with open(requestInfoFileName, 'w') as infoFile:
@@ -219,18 +228,8 @@ def runAllScreensAndUpdateStatus(requestPosition, requestFolders):
 
     # updated screen results
     screenResults['passedAll'] = passedAll
-
-    # update current request results and status
     request['Screen Results'] = screenResults
-    if screenResults['passedAll'] == True:
-        log('Automated screens passed; updating application status')
-        request['Status'] = 'Interconnection Agreement Proffered'
-    else: # if any of the screens failed
-        log('Automated screens failed; updating application status')
-        request['Status'] = 'Engineering Review'
-
-    mailer.sendEmail(request.get('Email (Member)', ''), 'R3IT application status updated', "The status of your interconnection request has been updated to '" + \
-        request['Status'] + "'. Login to your account for more information.")
+    
     return request
 
 def runSingleScreen(screeningData):
