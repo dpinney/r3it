@@ -228,6 +228,8 @@ def upload(id, doc):
   
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
+        else: return redirect('/report/' + id + '?notification=File%20type%20not%20supported%2E')
+
         try:
             os.makedirs(os.path.join(app.root_path, "data", 'applications', id, "uploads", doc))
         except OSError:
