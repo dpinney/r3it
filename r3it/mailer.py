@@ -14,15 +14,17 @@ def sendEmail(recipient, subject='', body=''):
     msg.set_content(body)
     # Send email.
     context = ssl.create_default_context()
-    with smtplib.SMTP(smtpServer, 587) as server:
-        server.ehlo()  # Can be omitted
-        server.starttls(context=context)
-        server.ehlo()  # Can be omitted
-        server.login(emailUser, emailPassword)
-        server.send_message(msg)
+    try:
+        with smtplib.SMTP(smtpServer, 587) as server:
+            server.ehlo()  # Can be omitted
+            server.starttls(context=context)
+            server.ehlo()  # Can be omitted
+            server.login(emailUser, emailPassword)
+            server.send_message(msg)
 
-    log("Email with subject '" + subject + "' sent to " + recipient)
-
+        log("Email with subject '" + subject + "' sent to " + recipient)
+    except:
+        log("Email with subject '" + subject + "' failed to send to " + recipient)
 
 def mailEngineers(subject='',body=''):
     print(subject, body)
