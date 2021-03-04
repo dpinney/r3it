@@ -8,9 +8,11 @@ from multiprocessing import Process, Lock
 from flask import Flask, redirect, request, render_template, url_for, send_from_directory, jsonify
 from werkzeug.utils import secure_filename
 from logger import log
+from flask_talisman import Talisman
 
 # Instantiate app
 app = Flask(__name__)
+Talisman(app)
 app.secret_key = config.COOKIE_KEY
 
 # Inject global template variables.
