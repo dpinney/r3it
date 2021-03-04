@@ -12,7 +12,7 @@ from flask_talisman import Talisman
 
 # Instantiate app
 app = Flask(__name__)
-Talisman(app, content_security_policy_report_only=True)
+Talisman(app, content_security_policy={'default-src':'*'})
 app.secret_key = config.COOKIE_KEY
 
 # Inject global template variables.
