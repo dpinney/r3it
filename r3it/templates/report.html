@@ -3,6 +3,7 @@
 {% block head %}
     <!-- Library Imports -->
     <script>sampleData = {{ eng_data | tojson }} </script>
+
 {% endblock %}
 
 {% block content %}
@@ -53,8 +54,9 @@
       </form>
     {% endfor %}
 
-    <hr>
     
+    {% if (data.get('Screen Results','') != '') %}
+    <hr>
     <H3>Automated Screening Results</H3>
     <table>
         {% for key in data['Screen Results'] %}
@@ -66,6 +68,7 @@
         {% endif %}
         {% endfor %}
     </table>
+    {% endif %}    
 
     {% for update in updates %}
     <form action='{{"/update-status/" + data['ID'] + '/' + update}}'>
@@ -80,7 +83,7 @@
 {% block member %}
 {% if data['Status'] == 'Payment Required' %}
     <H3>Payment required</H3>
-    <a href='{{"/payment/" + data['ID']}}'>Pay Application Fee</a>
+    <a href='{{"/payment/" + data['ID']}}'><button>Pay Application Fee</button></a>
 {% endif %}
 
   <H3>Click below to Withdraw Interconnection Application</H3>
@@ -94,16 +97,10 @@
 {% endblock %}
 
 {% block engineer %}
-	<script src="/static/sorttable.js"></script>
-    
-<!--     <hr>
-    {% if 'Engineering Review' == data['Status'] %}
-        <form action='{{"/update-status/" + data['ID'] + "/Interconnection%20Agreement%20Proffered"}}'>
-        <input type='submit' value='Proffer Interconnection Agreement'/>
-        </form>
-    {% endif %}
-    <hr>
- -->    
+   {% if eng_data|length != 0 %}
+	
+    <script src="/static/sorttable.js"></script>
+
     <H2>Interconnection Details</H2>
 
     <!-- Tables -->
@@ -512,6 +509,8 @@
     </div>
 
     </div>
+
+    {% endif %}    
 {% endblock %}
 
 {% macro notes() %}
