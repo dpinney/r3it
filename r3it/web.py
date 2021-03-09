@@ -123,16 +123,23 @@ def newpassword(email, token):
         log('Password reset successfully for ' + email)
         return redirect('/login?notification=Password%20updated%20successfully%2E')
 
+
+@app.route('/senddelegationemail/<id>')
+@flask_login.login_required
+def sendDelegationEmail(id):
+    mailer.sendEmail(appDict(id)['Email (Member)'], 'Approve interconnection application', 'Click this link to approve ' + appDict(id)['Email (Installer)'] + ' to administer an interconnection application for ' + appDict(id)['Address (Service)'] + ': ' DOMAIN + '/delegate/' + id + '/' + passwordHash('delegation', id)) #need link here.
+    return redirect('/report/' + id + '&notification=Delegation%20email%sent%2E')
+
 @app.route('/delegate/<id>/<token>')
 def delegate(id, token):
     '''Delegate account permissions'''
     notification = request.args.get('notification', None)
     if appDict(id)['Status'] == 'Delegation Required':
-        if appDict(id)['Delegation Token'] == token:
+        if passwordHash('delegation', id) == token:
             update_status(id, 'Application Submitted')
             return redirect('/?notification=Account%20permission%20delegated%2E')
         else: return redirect('/?notification=Delegation%20error%2E')
-    else: return redirect('/?notification=Delegation%20complete%2E')
+    else: return redirect('/?notification=Delegation%20already%20completed%2E')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
