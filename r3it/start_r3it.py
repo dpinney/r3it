@@ -1,10 +1,12 @@
-import os, web, logging
+import os, web, logging, config
 from subprocess import Popen
 
 # Note: sudo python start_r3it.py on macOS since this will open low numbered ports.
 # If you need some test certs: openssl req -x509 -newkey rsa:4096 -nodes -out cert.pem -keyout privkey.pem -days 365 -subj '/CN=localhost/O=NoCompany/C=US'
 
-reApp = web.Flask('R3IT')
+reApp = web.Flask('R3ITR',
+            static_url_path='', 
+            static_folder='.well-known')
 
 @reApp.route('/')
 def index():
@@ -12,7 +14,9 @@ def index():
 
 @reApp.before_request
 def before_request():
-	if web.request.url.startswith('http://'):
+	if web.request.url.startswith('http://' + config.DOMAIN + '/.well-known'):
+		pass
+	elif web.request.url.startswith('http://'):
 		url = web.request.url.replace('http://', 'https://', 1)
 		code = 301
 		return web.redirect(url, code=code)
