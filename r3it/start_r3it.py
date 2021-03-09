@@ -4,9 +4,7 @@ from subprocess import Popen
 # Note: sudo python start_r3it.py on macOS since this will open low numbered ports.
 # If you need some test certs: openssl req -x509 -newkey rsa:4096 -nodes -out cert.pem -keyout privkey.pem -days 365 -subj '/CN=localhost/O=NoCompany/C=US'
 
-reApp = web.Flask('R3ITR',
-            static_url_path='', 
-            static_folder='.well-known')
+reApp = web.Flask('R3ITR')
 
 @reApp.route('/')
 def index():
