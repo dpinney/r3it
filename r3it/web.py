@@ -123,7 +123,6 @@ def newpassword(email, token):
         log('Password reset successfully for ' + email)
         return redirect('/login?notification=Password%20updated%20successfully%2E')
 
-
 @app.route('/senddelegationemail/<id>')
 @flask_login.login_required
 def sendDelegationEmail(id):
@@ -477,19 +476,10 @@ def reviewEdits(id, decision):
 @app.route('/update-status/<id>/<status>')
 @flask_login.login_required
 def update_status(id, status):
-    data = appDict(id)
-    log('Updating application ' + id + 'status to ' + status)
-    if status not in config.statuses: 
-        log('Status update failed; invalid status')
-        return 'Status invalid; no update made.'
-    data['Status'] = status
-    with appFile(id, 'w') as file:
-        json.dump(data, file)
-    log('Status update successful')
-    mailer.sendEmail( data.get('Email (Member)', ''), 'R3IT application status updated', "The status of your interconnection request has been updated to '" + \
-        status + "'. Login to your account for more information.")
+    interconnection.updateStatus(id, status)
     if status == 'Withdrawn':
-        p = Process(target=interconnection.withdraw, args=(withdrawLock, processQueueLock, id))
+        p = Process( target=interconnection.withdraw, 
+            args=(withdrawLock, processQueueLock, id) )
         p.start()
     return redirect('/')
 

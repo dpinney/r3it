@@ -67,15 +67,10 @@ def processQueue(lock):
 
             # if new app, update status to engineering review 
             if (request.get('Status') == 'Application Submitted'):
-                request['Status'] = 'Engineering Review'
+                updateStatus(request['ID'],'Engineering Review')
                 log('All request are required to go through engineer; ' + \
                     'updating application status to Engineering Review')
-                mailer.sendEmail(request.get('Email (Member)', ''), 
-                    'R3IT application status updated', \
-                    'The status of your interconnection request has ' + \
-                    "been updated to '" + request['Status'] + "'. " + \
-                    'Login to your account for more information.')
-
+                
             # save request info to file
             with open(requestInfoFileName, 'w') as infoFile:
                 json.dump(request, infoFile)
@@ -128,8 +123,8 @@ def withdraw(withdrawLock, processQueueLock, requestID):
 
             # update withrawn status
             if currentRequestPosition == withdrawnRequestPos:
-                request['Status'] = 'Withdrawn'
-                log('Application ' + request['ID'] + 'withdrawn')
+                updateStatus(request['ID'],'Withdrawn')
+                log('Application ' + request['ID'] + ' withdrawn')
             else:
                 request['markedForRerunDueToWithdrawal'] = True
                 log('Application ' + request['ID'] + \
@@ -144,7 +139,6 @@ def withdraw(withdrawLock, processQueueLock, requestID):
 
     # process queue
     processQueue(processQueueLock)
-
 
 # helper functions ------------------------------------------------------------
 
@@ -539,6 +533,30 @@ def calcCapacityUsed():
                 'Nameplate Rating (kW)',0) )
 
     return approvedGeneration
+
+def updateStatus(id, status):
+
+    log('Updating application ' + id + ' status to ' + status)
+    
+    # make sure this new status is valid
+    if status not in config.statuses: 
+        log('Status update failed; invalid status')
+        return 'Status invalid; no update made.'
+    
+    # update status
+    data = appDict(id)
+    data['Status'] = status
+    with appFile(id, 'w') as file:
+        json.dump(data, file)
+    log('Status update successful')
+
+    # email member and engineers
+    subject = 'R3IT application status updated'
+    message = "The status of application " + id + 
+        " has been updated to '" + status + "'. " +
+        "Login to your account for more information."
+    mailer.sendEmail( data.get('Email (Member)', ''), subject, message )
+    mailer.mailEngineers( subject, message )
 
 # run tests when file is run --------------------------------------------------
 
