@@ -49,12 +49,25 @@ def appPath(id):
     '''Returns path for application file given id.'''
     return os.path.join(appDir(id),'application.json')
 
-def appFile(id,rw='r'): return open(appPath(id),rw)
-'''Returns file object for application given id (timestamp).'''
+def appFile(id,rw='r'): 
+    '''Returns file object for application given id (timestamp).'''
+    return open(appPath(id),rw)
 
 def appDict(id):
     '''Returns interconnection application dict given app id.'''
     with appFile(id, 'r') as file: return json.load(file)
+
+def appEditsPath(id):
+    '''Returns path for application edits file given id.'''
+    return os.path.join(appDir(id),'edits.json')
+
+def appEditsFile(id,rw='r'): 
+    '''Returns file object for application edits given id (timestamp).'''
+    return open(appEditsPath(id),rw)
+    
+def appEditsDict(id):
+    '''Returns interconnection application edits dict given app id.'''
+    with appEditsFile(id, 'r') as file: return json.load(file)
 
 def appQueue():
     '''Returns list of application dicts sorted by precedence'''

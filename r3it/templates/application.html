@@ -51,28 +51,28 @@
 
     <H1>New Interconnection Application</H1>
 
-    <form id="application" action='/add-to-queue' method='post'>
+    <form id="application" action="{{formAction}}" method='post'>
         
         <div class="card">
             
             <div class="leftForm">
                 <H3>Application Name</H3>
-                <input type='text' id='applicationName' name='Application Name' value="{{default.label}}"><br>
+                <input type='text' id='applicationName' name='Application Name' value="{{default['Application Name']}}"><br>
             </div>
             
             <div class="rightForm">
             
-                <H3>Tarriff</H3>
+                <H3>Tariff</H3>
                 
-                <input id="aprilRadio" type="radio" name="Tarriff" value="Net metering April kWh reset" checked="True">
+                <input id="aprilRadio" type="radio" name="Tariff" value="Net metering April kWh reset" {% if (default['Tariff'] == 'Net metering April kWh reset') %} checked="True" {% endif %}>
                 <label for="aprilRadio">Net metering April kWh reset</label>
                 <br>
 
-                <input id="novemberRadio" type="radio" name="Tarriff" value="Net metering November kWh reset">
+                <input id="novemberRadio" type="radio" name="Tariff" value="Net metering November kWh reset" {% if (default['Tariff'] == 'Net metering November kWh reset') %} checked="True" {% endif %}>
                 <label for="novemberRadio">Net metering November kWh reset</label>
                 <br>
 
-                <input id="valueRadio" type="radio" name="Tarriff" value="Value of energy">
+                <input id="valueRadio" type="radio" name="Tariff" value="Value of energy" {% if (default['Tariff'] == 'Value of energy') %} checked="True" {% endif %}>
                 <label for="valueRadio">Value of energy</label>
                 <br>
             
@@ -86,90 +86,123 @@
             <!TODO: Decide if drop-down for partnered solar installers is good idea, maybe implement?>
             <div class="leftForm">
             
-            <H3>Installation Type</H3>
-            
-            <input onclick="showCorrectFormParts(this)" id="contractorRadio" type="radio" name="Application Type" value="Contractor only" checked="True">
-            <label for="contractorRadio">Contractor only</label>
-            <br>
+                <H3>Installation Type</H3>
+                
+                <input onclick="showCorrectFormParts(this)" id="contractorElecRadio" type="radio" name="Installation Type" value="Contractor and Electrician" {% if (default['Installation Type'] == 'Contractor and Electrician') %} checked="True" {% endif %}>
+                <label for="contractorElecRadio">Contractor and Electrician</label>
+                <br>
 
-            <input onclick="showCorrectFormParts(this)" id="contractorElecRadio" type="radio" name="Application Type" value="Contractor and Electrician">
-            <label for="contractorElecRadio">Contractor and Electrician</label>
-            <br>
-           
+                <input onclick="showCorrectFormParts(this)" id="contractorRadio" type="radio" name="Installation Type" value="Contractor only" {% if (default['Installation Type'] == 'Contractor only') %} checked="True" {% endif %}>
+                <label for="contractorRadio">Contractor only</label>
+                <br>
 
-            <input onclick="showCorrectFormParts(this)" id="selfRadio" type="radio" name="Application Type" value="Self-install">
-            <label for="selfRadio">Self-install</label>
-            <br>
-            
+                <input onclick="showCorrectFormParts(this)" id="selfRadio" type="radio" name="Installation Type" value="Self-install" {% if (default['Installation Type'] == 'Self-install') %} checked="True" {% endif %}>
+                <label for="selfRadio">Self-install</label>
+                <br>
 
-            <div id='contractor'>
-            <H3>Contractor</H3>
-            <label for='contact'>Contact:</label><br>
-            <input type='text' id='contact' name='Contractor' value='Solar Install, Inc.'><br>
-            <label for='contactPersonContact'>Contact Person:</label><br>
-            <input type='text' id='contactPersonContact' name='Contact Person (Contact)' value='John Henry'><br>
-            <label for='addressContact'>Address:</label><br>
-            <input type='text' id='addressContact' name='Address (Contractor)' value='123 Ceder Circle'><br>
-            <label for='cityContact'>City:</label><br>
-            <input type='text' id='cityContact' name='City (Contractor)' value='Chicago'><br>
-            <label for='stateContact'>State:</label><br>
-            <input type='text' id='stateContact' name='State (Contractor)' value='IL'><br>
-            <label for='zipContact'>Zip Code:</label><br>
-            <input type='text' id='zipContact' name='Zip (Contractor)' value='76543'><br>
-            <label for='primaryTelephoneContact'>Telephone (Primary):</label><br>
-            <input type='text' id='primaryTelephoneContact' name='Primary Telephone (Contractor)' value='2345678987'><br>
-            <label for='secondaryTelephoneContact'>Telephone (Secondary):</label><br>
-            <input type='text' id='secondaryTelephoneContact' name='Secondary Telephone (Contractor)' value='(234) 567 - 8987'><br>
-            <label for='emailContact'>Email Address:</label><br>
-            <input type='email' id='emailContact' name='Email (Contractor)' value='installer@solarinstallerinc.tld' onchange="ensureMemberIsNotContractor(this.id)"><br>
-            <label for='docketNum'>Docket Number:</label><br>
-            <input type='text' id='docketNum' name='Docket Num' value='145558'><br>
-            </div>
-            
-            <div id='electrician'>
-            <H3>Electrician</H3>
-            <label for='contact2'>Contact:</label><br>
-            <input type='text' id='contact2' name='Electrician' value='Solar Install, Inc.'><br>
-            <label for='contactPersonContact2'>Contact Person:</label><br>
-            <input type='text' id='contactPersonContact2' name='Contact Person (Electrician)' value='John Henry'><br>
-            <label for='addressContact2'>Address:</label><br>
-            <input type='text' id='addressContact2' name='Address (Electrician)' value='123 Ceder Circle'><br>
-            <label for='cityContact'>City:</label><br>
-            <input type='text' id='cityContact2' name='City (Electrician)' value='Chicago'><br>
-            <label for='stateContact2'>State:</label><br>
-            <input type='text' id='stateContact2' name='State (Electrician)' value='IL'><br>
-            <label for='zipContact2'>Zip Code:</label><br>
-            <input type='text' id='zipContact2' name='Zip (Electrician)' value='76543'><br>
-            <label for='primaryTelephoneContact2'>Telephone (Primary):</label><br>
-            <input type='text' id='primaryTelephoneContact2' name='Primary Telephone (Electrician)' value='2345678987'><br>
-            <label for='secondaryTelephoneContact2'>Telephone (Secondary):</label><br>
-            <input type='text' id='secondaryTelephoneContact2' name='Secondary Telephone (Electrician)' value='(234) 567 - 8987'><br>
-            <label for='emailContact2'>Email Address:</label><br>
-            <input type='email' id='emailContact2' name='Email (Electrician)' value='installer@solarinstallerinc.tld'><br>
-            </div>
+                <div id='contractor'>
+
+                    <H3>Contractor</H3>
+
+                    <label for='contact'>Contact:</label><br>
+                    <input type='text' id='contact' name='Contractor' value="{{default['Contractor']}}"><br>
+
+                    <label for='contactPersonContact'>Contact Person:</label><br>
+                    <input type='text' id='contactPersonContact' name='Contact Person (Contact)' value="{{default['Contact Person (Contact)']}}"><br>
+
+                    <label for='addressContact'>Address:</label><br>
+                    <input type='text' id='addressContact' name='Address (Contractor)' value="{{default['Address (Contractor)']}}"><br>
+
+                    <label for='cityContact'>City:</label><br>
+                    <input type='text' id='cityContact' name='City (Contractor)' value="{{default['City (Contractor)']}}"><br>
+
+                    <label for='stateContact'>State:</label><br>
+                    <input type='text' id='stateContact' name='State (Contractor)' value="{{default['State (Contractor)']}}"><br>
+
+                    <label for='zipContact'>Zip Code:</label><br>
+                    <input type='text' id='zipContact' name='Zip (Contractor)' value="{{default['Zip (Contractor)']}}"><br>
+
+                    <label for='primaryTelephoneContact'>Telephone (Primary):</label><br>
+                    <input type='text' id='primaryTelephoneContact' name='Primary Telephone (Contractor)' value="{{default['Primary Telephone (Contractor)']}}"><br>
+
+                    <label for='secondaryTelephoneContact'>Telephone (Secondary):</label><br>
+                    <input type='text' id='secondaryTelephoneContact' name='Secondary Telephone (Contractor)' value="{{default['Secondary Telephone (Contractor)']}}"><br>
+
+                    <label for='emailContact'>Email Address:</label><br>
+                    <input type='email' id='emailContact' name='Email (Contractor)' value="{{default['Email (Contractor)']}}" onchange="ensureMemberIsNotContractor(this.id)"><br>
+
+                    <label for='docketNum'>Docket Number:</label><br>
+                    <input type='text' id='docketNum' name='Docket Num' value="{{default['Docket Num']}}"><br>
+
+                </div>
+                
+                <div id='electrician'>
+
+                    <H3>Electrician</H3>
+                    
+                    <label for='contact2'>Contact:</label><br>
+                    <input type='text' id='contact2' name='Electrician' value="{{default['Electrician']}}"><br>
+                    
+                    <label for='contactPersonContact2'>Contact Person:</label><br>
+                    <input type='text' id='contactPersonContact2' name='Contact Person (Electrician)' value="{{default['Contact Person (Electrician)']}}"><br>
+                    
+                    <label for='addressContact2'>Address:</label><br>
+                    <input type='text' id='addressContact2' name='Address (Electrician)' value="{{default['Address (Electrician)']}}"><br>
+                    
+                    <label for='cityContact'>City:</label><br>
+                    <input type='text' id='cityContact2' name='City (Electrician)' value="{{default['City (Electrician)']}}"><br>
+                    
+                    <label for='stateContact2'>State:</label><br>
+                    <input type='text' id='stateContact2' name='State (Electrician)' value="{{default['State (Electrician)']}}"><br>
+                    
+                    <label for='zipContact2'>Zip Code:</label><br>
+                    <input type='text' id='zipContact2' name='Zip (Electrician)' value="{{default['Zip (Electrician)']}}"><br>
+                    
+                    <label for='primaryTelephoneContact2'>Telephone (Primary):</label><br>
+                    <input type='text' id='primaryTelephoneContact2' name='Primary Telephone (Electrician)' value="{{default['Primary Telephone (Electrician)']}}"><br>
+                    
+                    <label for='secondaryTelephoneContact2'>Telephone (Secondary):</label><br>
+                    <input type='text' id='secondaryTelephoneContact2' name='Secondary Telephone (Electrician)' value="{{default['Secondary Telephone (Electrician)']}}"><br>
+                    
+                    <label for='emailContact2'>Email Address:</label><br>
+                    <input type='email' id='emailContact2' name='Email (Electrician)' value="{{default['Email (Electrician)']}}"><br>
+                
+                </div>
+                
             </div>
 
             <div class="rightForm">
-            <H3>Member</H3>
-            <label for='member'>Member:</label><br>
-            <input type='text' id='member' name='Member' value='{{default.name}}'><br>
-            <!Is name vs. contact confusing? How to clarify? Maybe ask for Organization?>
-            <label for='contactPersonMember'>Contact Person:</label><br>
-            <input type='text' id='contactPersonMember' name='Contact Person (Member)' value='{{default.name}}'><br>
-            <label for='addressBilling'>Address:</label><br>
-            <input type='text' id='addressBilling' name='Address (Billing)' value="{{default.address}}"><br>
-            <label for='cityBilling'>City:</label><br>
-            <input type='text' id='cityBilling' name='City (Billing)' value='{{default.city}}'><br>
-            <label for='stateBilling'>State:</label><br>
-            <input type='text' id='stateBilling' name='State (Billing)' value='{{default.state}}'><br>
-            <label for='zipBilling'>Zip Code:</label><br>
-            <input type='text' id='zipBilling' name='Zip (Billing)' value='{{default.zip}}'><br>
-            <label for='primaryTelephoneMember'>Telephone (Primary):</label><br>
-            <input type='text' id='primaryTelephoneMember' name='Telephone (Primary, Member)' value='{{default.phone}}'><br>
-            <label for='secondaryTelephoneMember'>Telephone (Secondary):</label><br>
-            <input type='text' id='secondaryTelephoneMember' name='Telephone (Secondary, Member)' value='{{default.phone}}'><br>
-            <label for='emailMember'>Email Address:</label><br>
-            <input type='email' id='emailMember' name='Email (Member)' value='{{default.email}}' onchange="ensureMemberIsNotContractor(this.id)"><br>
+            
+                <H3>Member</H3>
+                
+                <label for='member'>Member:</label><br>
+                <input type='text' id='member' name='Member' value="{{default['Member']}}"><br>
+                <!Is name vs. contact confusing? How to clarify? Maybe ask for Organization?>
+                
+                <label for='contactPersonMember'>Contact Person:</label><br>
+                <input type='text' id='contactPersonMember' name='Contact Person (Member)' value="{{default['Contact Person (Member)']}}"><br>
+                
+                <label for='addressBilling'>Address:</label><br>
+                <input type='text' id='addressBilling' name='Address (Billing)' value="{{default['Address (Billing)']}}"><br>
+                
+                <label for='cityBilling'>City:</label><br>
+                <input type='text' id='cityBilling' name='City (Billing)' value="{{default['City (Billing)']}}"><br>
+                
+                <label for='stateBilling'>State:</label><br>
+                <input type='text' id='stateBilling' name='State (Billing)' value="{{default['State (Billing)']}}"><br>
+                
+                <label for='zipBilling'>Zip Code:</label><br>
+                <input type='text' id='zipBilling' name='Zip (Billing)' value="{{default['Zip (Billing)']}}"><br>
+                
+                <label for='primaryTelephoneMember'>Telephone (Primary):</label><br>
+                <input type='text' id='primaryTelephoneMember' name='Telephone (Primary, Member)' value="{{default['Telephone (Primary, Member)']}}"><br>
+                
+                <label for='secondaryTelephoneMember'>Telephone (Secondary):</label><br>
+                <input type='text' id='secondaryTelephoneMember' name='Telephone (Secondary, Member)' value="{{default['Telephone (Secondary, Member)']}}"><br>
+                
+                <label for='emailMember'>Email Address:</label><br>
+                <input type='email' id='emailMember' name='Email (Member)' value="{{default['Email (Member)']}}" onchange="ensureMemberIsNotContractor(this.id)"><br>
+                
             </div>
 
         </div>
@@ -179,63 +212,93 @@
             <H3 style="width: 100%;">Interconnection Service Information</H3>
             
             <div class="leftForm">
-            <H4>Service Information</H4>
-            <label for='utility'>Utility:</label><br>
-            <input type='text' id='utility' name='Utility' value='Dairyland Power'><br>
-            <label for='accountNumber'>Account Number:</label><br>
-            <input type='text' id='accountNumber' name='Account Number' value='23456789'><br>
-            <label for='meterID'>Meter ID:</label><br>
-            <input type='text' id='meterID' name='Meter ID' value="{{default.meterID}}"><br>
-            <!TODO: Allow drop-down for pre-certified inverters? Separate application?>
-            <label for='inverterManf'>Inverter Manufacturer:</label><br>
-            <input type='text' id='inverterManf' name='Inverter Manufacturer' value='Princeton Power'><br>
-            <label for='inverterModel'>Inverter Model:</label><br>
-            <input type='text' id='inverterModel' name='Inverter Model' value="T"><br>
-            <label for='nameplateRatingkW'>Nameplate Rating (kW-AC):</label><br>
-            <input type='text' id='nameplateRatingkW' name='Nameplate Rating (kW)' value="{{default.size}}"><br>
-            <label for='nameplateRatingkVA'>Nameplate Rating (kVA-AC):</label><br>
-            <input type='text' id='nameplateRatingkVA' name='Nameplate Rating (kVA)' value='{{default.size}}'><br>
-            <label for='nameplateRatingV'>Nameplate Rating (V-AC):</label><br>
-            <input type='text' id='nameplateRatingV' name='Nameplate Rating (V)' value='{{default.voltage}}'><br>
-            <!TODO: Make dropdown or radio button>
-            <label for='phases'>Single or Three Phase:</label><br>
-            <input type='text' id='phases' name='Phases' value='3'><br>
-            <label for='primeMover'>Prime Mover:</label><br>
-            <input type='text' id='primeMover' name='Prime Mover' value='Photovoltaic'><br>
-            <!TODO: Make dropdown or radio button>
-            <label for='energySource'>Energy Source:</label><br>
-            <input type='text' id='energySource' name='Energy Source' value='Sunlight'><br>
-            <!TODO: Should be a bool>
-            <label for='ul1741'>Is the equipment UL1741 listed?:</label><br>
-            <input type='text' id='ul1741' name='UL1741' value='Yes'> <br>
-            <!TODO: Date pickers>
-            <label for='installDateEstimated'>Estimated Install Date:</label><br>
-            <input type='text' id='installDateEstimated' name='Estimated Install Date' value='11/11/2020'><br>
-            <label for='inServiceDateEstimated'>Estimated In-Service Date:</label><br>
-            <input type='text' id='inServiceDateEstimated' name='Estimated In-Service Date' value='9/11/2021'><br>
-            <!TODO: Table for Equipment - Certification>
+           
+                <H4>Service Information</H4>
+               
+                <label for='utility'>Utility:</label><br>
+                <input type='text' id='utility' name='Utility' value="{{default['Utility']}}"><br>
+               
+                <label for='accountNumber'>Account Number:</label><br>
+                <input type='text' id='accountNumber' name='Account Number' value="{{default['Account Number']}}"><br>
+               
+                <label for='meterID'>Meter ID:</label><br>
+                <input type='text' id='meterID' name='Meter ID' value="{{default['Meter ID']}}"><br>
+               
+                <!TODO: Allow drop-down for pre-certified inverters? Separate application?>
+                <label for='inverterManf'>Inverter Manufacturer:</label><br>
+                <input type='text' id='inverterManf' name='Inverter Manufacturer' value="{{default['Inverter Manufacturer']}}"><br>
+               
+                <label for='inverterModel'>Inverter Model:</label><br>
+                <input type='text' id='inverterModel' name='Inverter Model' value="{{default['Inverter Model']}}"><br>
+               
+                <label for='nameplateRatingkW'>Nameplate Rating (kW-AC):</label><br>
+                <input type='text' id='nameplateRatingkW' name='Nameplate Rating (kW)' value="{{default['Nameplate Rating (kW)']}}"><br>
+               
+                <label for='nameplateRatingkVA'>Nameplate Rating (kVA-AC):</label><br>
+                <input type='text' id='nameplateRatingkVA' name='Nameplate Rating (kVA)' value="{{default['Nameplate Rating (kVA)']}}"><br>
+               
+                <label for='nameplateRatingV'>Nameplate Rating (V-AC):</label><br>
+                <input type='text' id='nameplateRatingV' name='Nameplate Rating (V)' value="{{default['Nameplate Rating (V)']}}"><br>
+
+                <label>Phases:</label><br>
+                <input id="threePhaseRadio" type="radio" name="Phases" value="Three" {% if (default['Phases'] == 'Three') %} checked="True" {% endif %}>
+                <label for="threePhaseRadio">Three</label>
+                <input id="onePhaseRadio" type="radio" name="Phases" value="One" {% if (default['Phases'] == 'One') %} checked="True" {% endif %}>
+                <label for="onePhaseRadio">One</label> <br>
+               
+                <label for='primeMover'>Prime Mover:</label><br>
+                <input type='text' id='primeMover' name='Prime Mover' value="{{default['Prime Mover']}}"><br>
+               
+                <!TODO: Make dropdown or radio button>
+                <label for='energySource'>Energy Source:</label><br>
+                <input type='text' id='energySource' name='Energy Source' value="{{default['Energy Source']}}"><br>
+               
+                <label>Is the equipment UL1741 listed?:</label><br>
+                <input id="yesListedRadio" type="radio" name="UL1741 listed" value="Yes" {% if (default['UL1741 listed'] == 'Yes') %} checked="True" {% endif %}>
+                <label for="yesListedRadio">Yes</label>
+                <input id="noListedRadio" type="radio" name="UL1741 listed" value="No" {% if (default['UL1741 listed'] == 'No') %} checked="True" {% endif %}>
+                <label for="noListedRadio">No</label><br>
+                
+                <!TODO: Date pickers>
+                <label for='installDateEstimated'>Estimated Install Date:</label><br>
+                <input type='date' id='installDateEstimated' name='Estimated Install Date' value="{{default['Estimated Install Date']}}"><br>
+               
+                <label for='inServiceDateEstimated'>Estimated In-Service Date:</label><br>
+                <input type='date' id='inServiceDateEstimated' name='Estimated In-Service Date' value="{{default['Estimated In-Service Date']}}"><br>
+               
+                <!TODO: Table for Equipment - Certification>
+            
             </div>
 
             <!TODO: Figure out how to add multiple owners.>
             <div class="rightForm">
-            <H4>Owner</H4>
-            <label for='owner'>Owner:</label><br>
-            <input type='text' id='owner' name='Owner' value='{{default.name}}'><br>
-            <H4>Location</H4>
-            <!TODO: Figure out "same as above" button.>
-            <label for='addressService'>Address:</label><br>
-            <input type='text' id='addressService' name='Address (Service)' value='{{default.address}}'><br>
-            <label for='cityService'>City:</label><br>
-            <input type='text' id='cityService' name='City (Service)' value='{{default.city}}'><br>
-            <label for='stateService'>State:</label><br>
-            <input type='text' id='stateService' name='State (Service)' value="{{default.state}}"><br>
-            <label for='zipService'>Zip Code:</label><br>
-            <input type='text' id='zipService' name='Zip (Service)' value="{{default.zip}}"><br>
+            
+                <H4>Owner</H4>
+            
+                <label for='owner'>Owner:</label><br>
+                <input type='text' id='owner' name='Owner' value="{{default['Owner']}}"><br>
+                
+                <H4>Location</H4>
+                
+                <!TODO: Figure out "same as above" button.>
+                <label for='addressService'>Address:</label><br>
+                <input type='text' id='addressService' name='Address (Service)' value="{{default['Address (Service)']}}"><br>
+                
+                <label for='cityService'>City:</label><br>
+                <input type='text' id='cityService' name='City (Service)' value="{{default['City (Service)']}}"><br>
+                
+                <label for='stateService'>State:</label><br>
+                <input type='text' id='stateService' name='State (Service)' value="{{default['State (Service)']}}"><br>
+                
+                <label for='zipService'>Zip Code:</label><br>
+                <input type='text' id='zipService' name='Zip (Service)' value="{{default['Zip (Service)']}}"><br>
+                
             </div>
+        
         </div>
         
         <div class="card">
-            <p> By clicking the checkbox and typing their name below, the member agrees to provide the Cooperative with any additional information required to complete the interconnection. The member shall operate his equipment within the guidelines set forth by the cooperative. </p>
+            <p> By clicking the checkbox and typing their name below, the applicant agrees to provide the Cooperative with any additional information required to complete the interconnection. The applicant shall operate his equipment within the guidelines set forth by the cooperative. </p>
             <p><input required type="checkbox" id="agreement" name="Agreement">
             <label for="agreement"> I accept the terms above</label> </p>
             <p><input required type="text" placeholder="Please type your name here" id="signed" name="Signed"></p>
