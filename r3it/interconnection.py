@@ -552,8 +552,8 @@ def updateStatus(id, status):
 
     # email member and engineers
     subject = 'R3IT application status updated'
-    message = "The status of application " + id + 
-        " has been updated to '" + status + "'. " +
+    message = "The status of application " + id + \
+        " has been updated to '" + status + "'. " + \
         "Login to your account for more information."
     mailer.sendEmail( data.get('Email (Member)', ''), subject, message )
     mailer.mailEngineers( subject, message )
