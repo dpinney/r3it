@@ -1,4 +1,6 @@
 import os, web, logging, config
+
+from flask.helpers import send_from_directory
 from subprocess import Popen
 
 # Note: sudo python start_r3it.py on macOS since this will open low numbered ports.
@@ -9,6 +11,11 @@ reApp = web.Flask('R3ITR')
 @reApp.route('/')
 def index():
 	return 'NA'
+
+@reApp.route('/.well-known/acme-challenges/<path:filename>')
+def cert_renewal(filename):
+	return send_from_directory('/home/ubuntu/r3it/r3it/.well-known/acme-challenge/' + filename)
+
 
 @reApp.before_request
 def before_request():
