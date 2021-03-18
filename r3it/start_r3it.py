@@ -12,11 +12,7 @@ def index():
 
 @reApp.before_request
 def before_request():
-	if web.request.url.startswith('http://' + config.DOMAIN + '/.well-known'):
-		url = web.request.url.replace('http://', 'http://', 1)
-		code = 301
-		return web.redirect(url, code=code)	
-	elif web.request.url.startswith('http://'):
+	if not web.request.url.startswith('http://' + config.DOMAIN + '/.well-known') and web.request.url.startswith('http://'):
 		url = web.request.url.replace('http://', 'https://', 1)
 		code = 301
 		return web.redirect(url, code=code)
