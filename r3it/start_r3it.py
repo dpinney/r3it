@@ -18,10 +18,10 @@ def cert_renewal(filename):
 
 @reApp.before_request
 def before_request():
-	if not web.request.url.startswith('http://' + config.DOMAIN + '/.well-known') and web.request.url.startswith('http://'):
-		url = web.request.url.replace('http://', 'https://', 1)
+	if not Flask.request.url.startswith('http://' + config.DOMAIN + '/.well-known') and Flask.request.url.startswith('http://'):
+		url = Flask.request.url.replace('http://', 'https://', 1)
 		code = 301
-		return web.redirect(url, code=code)
+		return Flask.redirect(url, code=code)
 
 if __name__ == "__main__":
 	# Start redirector:
