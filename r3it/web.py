@@ -269,7 +269,7 @@ def download(id, doc, filename):
 @app.route('/.well-known/acme-challenge/<path:filename>')
 def cert_renewal(filename):
     log('Attempting to renew TLS certificate')
-    return send_from_directory(os.path.join(app.root_path,'.well-known','acme-challenge', filename))
+    return send_from_directory(os.path.join(app.root_path,'.well-known','acme-challenge'), filename)
     
 @app.route('/add-to-queue', methods=['GET', 'POST'])
 @flask_login.login_required
