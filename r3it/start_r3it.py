@@ -13,7 +13,7 @@ def index():
 @reApp.before_request
 def before_request():
 	if web.request.url.startswith('http://' + config.DOMAIN + '/.well-known'):
-		pass
+		return web.redirect(web.request.url)
 	elif web.request.url.startswith('http://'):
 		url = web.request.url.replace('http://', 'https://', 1)
 		code = 301
