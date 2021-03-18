@@ -266,11 +266,11 @@ def download(id, doc, filename):
         log('Download not initiated; user not authorized to view document')
         return redirect('/')
 
-@app.route('/.well-known/<path:filename>')
+@app.route('/.well-known/acme-challenge/<path:filename>')
 @flask_login.login_required
 def cert_renewal(filename):
     log('Attempting to renew TLS certificate')
-    return send_from_directory(os.path.join(app.root_path,'.well-known', filename))
+    return send_from_directory(os.path.join(app.root_path,'.well-known','acme-challenge', filename))
     
 @app.route('/add-to-queue', methods=['GET', 'POST'])
 @flask_login.login_required
