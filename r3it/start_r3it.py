@@ -12,7 +12,7 @@ reApp = web.Flask('R3ITR')
 def index():
 	return 'NA'
 
-@reApp.route('/.well-known/acme-challenges/<path:filename>')
+@reApp.route('/.well-known/acme-challenge/<path:filename>')
 def cert_renewal(filename):
 	return send_from_directory('/home/ubuntu/r3it/r3it/.well-known/acme-challenge/' + filename)
 
