@@ -13,7 +13,7 @@ def index():
 
 @reApp.route('/.well-known/acme-challenge/<path:filename>')
 def cert_renewal(filename):
-	return send_from_directory('/home/ubuntu/r3it/r3it/.well-known/acme-challenge/' + filename)
+	return send_from_directory('/home/ubuntu/r3it/r3it/.well-known/acme-challenge/', filename)
 
 
 @reApp.before_request
