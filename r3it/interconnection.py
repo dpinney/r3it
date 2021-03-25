@@ -554,7 +554,7 @@ def updateStatus(id, status):
     subject = 'R3IT application status updated'
     message = "The status of application " + id + \
         " has been updated to '" + status + "'. " + \
-        "Use the following link to your application for more information: " + 
+        "Use the following link to your application for more information: " + \
         "demo.r3it.ghw.io/report/" + app['ID']
     mailer.sendEmail( data.get('Email (Member)', ''), subject, message )
     mailer.mailEngineers( subject, message )
