@@ -87,10 +87,20 @@
 
 
 {% macro progressBar() %}
-{% if netMeteringUsed > 0 %}
-<H3>Net Metering Capacity Used: {{netMeteringUsed}}%</H3>
-<div id="progressBarBackground">
-	<div id="progressBar" style="width:{{netMeteringUsed}}%"></div>
+{% if netMeteringUsed['used'] > 0 %}
+<H3>Net Metering Capacity Used: {{netMeteringUsed['used']}} kW of {{netMeteringUsed['available']}} kW ( {{netMeteringUsed['percent']}}% )</H3>
+<div id="progressBarBackground" class="tooltip">
+	
+	{% if netMeteringUsed['percent'] < 0.5 %}
+		<div id="progressBar" style="width:0.5%"></div>
+	{% else %}
+		<div id="progressBar" style="width:{{netMeteringUsed['percent']}}%"></div>
+	{% endif %}
+	
+	<span class="tooltipText">
+		This is the capacity available to all consumers applying for interconnection with your facility. The capacity is made available on a first come first serve basis.
+	</span>
+
 </div>
 {% endif %}
 {% endmacro %}

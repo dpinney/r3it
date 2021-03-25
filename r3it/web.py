@@ -188,7 +188,12 @@ def index():
                                     if requiresUsersAction(currentUser(), app)
     ]
     
-    netMeteringUsed = 100*interconnection.calcCapacityUsed()/config.netMeteringCapacity
+    netMeteringUsed = {}
+    netMeteringUsed['used'] = interconnection.calcCapacityUsed()
+    netMeteringUsed['available'] = config.netMeteringCapacity
+    netMeteringUsed['percent'] = 100 * \
+    	netMeteringUsed['used'] / netMeteringUsed['available']
+    print(netMeteringUsed)
     return render_template('index.html', data=data, \
                                          priorities=priorities, \
                                          notification=notification, \
