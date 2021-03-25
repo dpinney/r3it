@@ -193,7 +193,6 @@ def index():
     netMeteringUsed['available'] = config.netMeteringCapacity
     netMeteringUsed['percent'] = 100 * \
     	netMeteringUsed['used'] / netMeteringUsed['available']
-    print(netMeteringUsed)
     return render_template('index.html', data=data, \
                                          priorities=priorities, \
                                          notification=notification, \
@@ -509,10 +508,10 @@ def payment(id):
 @app.route('/success/<id>/<token>')
 def success(id, token):
     if token != hashPassword(id, COOKIE_KEY) : return redirect('/?notification=Payment&20failed&2E')
-    if appDict(id).get('Email (Member)', '') == appDict(id).get('Email (Contact)', 'a'):
+    if appDict(id).get('Installation Type', '') ==  'Self-install':
         update_status(id, 'Application Submitted')
     else: update_status(id, 'Delegation Required')
-    return redirect('/report/' + id + '?notification=Application&20submitted&2E')
+    return redirect('/report/' + id + '?notification=Application%20submitted%2E')
 
 @app.route('/create-checkout-session/<id>', methods=['POST'])
 def create_checkout_session(id):
