@@ -14,18 +14,18 @@ read -p "Enter the domain name:" domain
 
 # R3it install script
 
-apt-get update -y -q
-apt-get upgrade -y -q
+sudo apt-get update -y -q
+sudo apt-get upgrade -y -q
 
 # install python3.8, pip, gunicorn, cron
 
-apt-get install python3.6 letsencrypt python3-pip -y -q
+sudo apt-get install python3.6 letsencrypt python3-pip -y -q
 
 # install omf
 cd ~/
 git clone https://github.com/dpinney/omf.git
 cd ~/omf
-python3 ~/omf/install.py
+sudo python3 ~/omf/install.py
 
 # install requirements
 cd ~/r3it
@@ -33,7 +33,7 @@ pip3 install -r requirements.txt
 
 # provision TLS
 
-certbot certonly --standalone --agree-tos -n -m $email -d $domain
+sudo certbot certonly --standalone --agree-tos -n -m $email -d $domain
 
 # install certs
 
@@ -50,6 +50,6 @@ touch ~/r3it/r3it/data/log
 
 # enable r3it
 
-systemctl {enable,start} /etc/systemd/system/r3it.service
-systemctl {enable,start} /etc/systemd/system/cert.timer
-systemctl enable /etc/systemd/system/cert.service
+sudo systemctl {enable,start} /etc/systemd/system/r3it.service
+sudo systemctl {enable,start} /etc/systemd/system/cert.timer
+sudo systemctl enable /etc/systemd/system/cert.service
