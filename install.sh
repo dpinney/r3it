@@ -35,15 +35,18 @@ pip3 install -r requirements.txt
 
 certbot certonly --agree-tos -n -m $email -d $domain
 
-# install service
+# install services
 
 ln -s ~/r3it/r3it/r3it.service /etc/systemd/system/r3it.service
+ln -s ~/r3it/r3it/cert.* /etc/systemd/system/
 
 # install certs
 
 ln -s /etc/letsencrypt/live/$domain/fullchain.pem ~/r3it/r3it/fullchain.pem
 ln -s /etc/letsencrypt/live/$domain/privkey.pem ~/r3it/r3it/privkey.pem
 ln -s /etc/letsencrypt/live/$domain/cert.pem ~/r3it/r3it/cert.pem
+
+# install 
 
 # enable service
 
