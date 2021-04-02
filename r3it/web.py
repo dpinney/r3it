@@ -123,18 +123,26 @@ def newpassword(email, token):
         log('Password reset successfully for ' + email)
         return redirect('/login?notification=Password%20updated%20successfully%2E')
 
-@app.route('/senddelegationemail/<id>')
+@app.route('/sendDelegationEmail/<id>')
 @flask_login.login_required
-def sendDelegationEmail(id):
-    mailer.sendEmail(appDict(id)['Email (Member)'], 'Approve interconnection application', 'Click this link to approve ' + appDict(id)['Email (Installer)'] + ' to administer an interconnection application for ' + appDict(id)['Address (Service)'] + ': ' + config.DOMAIN + '/delegate/' + id + '/' + passwordHash('delegation', id)) #need link here.
-    return redirect('/report/' + id + '&notification=Delegation%20email%sent%2E')
+def sendDelegationEmail(id, notification=''):
+    mailer.sendEmail(appDict(id)['Email (Member)'], 
+    	'Approve interconnection application', 
+    	'Click this link to approve ' + 
+    	appDict(id)['Email (Contractor)'] + 
+    	' to administer an interconnection application for ' + 
+    	appDict(id)['Address (Service)'] + ': ' + 
+    	config.DOMAIN + '/delegate/' + id + '/' + 
+    	hashPassword('delegation', id)) 
+    return redirect('/report/' + id + '?notification=' + 
+    	notification+'Delegation%20email%20sent%2E')
 
 @app.route('/delegate/<id>/<token>')
 def delegate(id, token):
     '''Delegate account permissions'''
     notification = request.args.get('notification', None)
     if appDict(id)['Status'] == 'Delegation Required':
-        if passwordHash('delegation', id) == token:
+        if hashPassword('delegation', id) == token:
             update_status(id, 'Application Submitted')
             return redirect('/?notification=Account%20permission%20delegated%2E')
         else: return redirect('/?notification=Delegation%20error%2E')
@@ -507,11 +515,20 @@ def payment(id):
 @flask_login.login_required
 @app.route('/success/<id>/<token>')
 def success(id, token):
-    if token != hashPassword(id, COOKIE_KEY) : return redirect('/?notification=Payment&20failed&2E')
+    
+    if token != hashPassword(id, COOKIE_KEY) : 
+    	return redirect('/?notification=Payment&20failed&2E')
+
     if appDict(id).get('Installation Type', '') ==  'Self-install':
         update_status(id, 'Application Submitted')
-    else: update_status(id, 'Delegation Required')
-    return redirect('/report/' + id + '?notification=Application%20submitted%2E')
+        notification = 'Application%20submitted%2E'
+        return redirect('/report/' + id + '?notification=' + notification)
+    
+    else: 
+    	update_status(id, 'Delegation Required')
+    	notification = 'Application%20submitted%2E%20Delegation%20required%2E%20'
+    	return sendDelegationEmail(id, notification=notification)
+    
 
 @app.route('/create-checkout-session/<id>', methods=['POST'])
 def create_checkout_session(id):

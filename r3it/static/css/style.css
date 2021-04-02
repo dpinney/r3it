@@ -278,7 +278,7 @@ table.sortable th {
     padding: 10px;
 } #notesSave { display: none; }
 
-#pay, #withdraw, #editDetails, #acceptEdits, #rejectEdits {
+#pay, #withdraw, #editDetails, #acceptEdits, #rejectEdits, #sendDelegationEmail {
     width: 100%;
 }
 

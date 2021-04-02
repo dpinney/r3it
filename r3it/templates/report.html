@@ -18,6 +18,23 @@
         {{notes()}}
     {% endif %}
 
+    {% if( 
+        (current_user.roles == []) and 
+        (current_user.is_authenticated()) and 
+        (data['Status'] == 'Delegation Required')
+    ) %}
+
+       <h3>Delegation Required</h3>
+        <div class="card">
+        Please authorize your contractor to communicate about your application on your behalf. An email was sent to the member email associated with this account containing a link to provide the approval. If you did not receive the email, or would like us to resend it, please ensure the member email in the 'Application Details' below is correct, and then click the button below to send the delegation email again.
+        </div>
+        <a href="{{'/sendDelegationEmail/' + data['ID'] }}">
+            <button id="sendDelegationEmail">Send Delegation Email</button>
+        </a>
+        <h1><hr></h1>
+       
+    {% endif %}
+
     <h3>Application details</h3>
 
     <table>
@@ -60,7 +77,7 @@
 
     {% if (data['Status'] in ['Payment Required', 'Delegation Required', 'Application Submitted', 'Engineering Review']) %}
 
-        {% if(current_user.roles == []) %}
+        {% if( (current_user.roles == []) and (current_user.is_authenticated()) ) %}
             <a href="{{'/edit/' + data['ID'] }}"><button id="editDetails">Edit Application Details</button></a>
         {% endif %}
         
@@ -140,9 +157,10 @@
         <a href='{{"/payment/" + data['ID']}}'>
             <button id='pay'>Pay Application Fee</button>
         </a>
+        <hr>
     {% endif %}
     
-    <hr>
+    
 
     <H3>Click below to Withdraw Interconnection Application</H3>
     <form action='{{"/update-status/" + data['ID'] + "/Withdrawn"}}'>
