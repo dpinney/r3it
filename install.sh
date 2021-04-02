@@ -50,6 +50,6 @@ touch ~/r3it/r3it/data/log
 
 # enable r3it
 
-systemctl {enable,start} /etc/systemd/systen/r3it.service
-systemctl {enable,start} /etc/systemd/systen/cert.timer
-systemctl enable /etc/systemd/systen/cert.service
+systemctl {enable,start} /etc/systemd/system/r3it.service
+systemctl {enable,start} /etc/systemd/system/cert.timer
+systemctl enable /etc/systemd/system/cert.service
