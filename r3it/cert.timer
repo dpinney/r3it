@@ -1,0 +1,7 @@
+[Unit]Description=Cert renewal for r3it
+
+[Timer]OnBootSec=5min
+OnCalendar=weekly
+Unit=cert.target
+
+[Install]WantedBy=basic.target
