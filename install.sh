@@ -35,21 +35,17 @@ pip3 install -r requirements.txt
 
 certbot certonly --agree-tos -n -m $email -d $domain
 
-# install services
-
-ln -s ~/r3it/r3it/r3it.service /etc/systemd/system/r3it.service
-ln -s ~/r3it/r3it/cert.* /etc/systemd/system/
-
 # install certs
 
-ln -s /etc/letsencrypt/live/$domain/fullchain.pem ~/r3it/r3it/fullchain.pem
-ln -s /etc/letsencrypt/live/$domain/privkey.pem ~/r3it/r3it/privkey.pem
-ln -s /etc/letsencrypt/live/$domain/cert.pem ~/r3it/r3it/cert.pem
+ln -s /etc/letsencrypt/live/$domain/*.pem ~/r3it/r3it/
 
-# install 
+# install systemd unit files for r3it and certificate renewal.
 
-# enable service
+ln -s ~/r3it/r3it/r3it.service /etc/systemd/system/r3it.service
+ln -s ~/r3it/r3it/cert.{s..t}* /etc/systemd/system/
 
-systemctl enable r3it
+# enable r3it
 
-# cron jobs
+systemctl {enable,start} /etc/systemd/systen/r3it.service
+systemctl {enable,start} /etc/systemd/systen/cert.timer
+systemctl enable /etc/systemd/systen/cert.service
