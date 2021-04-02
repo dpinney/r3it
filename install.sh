@@ -14,21 +14,21 @@ read -p "Enter the domain name:" domain
 
 # R3it install script
 
-apt-get update
-apt-get upgrade
+apt-get update -y -q
+apt-get upgrade -y -q
 
 # install python3.8, pip, gunicorn, cron
 
-apt-get install python3.6 letsencrypt python3-pip
+apt-get install python3.6 letsencrypt python3-pip -y -q
 
 # install omf
 cd ~/
 git clone https://github.com/dpinney/omf.git
-cd omf
-python3 install.py
+cd ~/omf
+python3 ~/omf/install.py
 
 # install requirements
-cd r3it
+cd ~/r3it
 pip3 install -r requirements.txt
 
 # provision TLS
@@ -43,6 +43,10 @@ ln -s /etc/letsencrypt/live/$domain/*.pem ~/r3it/r3it/
 
 ln -s ~/r3it/r3it/r3it.service /etc/systemd/system/r3it.service
 ln -s ~/r3it/r3it/cert.{s..t}* /etc/systemd/system/
+
+# create log file
+
+touch ~/r3it/r3it/data/log
 
 # enable r3it
 

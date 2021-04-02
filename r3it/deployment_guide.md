@@ -1,8 +1,10 @@
 Deploy:
-1. Create an Ubuntu 20.04 VM
+1. Create an Ubuntu 20.04 VM with at least 1 vCPU and 2GB ram.
 2. Configure DNS to point to new VM.
-3. Edit config.py, put in API keys, domain name, etc. as appropriate.
-4. Run install.sh
+3. Ensure ports 443 and 80 are open (e.g., on hosting provider's firewall).
+4. Clone the repo: git clone https://github.com/dpinney/r3it
+5. Edit config.py, adding API keys, domain name, emails, etc. as appropriate.
+6. Run install.sh as root, e.g., sudo bash ~/r3it/install.sh
 
 Update:
 1. sudo bash ~/r3it/r3it/pull_update.sh
