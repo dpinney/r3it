@@ -33,7 +33,7 @@ pip3 install -r requirements.txt
 
 # provision TLS
 
-certbot certonly --agree-tos -n -m $email -d $domain
+certbot certonly --standalone --agree-tos -n -m $email -d $domain
 
 # install certs
 
