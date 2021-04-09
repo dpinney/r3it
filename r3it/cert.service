@@ -1,6 +1,6 @@
-[Unit]Description=Renews certificates for r3it
+[Unit]
+Description=Renews certificates for r3it
 Wants=cert.timer
 
-[Service]ExecStart=/usr/bin/sudo /usr/bin/certbot renew --force-renewal
-
-[Install]WantedBy=cert.target
+[Service]
+ExecStart=/usr/bin/sudo /usr/bin/certbot renew --force-renewal
