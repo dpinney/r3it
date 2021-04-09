@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Check for root.
+# Check for root. NB: seems like actually a bad idea b/c sudo doesn't maintain home dir of user.
 
-if [[ $EUID > 0 ]]
-  then echo "Please run as root"
-  exit
-fi
+# if [[ $EUID > 0 ]]
+#   then echo "Please run as root"
+#   exit
+# fi
 
 # Get email address and domain.
 
@@ -14,6 +14,7 @@ read -p "Enter the domain name:" domain
 
 # R3it install script
 
+sudo add-apt-repository ppa:deadsnakes/ppa
 sudo apt-get update -y -q
 sudo apt-get upgrade -y -q
 
@@ -25,7 +26,7 @@ sudo apt-get install python3.6 letsencrypt python3-pip -y -q
 cd ~/
 git clone https://github.com/dpinney/omf.git
 cd ~/omf
-sudo python3 ~/omf/install.py
+sudo python3.6 ~/omf/install.py
 
 # install requirements
 cd ~/r3it
@@ -46,10 +47,10 @@ sudo --preserve-env=HOME ln -s ~/r3it/r3it/cert.{s..t}* /etc/systemd/system/
 
 # create log file
 
+mkdir ~/r3it/r3it/data
 touch ~/r3it/r3it/data/log
 
 # enable r3it
 
 sudo systemctl {enable,start} /etc/systemd/system/r3it.service
 sudo systemctl {enable,start} /etc/systemd/system/cert.timer
-sudo systemctl enable /etc/systemd/system/cert.service
