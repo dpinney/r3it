@@ -114,3 +114,60 @@ def getMockData(dataType):
                         config.omdFilename))))
 
     return mockData
+
+def getMockAppFormInputs():
+
+    name = getMockData('name')
+    size = getMockData('size')
+
+    mockForm = {
+        "Owner": name,
+        "Member": name,
+        "Contact Person (Member)": name,
+        "Application Name": '{}\'s Solar Project'.format(name),
+        "Nameplate Rating (kW)": size,
+        "Nameplate Rating (kVA)": size,
+        "Contractor": "Solar Install, Inc.",
+        "Contact Person (Contractor)": getMockData('name'),
+        "Address (Contractor)": getMockData('address'),
+        "City (Contractor)": getMockData('city'),
+        "State (Contractor)": getMockData('state'),
+        "Zip (Contractor)": getMockData('zip'),
+        "Primary Telephone (Contractor)": getMockData('phone'),
+        "Secondary Telephone (Contractor)": getMockData('phone'),
+        "Email (Contractor)": "installer@solarinstallerinc.tld",
+        "Docket Num": "145558",
+        "Electrician": "Solar Install, Inc.",
+        "Contact Person (Electrician)":  getMockData('name'),
+        "Address (Electrician)": getMockData('address'),
+        "City (Electrician)": getMockData('city'),
+        "State (Electrician)": getMockData('state'),
+        "Zip (Electrician)": getMockData('zip'),
+        "Primary Telephone (Electrician)": getMockData('phone'),
+        "Secondary Telephone (Electrician)": getMockData('phone'),
+        "Email (Electrician)": "installer@solarinstallerinc.tld",
+        "Address (Billing)": getMockData('address'),
+        "City (Billing)": getMockData('city'),
+        "State (Billing)": getMockData('state'),
+        "Zip (Billing)": getMockData('zip'),
+        "Telephone (Primary, Member)": getMockData('phone'),
+        "Telephone (Secondary, Member)": getMockData('phone'),
+        "Email (Member)": "member@email.com",
+        "Utility": "Dairyland Power",
+        "Account Number": "23456789",
+        "Meter ID": getMockData('meterID'),
+        "Inverter Manufacturer": "Princeton Power",
+        "Inverter Model": "T",
+        "Nameplate Rating (V)": getMockData('voltage'),
+        "Estimated Install Date": "2021-11-11",
+        "Estimated In-Service Date": "2022-08-11",
+        "Address (Service)": getMockData('address'),
+        "City (Service)": getMockData('city'),
+        "State (Service)": getMockData('state'),
+        "Zip (Service)": getMockData('zip')
+    }
+
+    defaultForm = config.appFormDefaults.copy()
+    defaultForm.update(mockForm)
+
+    return defaultForm

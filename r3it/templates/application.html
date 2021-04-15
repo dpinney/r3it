@@ -17,15 +17,29 @@
                 case 'Contractor only':
                     contractor.style.display = 'inline';
                     electrician.style.display = 'none';
+                    setFormPartDisabledVal(contractor,false)
+                    setFormPartDisabledVal(electrician,true)
                     break;
                 case 'Contractor and Electrician':
                     contractor.style.display = 'inline';
                     electrician.style.display = 'inline';
+                    setFormPartDisabledVal(contractor,false)
+                    setFormPartDisabledVal(electrician,false)
                     break;
                 case 'Self-install':
                     contractor.style.display = 'none';
                     electrician.style.display = 'none';
+                    setFormPartDisabledVal(contractor,true)
+                    setFormPartDisabledVal(electrician,true)
                     break;
+            }
+
+            function setFormPartDisabledVal(container,val) {
+
+                childElements = container.children
+                for (var i = 0, l = childElements.length; i < l; ++i) {
+                    childElements[i].disabled = val;
+                }
             }
 
         }
@@ -104,35 +118,35 @@
 
                     <H3>Contractor</H3>
 
-                    <label for='contact'>Contact:</label><br>
-                    <input type='text' id='contact' name='Contractor' value="{{default['Contractor']}}"><br>
+                    <label for='contractorName'>Contractor:</label><br>
+                    <input type='text' id='contractorName' name='Contractor' value="{{default['Contractor']}}" required><br>
 
-                    <label for='contactPersonContact'>Contact Person:</label><br>
-                    <input type='text' id='contactPersonContact' name='Contact Person (Contact)' value="{{default['Contact Person (Contact)']}}"><br>
+                    <label for='contactPersonContractor'>Contact Person:</label><br>
+                    <input type='text' id='contactPersonContractor' name='Contact Person (Contractor)' value="{{default['Contact Person (Contractor)']}}" required><br>
 
-                    <label for='addressContact'>Address:</label><br>
-                    <input type='text' id='addressContact' name='Address (Contractor)' value="{{default['Address (Contractor)']}}"><br>
+                    <label for='addressContractor'>Address:</label><br>
+                    <input type='text' id='addressContractor' name='Address (Contractor)' value="{{default['Address (Contractor)']}}" required><br>
 
-                    <label for='cityContact'>City:</label><br>
-                    <input type='text' id='cityContact' name='City (Contractor)' value="{{default['City (Contractor)']}}"><br>
+                    <label for='cityContractor'>City:</label><br>
+                    <input type='text' id='cityContractor' name='City (Contractor)' value="{{default['City (Contractor)']}}" required><br>
 
-                    <label for='stateContact'>State:</label><br>
-                    <input type='text' id='stateContact' name='State (Contractor)' value="{{default['State (Contractor)']}}"><br>
+                    <label for='stateContractor'>State:</label><br>
+                    <input type='text' id='stateContractor' name='State (Contractor)' value="{{default['State (Contractor)']}}" required><br>
 
-                    <label for='zipContact'>Zip Code:</label><br>
-                    <input type='text' id='zipContact' name='Zip (Contractor)' value="{{default['Zip (Contractor)']}}"><br>
+                    <label for='zipContractor'>Zip Code:</label><br>
+                    <input type='text' id='zipContractor' name='Zip (Contractor)' value="{{default['Zip (Contractor)']}}" required><br>
 
-                    <label for='primaryTelephoneContact'>Telephone (Primary):</label><br>
-                    <input type='text' id='primaryTelephoneContact' name='Primary Telephone (Contractor)' value="{{default['Primary Telephone (Contractor)']}}"><br>
+                    <label for='primaryTelephoneContractor'>Telephone (Primary):</label><br>
+                    <input type='text' id='primaryTelephoneContractor' name='Primary Telephone (Contractor)' value="{{default['Primary Telephone (Contractor)']}}" required><br>
 
-                    <label for='secondaryTelephoneContact'>Telephone (Secondary):</label><br>
-                    <input type='text' id='secondaryTelephoneContact' name='Secondary Telephone (Contractor)' value="{{default['Secondary Telephone (Contractor)']}}"><br>
+                    <label for='secondaryTelephoneContractor'>Telephone (Secondary):</label><br>
+                    <input type='text' id='secondaryTelephoneContractor' name='Secondary Telephone (Contractor)' value="{{default['Secondary Telephone (Contractor)']}}"><br>
 
-                    <label for='emailContact'>Email Address:</label><br>
-                    <input type='email' id='emailContact' name='Email (Contractor)' value="{{default['Email (Contractor)']}}" onchange="ensureMemberIsNotContractor(this.id)"><br>
+                    <label for='emailContractor'>Email Address:</label><br>
+                    <input type='email' id='emailContractor' name='Email (Contractor)' value="{{default['Email (Contractor)']}}" onchange="ensureMemberIsNotContractor(this.id)" required><br>
 
                     <label for='docketNum'>Docket Number:</label><br>
-                    <input type='text' id='docketNum' name='Docket Num' value="{{default['Docket Num']}}"><br>
+                    <input type='text' id='docketNum' name='Docket Num' value="{{default['Docket Num']}}" required><br>
 
                 </div>
                 
@@ -140,32 +154,32 @@
 
                     <H3>Electrician</H3>
                     
-                    <label for='contact2'>Contact:</label><br>
-                    <input type='text' id='contact2' name='Electrician' value="{{default['Electrician']}}"><br>
+                    <label for='electricianName'>Electrician:</label><br>
+                    <input type='text' id='electricianName' name='Electrician' value="{{default['Electrician']}}" required><br>
                     
-                    <label for='contactPersonContact2'>Contact Person:</label><br>
-                    <input type='text' id='contactPersonContact2' name='Contact Person (Electrician)' value="{{default['Contact Person (Electrician)']}}"><br>
+                    <label for='contactPersonElectrician'>Contact Person:</label><br>
+                    <input type='text' id='contactPersonElectrician' name='Contact Person (Electrician)' value="{{default['Contact Person (Electrician)']}}" required><br>
                     
-                    <label for='addressContact2'>Address:</label><br>
-                    <input type='text' id='addressContact2' name='Address (Electrician)' value="{{default['Address (Electrician)']}}"><br>
+                    <label for='addressElectrician'>Address:</label><br>
+                    <input type='text' id='addressElectrician' name='Address (Electrician)' value="{{default['Address (Electrician)']}}" required><br>
                     
-                    <label for='cityContact'>City:</label><br>
-                    <input type='text' id='cityContact2' name='City (Electrician)' value="{{default['City (Electrician)']}}"><br>
+                    <label for='cityElectrician'>City:</label><br>
+                    <input type='text' id='cityElectrician' name='City (Electrician)' value="{{default['City (Electrician)']}}" required><br>
                     
-                    <label for='stateContact2'>State:</label><br>
-                    <input type='text' id='stateContact2' name='State (Electrician)' value="{{default['State (Electrician)']}}"><br>
+                    <label for='stateElectrician'>State:</label><br>
+                    <input type='text' id='stateElectrician' name='State (Electrician)' value="{{default['State (Electrician)']}}" required><br>
                     
-                    <label for='zipContact2'>Zip Code:</label><br>
-                    <input type='text' id='zipContact2' name='Zip (Electrician)' value="{{default['Zip (Electrician)']}}"><br>
+                    <label for='zipElectrician'>Zip Code:</label><br>
+                    <input type='text' id='zipElectrician' name='Zip (Electrician)' value="{{default['Zip (Electrician)']}}" required><br>
                     
-                    <label for='primaryTelephoneContact2'>Telephone (Primary):</label><br>
-                    <input type='text' id='primaryTelephoneContact2' name='Primary Telephone (Electrician)' value="{{default['Primary Telephone (Electrician)']}}"><br>
+                    <label for='primaryTelephoneElectrician'>Telephone (Primary):</label><br>
+                    <input type='text' id='primaryTelephoneElectrician' name='Primary Telephone (Electrician)' value="{{default['Primary Telephone (Electrician)']}}" required><br>
                     
-                    <label for='secondaryTelephoneContact2'>Telephone (Secondary):</label><br>
-                    <input type='text' id='secondaryTelephoneContact2' name='Secondary Telephone (Electrician)' value="{{default['Secondary Telephone (Electrician)']}}"><br>
+                    <label for='secondaryTelephoneElectrician'>Telephone (Secondary):</label><br>
+                    <input type='text' id='secondaryTelephoneElectrician' name='Secondary Telephone (Electrician)' value="{{default['Secondary Telephone (Electrician)']}}"><br>
                     
-                    <label for='emailContact2'>Email Address:</label><br>
-                    <input type='email' id='emailContact2' name='Email (Electrician)' value="{{default['Email (Electrician)']}}"><br>
+                    <label for='emailElectrician'>Email Address:</label><br>
+                    <input type='email' id='emailElectrician' name='Email (Electrician)' value="{{default['Email (Electrician)']}}" required><br>
                 
                 </div>
                 
@@ -173,35 +187,35 @@
 
             <div class="rightForm">
             
-                <H3>Member</H3>
+                <H3 id='member'>Member</H3>
                 
-                <label for='member'>Member:</label><br>
-                <input type='text' id='member' name='Member' value="{{default['Member']}}"><br>
+                <label for='memberName'>Member:</label><br>
+                <input type='text' id='memberName' name='Member' value="{{default['Member']}}" required><br>
                 <!Is name vs. contact confusing? How to clarify? Maybe ask for Organization?>
                 
                 <label for='contactPersonMember'>Contact Person:</label><br>
-                <input type='text' id='contactPersonMember' name='Contact Person (Member)' value="{{default['Contact Person (Member)']}}"><br>
+                <input type='text' id='contactPersonMember' name='Contact Person (Member)' value="{{default['Contact Person (Member)']}}" required><br>
                 
                 <label for='addressBilling'>Address:</label><br>
-                <input type='text' id='addressBilling' name='Address (Billing)' value="{{default['Address (Billing)']}}"><br>
+                <input type='text' id='addressBilling' name='Address (Billing)' value="{{default['Address (Billing)']}}" required><br>
                 
                 <label for='cityBilling'>City:</label><br>
-                <input type='text' id='cityBilling' name='City (Billing)' value="{{default['City (Billing)']}}"><br>
+                <input type='text' id='cityBilling' name='City (Billing)' value="{{default['City (Billing)']}}" required><br>
                 
                 <label for='stateBilling'>State:</label><br>
-                <input type='text' id='stateBilling' name='State (Billing)' value="{{default['State (Billing)']}}"><br>
+                <input type='text' id='stateBilling' name='State (Billing)' value="{{default['State (Billing)']}}" required><br>
                 
                 <label for='zipBilling'>Zip Code:</label><br>
-                <input type='text' id='zipBilling' name='Zip (Billing)' value="{{default['Zip (Billing)']}}"><br>
+                <input type='text' id='zipBilling' name='Zip (Billing)' value="{{default['Zip (Billing)']}}" required><br>
                 
                 <label for='primaryTelephoneMember'>Telephone (Primary):</label><br>
-                <input type='text' id='primaryTelephoneMember' name='Telephone (Primary, Member)' value="{{default['Telephone (Primary, Member)']}}"><br>
+                <input type='text' id='primaryTelephoneMember' name='Telephone (Primary, Member)' value="{{default['Telephone (Primary, Member)']}}" required><br>
                 
                 <label for='secondaryTelephoneMember'>Telephone (Secondary):</label><br>
                 <input type='text' id='secondaryTelephoneMember' name='Telephone (Secondary, Member)' value="{{default['Telephone (Secondary, Member)']}}"><br>
                 
                 <label for='emailMember'>Email Address:</label><br>
-                <input type='email' id='emailMember' name='Email (Member)' value="{{default['Email (Member)']}}" onchange="ensureMemberIsNotContractor(this.id)"><br>
+                <input type='email' id='emailMember' name='Email (Member)' value="{{default['Email (Member)']}}" onchange="ensureMemberIsNotContractor(this.id)" required><br>
                 
             </div>
 

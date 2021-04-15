@@ -328,61 +328,9 @@ def application():
     
     '''GET returns form for new interconnection application.'''
     
-    memberName = getMockData('name')
-    generationSize = getMockData('size')
-
-    default = {
-        "Application Name": '{}\'s Solar Project'.format(memberName),
-        "Tariff": "Net metering April kWh reset",
-        "Installation Type": "Contractor and Electrician",
-        "Contractor": "Solar Install, Inc.",
-        "Contact Person (Contact)": getMockData('name'),
-        "Address (Contractor)": getMockData('address'),
-        "City (Contractor)": getMockData('city'),
-        "State (Contractor)": getMockData('state'),
-        "Zip (Contractor)": getMockData('zip'),
-        "Primary Telephone (Contractor)": getMockData('phone'),
-        "Secondary Telephone (Contractor)": getMockData('phone'),
-        "Email (Contractor)": "installer@solarinstallerinc.tld",
-        "Docket Num": "145558",
-        "Electrician": "Solar Install, Inc.",
-        "Contact Person (Electrician)":  getMockData('name'),
-        "Address (Electrician)": getMockData('address'),
-        "City (Electrician)": getMockData('city'),
-        "State (Electrician)": getMockData('state'),
-        "Zip (Electrician)": getMockData('zip'),
-        "Primary Telephone (Electrician)": getMockData('phone'),
-        "Secondary Telephone (Electrician)": getMockData('phone'),
-        "Email (Electrician)": "installer@solarinstallerinc.tld",
-        "Member": memberName,
-        "Contact Person (Member)": memberName,
-        "Address (Billing)": getMockData('address'),
-        "City (Billing)": getMockData('city'),
-        "State (Billing)": getMockData('state'),
-        "Zip (Billing)": getMockData('zip'),
-        "Telephone (Primary, Member)": getMockData('phone'),
-        "Telephone (Secondary, Member)": getMockData('phone'),
-        "Email (Member)": currentUser(),
-        "Utility": "Dairyland Power",
-        "Account Number": "23456789",
-        "Meter ID": getMockData('meterID'),
-        "Inverter Manufacturer": "Princeton Power",
-        "Inverter Model": "T",
-        "Nameplate Rating (kW)": generationSize,
-        "Nameplate Rating (kVA)": generationSize,
-        "Nameplate Rating (V)": getMockData('voltage'),
-        "Phases": "Three",
-        "Prime Mover": "Photovoltaic",
-        "Energy Source": "Sunlight",
-        "UL1741 listed": "Yes",
-        "Estimated Install Date": "2021-11-11",
-        "Estimated In-Service Date": "2022-08-11",
-        "Owner": "Jennifer Davis",
-        "Address (Service)": getMockData('address'),
-        "City (Service)": getMockData('city'),
-        "State (Service)": getMockData('state'),
-        "Zip (Service)": getMockData('zip')
-    }
+    default = config.appFormDefaults
+    if config.useMockApplications:
+        default = getMockAppFormInputs()
 
     log('New application started')
     return render_template('application.html', 

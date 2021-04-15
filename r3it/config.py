@@ -26,6 +26,7 @@ DOMAIN = 'demo.r3it.ghw.io'
 # application processing options ----------------------------------------------
 
 enableAutomaticScreening = True
+useMockApplications = True
 
 # utility parameters ----------------------------------------------------------
 
@@ -55,15 +56,6 @@ roles = {
 utilityRoles = [
     'engineer',
     'memberServices'
-]
-
-# Names of the document types attached to applications.
-appAttachments = [
-    "One Line Diagram", 
-    "Site Plan", 
-    "Placard", 
-    "Insurance disclosures", 
-    "Inverter Specification Sheet"
 ]
 
 # Email configuration
@@ -159,6 +151,70 @@ actionItems = {
         'Application Submitted',
         'Member Options Meeting Required'
     )
+}
+
+# application form defaults and attachment params -----------------------------
+
+# Names of the document types attached to applications.
+appAttachments = [
+    "One Line Diagram", 
+    "Site Plan", 
+    "Placard", 
+    "Insurance disclosures", 
+    "Inverter Specification Sheet"
+]
+
+appFormDefaults = {
+    "Member": "",
+    "Contact Person (Member)": "",
+    "Application Name": "",
+    "Nameplate Rating (kW)": "",
+    "Nameplate Rating (kVA)": "",
+    "Tariff": "Net metering April kWh reset",
+    "Installation Type": "Contractor and Electrician",
+    "Contractor": "",
+    "Contact Person (Contractor)": "",
+    "Address (Contractor)": "",
+    "City (Contractor)": "",
+    "State (Contractor)": "",
+    "Zip (Contractor)": "",
+    "Primary Telephone (Contractor)": "",
+    "Secondary Telephone (Contractor)": "",
+    "Email (Contractor)": "",
+    "Docket Num": "",
+    "Electrician": "",
+    "Contact Person (Electrician)": "",
+    "Address (Electrician)": "",
+    "City (Electrician)": "",
+    "State (Electrician)": "",
+    "Zip (Electrician)": "",
+    "Primary Telephone (Electrician)": "",
+    "Secondary Telephone (Electrician)": "",
+    "Email (Electrician)": "",
+    "Address (Billing)": "",
+    "City (Billing)": "",
+    "State (Billing)": "",
+    "Zip (Billing)": "",
+    "Telephone (Primary, Member)": "",
+    "Telephone (Secondary, Member)": "",
+    "Email (Member)": "",
+    "Utility": "",
+    "Account Number": "",
+    "Meter ID": "",
+    "Inverter Manufacturer": "",
+    "Inverter Model": "",
+    "Nameplate Rating (V)": "",
+    "Phases": "Three",
+    "Prime Mover": "Photovoltaic",
+    "Energy Source": "Sunlight",
+    "UL1741 listed": "Yes",
+    "Estimated Install Date": "", #YYYY-MM-DD
+    "Estimated In-Service Date": "", #YYYY-MM-DD
+    "Owner": "",
+    "Address (Service)": "",
+    "City (Service)": "",
+    "State (Service)": "",
+    "Zip (Service)": ""
 }
 
 # gridlabd power flow sim params ----------------------------------------------
