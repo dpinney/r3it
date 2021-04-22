@@ -14,7 +14,6 @@ read -p "Enter the domain name:" domain
 
 # R3it install script
 
-sudo add-apt-repository ppa:deadsnakes/ppa
 sudo apt-get update -y -q
 sudo apt-get upgrade -y -q
 
@@ -52,5 +51,7 @@ touch ~/r3it/r3it/data/log
 
 # enable r3it
 
-sudo systemctl {enable,start} /etc/systemd/system/r3it.service
-sudo systemctl {enable,start} /etc/systemd/system/cert.timer
+sudo systemctl enable /etc/systemd/system/r3it.service
+sudo systemctl start r3it
+sudo systemctl enable /etc/systemd/system/cert.timer
+sudo systemctl start cert.timer
