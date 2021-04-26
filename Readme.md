@@ -1,26 +1,15 @@
-Web application for R3IT
+## Overview
 
-## Thoughts on Technology Choices
+R3IT is a free and open-source web application that allows utilities to automate the processing of solar interconnection requests.
 
-- JavaScript: don't use it, don't mutate the DOM.
-- Build the web app like you would 25 years ago:
-	- The users should interact only via form submission.
-	- Dynamic changes to the interface should only be done via the templating language.
-- HTML + CSS side:
-	- For the alpha, don't use any CSS. Able to show improvement later.
-	- Laying out HTML elements... no! It should look like a professor's website.
-- For the backend:
-	- Flask + Jinja2.
-- The database?
-	- Option A: some combination of CSV and json
-	- Option B: sqlite
-- Authentication: don't do it yet!
+It handles request submission, request review workflows, payment and signature collection, and optionally an automated engineering screening and approval process.
 
-## Data Model
+For full details on the application, please see our [presentation on automated interconnection screening](https://drive.google.com/file/d/1zsBoV4a9BIVMQWoLtOgYsDeK3V_T8Y7-/view?usp=sharing).
 
-- applications_table
-	- add_app()
-	- approve_app()
-	- run_interconn_analysis()
-- engineering_constants
-	- update()
+## Installation
+
+```sh
+git clone https://github.com/dpinney/r3it/
+cd r3it
+sudo bash install.sh
+```
