@@ -614,7 +614,7 @@
 <div id="notesContainer">
 <form id="notes" action='{{"/save-notes/" + data["ID"]}}' method='post'>
     <H3>Notes:</H3>
-    <textarea id="notesText" name="notesText" rows=10 disabled="True">{{data['Notes']}}</textarea>
+    <textarea id="notesText" name="notesText" rows=10 disabled="True"></textarea>
     <button  name="save" id="notesSave">Save</button>
 </form>
 <button id="notesEdit" onclick="editNotes()">Edit</button>
