@@ -145,7 +145,9 @@ actionItems = {
         'Interconnection Agreement Proffered',
         'Interconnection Agreement Executed',
         'Permission to Operate Proffered',
-        'Commissioning Test Needed'
+        'Commissioning Test Needed',
+        'Delegation Required',
+        'Payment Required'
     ),
     'memberServices': (
         'Application Submitted',

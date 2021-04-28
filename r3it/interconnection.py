@@ -64,6 +64,9 @@ def processQueue(lock):
                 if not request['Screen Results']['passedAll']:
                     allPreviousPassed = False
                 request['markedForRerunDueToWithdrawal'] = False
+                # save request info to file
+                with open(requestInfoFileName, 'w') as infoFile:
+                    json.dump(request, infoFile)
 
             # if new app, update status to engineering review 
             if (request.get('Status') == 'Application Submitted'):
@@ -71,9 +74,7 @@ def processQueue(lock):
                 log('All request are required to go through engineer; ' + \
                     'updating application status to Engineering Review')
                 
-            # save request info to file
-            with open(requestInfoFileName, 'w') as infoFile:
-                json.dump(request, infoFile)
+            
 
     # get a list of all requests again to see if 
     # any new requests have been submitted
@@ -546,6 +547,7 @@ def updateStatus(id, status):
     # update status
     data = appDict(id)
     data['Status'] = status
+
     with appFile(id, 'w') as file:
         json.dump(data, file)
     log('Status update successful')

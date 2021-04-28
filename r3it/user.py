@@ -4,9 +4,8 @@ import glob, config, os, json, base64, hashlib, interconnection, random
 
 def userOwnsApp(email, app):
     '''Returns true if the user is the member or the solar installer.'''
-    return email == app.get('Email (Member)') \
-        or email == app.get('Email (Contact)')
-
+    return email == app.get('Email (Member)')
+    
 def users():
     '''Returns list of users, identified by email address.'''
     userPaths = glob.glob(config.USERS_DIR+'/*')

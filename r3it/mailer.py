@@ -27,6 +27,5 @@ def sendEmail(recipient, subject='', body=''):
         log("Email with subject '" + subject + "' failed to send to " + recipient)
 
 def mailEngineers(subject='',body=''):
-    print(subject, body)
     for email in roles.get('engineer',[]):
         sendEmail(email,subject,body)

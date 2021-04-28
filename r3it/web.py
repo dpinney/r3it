@@ -195,7 +195,7 @@ def index():
         app.get('Status')] for key, app in enumerate(appQueue()) \
                                     if requiresUsersAction(currentUser(), app)
     ]
-    
+
     netMeteringUsed = {}
     netMeteringUsed['used'] = interconnection.calcCapacityUsed()
     netMeteringUsed['available'] = config.netMeteringCapacity
@@ -331,6 +331,8 @@ def application():
     default = config.appFormDefaults
     if config.useMockApplications:
         default = getMockAppFormInputs()
+    default['Email (Member)'] = currentUser()
+
 
     log('New application started')
     return render_template('application.html', 
