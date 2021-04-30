@@ -508,7 +508,8 @@ def create_checkout_session(id):
 @app.route('/save-notes/<id>', methods=['POST'])
 def save_notes(id):
     app = appDict(id)
-    app['Notes'] += '\n' + currentUser + ': ' + request.form['notesText']
+    app['Notes'] = app.get('Notes', '')
+    app['Notes'] += currentUser() + ': ' + request.form['notesText'] + '\n'
     with appFile(app['ID'], 'w') as appfile:
         json.dump(app, appfile)
     return redirect(request.referrer)
