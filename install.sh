@@ -57,4 +57,4 @@ touch ~/r3it/r3it/configLocal.py
 sudo systemctl enable /etc/systemd/system/r3it.service
 sudo systemctl start r3it
 sudo systemctl enable /etc/systemd/system/cert.timer
-sudo systemctl start cert.timer
+# sudo systemctl start cert.timer
