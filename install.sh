@@ -53,7 +53,7 @@ mkdir ~/r3it/r3it/data
 touch ~/r3it/r3it/data/log
 
 # create local config file
-touch ~/r3it/r3it/configLocal.py
+echo 'from defaults import *' > ~/r3it/r3it/config.py
 
 # enable r3it
 

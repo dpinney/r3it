@@ -236,7 +236,3 @@ gridlabdInputs = {
     'faultVoltsThreshold': '138',
     'newGenerationInsolation': '30'
 }
-
-# overwrite variable with local config ----------------------------------------
-
-from configLocal import *
