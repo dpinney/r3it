@@ -49,6 +49,9 @@ sudo --preserve-env=HOME ln -s ~/r3it/r3it/cert.{s..t}* /etc/systemd/system/
 mkdir ~/r3it/r3it/data
 touch ~/r3it/r3it/data/log
 
+# create local config file
+touch ~/r3it/r3it/configLocal.py
+
 # enable r3it
 
 sudo systemctl enable /etc/systemd/system/r3it.service
