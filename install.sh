@@ -37,7 +37,10 @@ sudo certbot certonly --standalone --agree-tos -n -m $email -d $domain
 
 # install certs
 
-sudo --preserve-env=HOME ln -s /etc/letsencrypt/live/$domain/*.pem ~/r3it/r3it/
+sudo --preserve-env=HOME ln -s /etc/letsencrypt/live/$domain/fullchain.pem ~/r3it/r3it/
+sudo --preserve-env=HOME ln -s /etc/letsencrypt/live/$domain/privkey.pem ~/r3it/r3it/
+sudo --preserve-env=HOME ln -s /etc/letsencrypt/live/$domain/cert.pem ~/r3it/r3it/
+sudo --preserve-env=HOME ln -s /etc/letsencrypt/live/$domain/chain.pem ~/r3it/r3it/
 
 # install systemd unit files for r3it and certificate renewal.
 
