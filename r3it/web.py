@@ -515,7 +515,7 @@ def save_notes(id):
     newNote = request.form['notesText']
     notes = oldNotes + '\n\n' + now + ' ' + currentUser() + ': \n' + newNote
 
-    if newNote is not '':
+    if newNote != '':
         app['Notes'] = notes
         with appFile(app['ID'], 'w') as appfile:
             json.dump(app, appfile)
