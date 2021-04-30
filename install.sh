@@ -17,7 +17,7 @@ read -p "Enter the domain name:" domain
 sudo apt-get update -y -q
 sudo apt-get upgrade -y -q
 
-# install python3.8, pip, gunicorn, cron
+# install python3.6, pip, letsencrypt
 
 sudo apt-get install python3.6 letsencrypt python3-pip -y -q
 
@@ -56,5 +56,6 @@ touch ~/r3it/r3it/configLocal.py
 
 sudo systemctl enable /etc/systemd/system/r3it.service
 sudo systemctl start r3it
+sudo systemctl enable /etc/systemd/system/cert.service
 sudo systemctl enable /etc/systemd/system/cert.timer
-# sudo systemctl start cert.timer
+sudo systemctl start cert.timer
