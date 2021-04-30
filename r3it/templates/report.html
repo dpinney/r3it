@@ -593,31 +593,14 @@
 
 {% macro notes() %}
 
-<script type="text/javascript">
-    function editNotes() {
-
-        // display save button hide edit button
-        document.getElementById("notesSave").style.display = "inline";
-        document.getElementById("notesEdit").style.display = "none";
-        
-        // update notes text area styling to allow editing
-        notesText = document.getElementById("notesText")
-        notesText.disabled = false;
-        notesText.style.boxShadow = 'none';
-        notesText.style.borderStyle = 'solid';
-        notesText.style.borderWidth = '1px';
-        notesText.style.borderColor = '#000';
-
-    }
-</script>
-
 <div id="notesContainer">
-<form id="notes" action='{{"/save-notes/" + data["ID"]}}' method='post'>
     <H3>Notes:</H3>
-    <textarea id="notesText" name="notesText" rows=10 disabled="True">{{data['Notes']}}</textarea>
-    <button  name="save" id="notesSave">Save</button>
-</form>
-<button id="notesEdit" onclick="editNotes()">Edit</button>
+    <textarea class="notesText" rows=10 disabled="True" placeholder="There are no notes for this application at the current time.">{{data['Notes']}}</textarea>
+    <H3></H3>
+    <form id="notes" action='{{"/save-notes/" + data["ID"]}}' method='post'>
+        <textarea class="notesText" name="notesText" rows=3 placeholder="Enter note text here and hit save to update the notes."></textarea>
+        <button  name="save" id="notesSave">Save</button>
+    </form>
 <hr></div>
 
 {% endmacro %}

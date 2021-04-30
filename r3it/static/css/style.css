@@ -268,7 +268,7 @@ table.sortable th {
 
 #notesContainer button {
     margin: 10px 0px;
-} #notesText {
+} .notesText {
     resize: none;
     width: 100%;
     box-sizing: border-box;
@@ -276,7 +276,7 @@ table.sortable th {
     border: none;
     background-color: #fff;
     padding: 10px;
-} #notesSave { display: none; }
+} 
 
 #pay, #withdraw, #editDetails, #acceptEdits, #rejectEdits, #sendDelegationEmail {
     width: 100%;

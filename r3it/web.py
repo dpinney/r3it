@@ -507,11 +507,19 @@ def create_checkout_session(id):
 
 @app.route('/save-notes/<id>', methods=['POST'])
 def save_notes(id):
+    
     app = appDict(id)
-    app['Notes'] = app.get('Notes', '')
-    app['Notes'] += currentUser() + ': ' + request.form['notesText'] + '\n'
-    with appFile(app['ID'], 'w') as appfile:
-        json.dump(app, appfile)
+    oldNotes = app.get('Notes', '')
+    
+    now = datetime.now().strftime('%Y-%m-%d %H:%M:%S:%f %Z')
+    newNote = request.form['notesText']
+    notes = oldNotes + '\n\n' + now + ' ' + currentUser() + ': \n' + newNote
+
+    if newNote is not '':
+        app['Notes'] = notes
+        with appFile(app['ID'], 'w') as appfile:
+            json.dump(app, appfile)
+
     return redirect(request.referrer)
 
 if __name__ == '__main__':
