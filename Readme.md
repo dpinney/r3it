@@ -26,3 +26,7 @@ The application can be configured to match your utility branding and integrate w
 1. Email addresses for the system admin, engineers, and member services staff.
 1. SMTP credentials and an email address for automated emails from application.
 1. Branding: a Co-op logo, background image, and text that should be shown on the home screen.
+
+#### Updating the Application
+
+In the main r3it directory, run a `git pull`. Updated code will be installed, while the database and configuration values will be preserved.
