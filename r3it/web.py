@@ -1,7 +1,5 @@
 import config, mailer, stripe
 from datetime import datetime, timezone
-from user import *
-from appQueue import *
 import base64, json, copy, csv, os, hashlib, random, uuid, glob
 import flask_login, flask_sessionstore, flask_session_captcha
 from flask import Flask, redirect, request, render_template, url_for, send_from_directory, jsonify
@@ -12,6 +10,8 @@ if config.enableAutomaticScreening:
     import interconnection
 else:
     from interconnection import calcCapacityUsed, processQueue, withdraw
+    from appQueue import *
+
 
 # Instantiate app
 app = Flask(__name__)
@@ -171,6 +171,7 @@ def login():
 @app.route('/logout')
 def logout():
     '''Logs the user out of their account.'''
+
     log('User logging out')
     try:
         flask_login.logout_user()
