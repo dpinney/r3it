@@ -19,17 +19,17 @@ sudo apt-get upgrade -y -q
 
 # install python3.6, pip, letsencrypt
 
-sudo apt-get install python3.6 letsencrypt python3-pip -y -q
+sudo apt-get install letsencrypt -y -q
 
 # install omf
-cd ~/
-git clone https://github.com/dpinney/omf.git
-cd ~/omf
-sudo python3.6 ~/omf/install.py
+# cd ~/
+# git clone https://github.com/dpinney/omf.git
+# cd ~/omf
+# sudo python3.6 ~/omf/install.py
 
 # install requirements
 cd ~/r3it
-pip3 install -r requirements.txt
+pip install -r requirements.txt
 
 # provision TLS
 
@@ -61,4 +61,4 @@ sudo systemctl enable /etc/systemd/system/r3it.service
 sudo systemctl start r3it
 sudo systemctl enable /etc/systemd/system/cert.service
 sudo systemctl enable /etc/systemd/system/cert.timer
-sudo systemctl start cert.timer
+# sudo systemctl start cert.timer
