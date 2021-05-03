@@ -23,8 +23,6 @@ def utilityUsers():
         for role in roles:
             if role in config.utilityRoles: utilityUsers.append(email)
     return set(utilityUsers)
-# Would this work? Probably less readable regardless:
-# return [email for role in roles for email, roles in enumerate(privilegedUsers) if role in config.utilityRoles]
 
 def userRoles(email, app={}):
     '''Returns list of roles assigned to a user, identified by email.'''
