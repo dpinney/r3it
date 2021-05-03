@@ -29,7 +29,7 @@ sudo apt-get install letsencrypt python3-pip -y -q
 
 # install requirements
 cd ~/r3it
-pip3 install -r requirements.txt
+sudo pip3 install -r requirements.txt
 
 # provision TLS
 
