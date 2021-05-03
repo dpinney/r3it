@@ -7,13 +7,12 @@ import flask_login, flask_sessionstore, flask_session_captcha
 from flask import Flask, redirect, request, render_template, url_for, send_from_directory, jsonify
 from werkzeug.utils import secure_filename
 from logger import log
-
+from multiprocessing import Process, Lock
 if config.enableAutomaticScreening:
     import interconnection
-    from multiprocessing import Process, Lock
 else:
     from interconnection import calcCapacityUsed, processQueue, withdraw
-    
+
 # Instantiate app
 app = Flask(__name__)
 app.secret_key = config.COOKIE_KEY
