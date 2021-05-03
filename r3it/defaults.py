@@ -1,20 +1,20 @@
-# config.py -------------------------------------------------------------------
+# defaults.py -------------------------------------------------------------------
 
 import os
 
 # constants--------------------------------------------------------------------
 
-STATIC_DIR = 'static'
-GRIDLABD_DIR = 'gridlabd'
+STATIC_DIR = 'static'       # Name of directory for static assets, like the logo.
+GRIDLABD_DIR = 'gridlabd'   # Name of directory for gridlabd output files.
 
-INFO_FILENAME = 'application.json'
-INPUT_FILENAME = 'allInputData.json'
+INFO_FILENAME = 'application.json' # Name for interconnection application files.
+INPUT_FILENAME = 'allInputData.json' 
 OUTPUT_FILENAME = 'allOutputData.json'
 
-DATA_DIR = 'data'
-LOG_FILENAME = os.path.join(DATA_DIR,'log.txt')
-USERS_DIR = os.path.join(DATA_DIR,'users')
-APPLICATIONS_DIR = os.path.join(DATA_DIR,'applications')
+DATA_DIR = 'data' # Directory for user and application data.
+LOG_FILENAME = os.path.join(DATA_DIR,'log.txt') # Name of log file.
+USERS_DIR = os.path.join(DATA_DIR,'users') # Directory for user account data.
+APPLICATIONS_DIR = os.path.join(DATA_DIR,'applications') # Directory for application data.
 
 COOKIE_KEY = 'topsecretvalue'
 GEOCODE_KEY = ''
