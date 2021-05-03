@@ -134,4 +134,4 @@ dmypy.json
 r3it/flask_sessionstore/
 r3it/data/Users
 r3it/static/*.jpg
-r3it/config.py
+# r3it/config.py
