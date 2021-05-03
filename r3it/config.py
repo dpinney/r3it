@@ -2,10 +2,14 @@
 
 import os
 
+# import default settings -----------------------------------------------------
+
+from defaults import *
+
 # constants--------------------------------------------------------------------
 
-STATIC_DIR = 'static'  # Directory for static assets, like the logo.
-GRIDLABD_DIR = 'gridlabd' # Directory for gridlabd output files.
+STATIC_DIR = 'static'       # Directory for static assets, like the logo.
+GRIDLABD_DIR = 'gridlabd'   # Directory for gridlabd output files.
 
 INFO_FILENAME = 'application.json' # Name for interconnection application files.
 INPUT_FILENAME = 'allInputData.json' 
@@ -236,7 +240,3 @@ gridlabdInputs = {
     'faultVoltsThreshold': '138',
     'newGenerationInsolation': '30'
 }
-
-# overwrite variable with local config ----------------------------------------
-
-from defaults import *
