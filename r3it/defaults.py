@@ -25,7 +25,7 @@ DOMAIN = 'demo.r3it.ghw.io'
 
 # application processing options ----------------------------------------------
 
-enableAutomaticScreening = True
+enableAutomaticScreening = False
 useMockApplications = True
 
 # utility parameters ----------------------------------------------------------

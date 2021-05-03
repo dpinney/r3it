@@ -6,42 +6,27 @@ import os
 
 from defaults import *
 
-# constants--------------------------------------------------------------------
-
-STATIC_DIR = 'static'       # Directory for static assets, like the logo.
-GRIDLABD_DIR = 'gridlabd'   # Directory for gridlabd output files.
-
-INFO_FILENAME = 'application.json' # Name for interconnection application files.
-INPUT_FILENAME = 'allInputData.json' 
-OUTPUT_FILENAME = 'allOutputData.json'
-
-DATA_DIR = 'data' # Directory for user and application data.
-LOG_FILENAME = os.path.join(DATA_DIR,'log.txt') # Name of log file.
-USERS_DIR = os.path.join(DATA_DIR,'users') # Directory for user account data.
-APPLICATIONS_DIR = os.path.join(DATA_DIR,'applications') # Directory for application data.
+# Important configuration variables - SET THESE
 
 COOKIE_KEY = 'topsecretvalue' # Secret key for cookies; set this to a securely generated value.
-GEOCODE_KEY = '' # Secret key for geocoding API.
 STRIPE_PRIVATE_KEY = 'sk_test_2Mf8zBV1IqZkwtajeeK5lMCj00j0MxxuOu'
 STRIPE_PUBLIC_KEY = 'pk_test_LAZ0aEKWMLHbPSFIms7YzLkK00EHoWgCGB'
 
 DOMAIN = 'demo.r3it.ghw.io' # Fully qualified domain name for this site.
 
-# application processing options ----------------------------------------------
-
-enableAutomaticScreening = False # If True, this runs power flow analysis with the OMF. Requires the OMF.
-useMockApplications = True # For testing purposes, this can create dummy interconnection applications.
+# Email configuration
+r3itEmailAddress    = 'donotreply@r3it.ghw.io'  # Email address this app uses to send emails.
+emailUser           = 'donotreply@r3it.ghw.io'  # Email login.
+emailPassword       = 'verysecurepassword'      # Email password.
+smtpServer          = 'box.ghw.io'              # SMTP Server for sending emails.
 
 # utility parameters ----------------------------------------------------------
 
 utilityName = 'Example Electric' # Name of the utility.
 logo = os.path.join('/',STATIC_DIR,'exampleElectric.png') # Path to your utilities logo.
 bg = os.path.join('/',STATIC_DIR,'background.jpg') # Path to the site background image.
-omdFilename = 'Olin Barre Geo Modified DER.omd' # Path to the electric feeder file.
 
-sizeThreshold = 10 # Size threshold for for automatic approval, in kW-AC.
-netMeteringCapacity = 10000 # Utility-wide net metering limit, in kW-AC.
-
+# This dictionary sets the email addresses associated with authorized roles.
 roles = {
     'engineer' : [
         'engineer@electric.coop',
@@ -57,16 +42,43 @@ roles = {
     ]
 }
 
+# application processing options ----------------------------------------------
+
+enableAutomaticScreening = False # If True, this runs power flow analysis with the OMF. Requires the OMF.
+useMockApplications = True # For testing purposes, this can create dummy interconnection applications.
+
+# Set these if automatic screening is turned on.
+
+sizeThreshold = 10 # Size threshold for for automatic approval, in kW-AC.
+netMeteringCapacity = 10000 # Utility-wide net metering limit, in kW-AC. TODO: Should this be optional?
+omdFilename = 'Olin Barre Geo Modified DER.omd' # File name for the electric feeder.
+GEOCODE_KEY = ''              # Secret key for geocoding API.
+
+
+# -----------------------------------------------------------------------------
+# One should not normally need to change anything below this line. ------------
+# -----------------------------------------------------------------------------
+
+# Specifies the user roles which are affiliated with the utility. -------------
+
 utilityRoles = [
     'engineer',
     'memberServices'
 ]
 
-# Email configuration
-r3itEmailAddress    = 'donotreply@r3it.ghw.io'  # Email address this app uses to send emails.
-emailUser           = 'donotreply@r3it.ghw.io'  # Email login.
-emailPassword       = 'verysecurepassword'      # Email password.
-smtpServer          = 'box.ghw.io'              # SMTP Server for sending emails.
+# constants--------------------------------------------------------------------
+
+STATIC_DIR = 'static'       # Name of directory for static assets, like the logo.
+GRIDLABD_DIR = 'gridlabd'   # Name of directory for gridlabd output files.
+
+INFO_FILENAME = 'application.json' # Name for interconnection application files.
+INPUT_FILENAME = 'allInputData.json' 
+OUTPUT_FILENAME = 'allOutputData.json'
+
+DATA_DIR = 'data' # Directory for user and application data.
+LOG_FILENAME = os.path.join(DATA_DIR,'log.txt') # Name of log file.
+USERS_DIR = os.path.join(DATA_DIR,'users') # Directory for user account data.
+APPLICATIONS_DIR = os.path.join(DATA_DIR,'applications') # Directory for application data.
 
 # All possible statuses an interconnection application may have.
 statuses = (

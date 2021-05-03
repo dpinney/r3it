@@ -1,14 +1,19 @@
-import config, interconnection, mailer, stripe
+import config, mailer, stripe
 from datetime import datetime, timezone
 from user import *
 from appQueue import *
 import base64, json, copy, csv, os, hashlib, random, uuid, glob
 import flask_login, flask_sessionstore, flask_session_captcha
-from multiprocessing import Process, Lock
 from flask import Flask, redirect, request, render_template, url_for, send_from_directory, jsonify
 from werkzeug.utils import secure_filename
 from logger import log
 
+if config.enableAutomaticScreening:
+    import interconnection
+    from multiprocessing import Process, Lock
+else:
+    from interconnection import calcCapacityUsed, processQueue, withdraw
+    
 # Instantiate app
 app = Flask(__name__)
 app.secret_key = config.COOKIE_KEY
@@ -197,7 +202,7 @@ def index():
     ]
 
     netMeteringUsed = {}
-    netMeteringUsed['used'] = interconnection.calcCapacityUsed()
+    netMeteringUsed['used'] = calcCapacityUsed()
     netMeteringUsed['available'] = config.netMeteringCapacity
     netMeteringUsed['percent'] = 100 * \
     	netMeteringUsed['used'] / netMeteringUsed['available']
