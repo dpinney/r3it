@@ -1,12 +1,13 @@
 import config
 import random, json, os, glob, mailer
 from shutil import copy2, rmtree
-from omf.models import derInterconnection
-from omf import feeder
 from appQueue import *
-from geocodio import GeocodioClient
 from math import sqrt
 from logger import log
+if config.enableAutomaticScreening:
+    from omf.models import derInterconnection
+    from omf import feeder
+    from geocodio import GeocodioClient
 
 # globals ---------------------------------------------------------------------
 
