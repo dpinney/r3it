@@ -17,9 +17,9 @@ read -p "Enter the domain name:" domain
 sudo apt-get update -y -q
 sudo apt-get upgrade -y -q
 
-# install python3.6, pip, letsencrypt
+# install pip, letsencrypt
 
-sudo apt-get install letsencrypt -y -q
+sudo apt-get install letsencrypt python3-pip -y -q
 
 # install omf
 # cd ~/
@@ -29,7 +29,7 @@ sudo apt-get install letsencrypt -y -q
 
 # install requirements
 cd ~/r3it
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 
 # provision TLS
 
@@ -53,7 +53,7 @@ mkdir ~/r3it/r3it/data
 touch ~/r3it/r3it/data/log
 
 # create local config file
-echo 'from defaults import *' > ~/r3it/r3it/config.py
+# echo 'from defaults import *' > ~/r3it/r3it/config.py
 
 # enable r3it
 
