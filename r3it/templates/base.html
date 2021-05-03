@@ -27,7 +27,7 @@
 		</label>
 		<input type="checkbox" id="menuToggle" />
 		<ul id="menu">
-			{% if current_user.is_authenticated %}
+			{% if current_user.is_authenticated() %}
 				<li><a class="menuItem" href='/logout'>LOGOUT</a></li>
 				<li><a class="menuItem" href='/'>HOME</a></li>
 			{% else %}
@@ -40,7 +40,7 @@
 
 	<div class="content">
 		
-		{% if not current_user.is_authenticated %}
+		{% if not current_user.is_authenticated() %}
 			{% block banner %}{% endblock %}
 			{% block anonymous %}{% endblock %}
 		{% endif %}
@@ -56,7 +56,7 @@
 			{% block engineer %}{% endblock %}
 		{% elif 'memberServices' in current_user.roles %} 
 			{% block ms %}{% endblock %}
-		{% else %} {% if current_user.is_authenticated %}
+		{% else %} {% if current_user.is_authenticated() %}
 			{% block member %}{% endblock %}{% endif %}
 		{% endif %}
 
