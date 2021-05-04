@@ -135,3 +135,5 @@ r3it/flask_sessionstore/
 r3it/data/Users
 r3it/static/*.jpg
 r3it/config.py
+Icon
+r3it/Icon
