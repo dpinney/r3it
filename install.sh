@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# R3it install script
+
 # Check for root. NB: seems like actually a bad idea b/c sudo doesn't maintain home dir of user.
 
 # if [[ $EUID > 0 ]]
@@ -12,23 +14,23 @@
 read -p "Enter the admin's email address:" email
 read -p "Enter the domain name:" domain
 
-# R3it install script
-
 sudo apt-get update -y -q
-sudo apt-get upgrade -y -q
+yes | sudo apt-get upgrade -y -q
 
 # install pip, letsencrypt
 
-sudo apt-get install letsencrypt python3-pip -y -q
+sudo apt-get install letsencrypt python3-pip authbind -y -q
 
 # install omf
-# cd ~/
+# cd /opt/
 # git clone https://github.com/dpinney/omf.git
-# cd ~/omf
-# sudo python3.6 ~/omf/install.py
+# cd /opt/omf
+# sudo python3.6 /opt/omf/install.py
 
 # install requirements
-cd ~/r3it
+sudo useradd -r r3it
+sudo chown -R r3it:r3it /opt/r3it
+cd /opt/r3it
 sudo pip3 install -r requirements.txt
 
 # provision TLS
@@ -37,23 +39,23 @@ sudo certbot certonly --standalone --agree-tos -n -m $email -d $domain
 
 # install certs
 
-sudo --preserve-env=HOME ln -s /etc/letsencrypt/live/$domain/fullchain.pem ~/r3it/r3it/
-sudo --preserve-env=HOME ln -s /etc/letsencrypt/live/$domain/privkey.pem ~/r3it/r3it/
-sudo --preserve-env=HOME ln -s /etc/letsencrypt/live/$domain/cert.pem ~/r3it/r3it/
-sudo --preserve-env=HOME ln -s /etc/letsencrypt/live/$domain/chain.pem ~/r3it/r3it/
+sudo ln -s /etc/letsencrypt/live/$domain/fullchain.pem /opt/r3it/r3it/
+sudo ln -s /etc/letsencrypt/live/$domain/privkey.pem /opt/r3it/r3it/
+sudo ln -s /etc/letsencrypt/live/$domain/cert.pem /opt/r3it/r3it/
+sudo ln -s /etc/letsencrypt/live/$domain/chain.pem /opt/r3it/r3it/
 
 # install systemd unit files for r3it and certificate renewal.
 
-sudo --preserve-env=HOME ln -s ~/r3it/r3it/r3it.service /etc/systemd/system/r3it.service
-sudo --preserve-env=HOME ln -s ~/r3it/r3it/cert.{s..t}* /etc/systemd/system/
+sudo ln -s /opt/r3it/r3it/r3it.service /etc/systemd/system/r3it.service
+sudo ln -s /opt/r3it/r3it/cert.{s..t}* /etc/systemd/system/
 
 # create log file
 
-mkdir ~/r3it/r3it/data
-touch ~/r3it/r3it/data/log
+mkdir /opt/r3it/r3it/data
+touch /opt/r3it/r3it/data/log
 
 # create local config file
-# echo 'from defaults import *' > ~/r3it/r3it/config.py
+# echo 'from defaults import *' > /opt/r3it/r3it/config.py
 
 # enable r3it
 
