@@ -51,8 +51,8 @@ sudo ln -s /opt/r3it/r3it/cert.{s..t}* /etc/systemd/system/
 
 # create log file
 
-mkdir /opt/r3it/r3it/data
-touch /opt/r3it/r3it/data/log
+sudo mkdir /opt/r3it/r3it/data
+sudo touch /opt/r3it/r3it/data/log
 
 # create directory for LetsEncrypt acme challenges.
 
