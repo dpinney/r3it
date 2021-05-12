@@ -5,7 +5,7 @@ After=syslog.target network.target
 [Service]
 User=r3it
 WorkingDirectory=/opt/r3it/r3it/
-ExecStart=/usr/bin/authbind /usr/bin/python3 start_r3it.py
+ExecStart=/usr/bin/authbind --deep /usr/bin/python3 start_r3it.py
 Restart=on-failure
 
 [Install]

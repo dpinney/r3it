@@ -54,6 +54,16 @@ sudo ln -s /opt/r3it/r3it/cert.{s..t}* /etc/systemd/system/
 mkdir /opt/r3it/r3it/data
 touch /opt/r3it/r3it/data/log
 
+# create directory for LetsEncrypt acme challenges.
+
+mkdir /opt/r3it/r3it/.well-known/acme-challenge
+
+# configure authbind so r3it can bind to low-numbered ports sans root.
+
+touch /etc/authbind/byport/{80,443}
+sudo chown r3it:r3it /etc/authbind/byport/{80,443}
+sudo chmod 710 /etc/authbind/byport/{80,443}
+
 # create local config file
 # echo 'from defaults import *' > /opt/r3it/r3it/config.py
 
