@@ -15,7 +15,7 @@ read -p "Enter the admin's email address:" email
 read -p "Enter the domain name:" domain
 
 sudo apt-get update -y -q
-yes | sudo apt-get upgrade -y -q
+sudo apt-get upgrade -y -q
 
 # install pip, letsencrypt
 
@@ -56,7 +56,7 @@ sudo touch /opt/r3it/r3it/data/log
 
 # create directory for LetsEncrypt acme challenges.
 
-sudo mkdir /opt/r3it/r3it/.well-known/acme-challenge
+sudo mkdir -p /opt/r3it/r3it/.well-known/acme-challenge
 
 # configure authbind so r3it can bind to low-numbered ports sans root.
 
