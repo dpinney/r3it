@@ -3,7 +3,7 @@ flask_login
 flask_wtf
 Werkzeug
 cachelib
-flask_sessionstore
+flask_session
 flask_session_captcha
 pygeocodio
 stripe

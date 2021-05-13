@@ -1,7 +1,7 @@
 import config, mailer, stripe
 from datetime import datetime, timezone
 import base64, json, copy, csv, os, hashlib, random, uuid, glob
-import flask_login, flask_sessionstore, flask_session_captcha
+import flask_login, flask_session, flask_session_captcha
 from flask import Flask, redirect, request, render_template, url_for, send_from_directory, jsonify
 from werkzeug.utils import secure_filename
 from logger import log
@@ -33,13 +33,13 @@ def inject_config():
 processQueueLock = Lock()
 withdrawLock = Lock()
 
-# Instantiate CAPTCHA
+# Instantiate CAPTCHA TODO: make work with flask 2.0 -> werkzeug > .16
 app.config['CAPTCHA_ENABLE'] = True
 app.config['CAPTCHA_LENGTH'] = 5
 app.config['CAPTCHA_WIDTH'] = 160
 app.config['CAPTCHA_HEIGHT'] = 60
 app.config['SESSION_TYPE'] = 'filesystem'
-flask_sessionstore.Session(app)
+flask_session.Session(app)
 captcha = flask_session_captcha.FlaskSessionCaptcha(app)
 
 # Instantiate authentication system.
