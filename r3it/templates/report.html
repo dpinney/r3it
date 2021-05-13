@@ -18,7 +18,7 @@
         {{notes()}}
     {% endif %}
 
-    {% if( 
+    {% if ( 
         (current_user.roles == []) and 
         (current_user.is_authenticated()) and 
         (data['Status'] == 'Delegation Required')
