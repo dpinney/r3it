@@ -77,7 +77,7 @@
 
     {% if (data['Status'] in ['Payment Required', 'Delegation Required', 'Application Submitted', 'Engineering Review']) %}
 
-        {% if( (current_user.roles == []) and (current_user.is_authenticated()) ) %}
+        {% if( (current_user.roles == []) and (current_user.is_authenticated ) %}
             <a href="{{'/edit/' + data['ID'] }}"><button id="editDetails">Edit Application Details</button></a>
         {% endif %}
         
