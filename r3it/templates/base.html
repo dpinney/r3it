@@ -51,8 +51,8 @@
 		<H3 id='notification'> {{ notification }} </H3>
 		{% endif %}
 
-		{% block content %} {% endblock %}
 		{% if current_user.is_authenticated %}
+			{% block content %} {% endblock %}
 			{% if 'engineer' in current_user.roles %} 
 				{% block engineer %}{% endblock %}
 			{% elif 'memberServices' in current_user.roles %} 
