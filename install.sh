@@ -15,7 +15,7 @@ read -p "Enter the admin's email address:" email
 read -p "Enter the domain name:" domain
 
 sudo apt-get update -y -q
-sudo apt-get upgrade -y -q
+sudo apt-get upgrade -y -q # TODO: Can we make this totally unattended? Still asking about old vs new config files.
 
 # install pip, letsencrypt
 
@@ -28,8 +28,6 @@ sudo apt-get install letsencrypt python3-pip authbind -y -q
 # sudo python3.6 /opt/omf/install.py
 
 # install requirements
-sudo useradd -r r3it
-sudo chown -R r3it:r3it /opt/r3it
 cd /opt/r3it
 sudo pip3 install -r requirements.txt
 
@@ -57,6 +55,11 @@ sudo touch /opt/r3it/r3it/data/log
 # create directory for LetsEncrypt acme challenges.
 
 sudo mkdir -p /opt/r3it/r3it/.well-known/acme-challenge
+
+# Add r3it user:group
+
+sudo useradd -r r3it
+sudo chown -R r3it:r3it /opt/r3it
 
 # configure authbind so r3it can bind to low-numbered ports sans root.
 
