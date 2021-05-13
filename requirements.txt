@@ -1,7 +1,7 @@
 flask
 flask_login
 flask_wtf
-Werkzeug==0.16
+Werkzeug
 cachelib
 flask_sessionstore
 flask_session_captcha
