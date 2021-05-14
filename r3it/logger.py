@@ -1,5 +1,6 @@
-import logging, config
+from r3it import config
 import datetime as dt
+import logging
 
 # instantiate logger
 # if is needed because Werkzeug apparently starts the server twice,
