@@ -1,3 +1,0 @@
-# queueTest.py
-
-import queue
