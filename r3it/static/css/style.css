@@ -192,7 +192,7 @@ table.sortable th {
 } 
 
 #title {
-    font-size: 3em;
+    font-size: 2em;
     max-width: 60%;
     padding: 50px;
     color: white;
@@ -210,7 +210,8 @@ table.sortable th {
     text-decoration: none;
     background-color: #000;
     color: #fff;
-    box-shadow:  2px 2px 3px #000;   
+    box-shadow:  2px 2px 3px #000; 
+    margin: 0.5em 0em;  
 } #bannerButtons a:hover {
     background-color: #fff;
     color:#000;
