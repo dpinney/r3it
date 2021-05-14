@@ -9,7 +9,14 @@ import logging
 logger = logging.getLogger('interconnectionLogger')
 logger.setLevel(logging.DEBUG)
 if len(logger.handlers)==0:
-    handler = logging.FileHandler(config.LOG_FILENAME)
+    
+    try:
+        handler = logging.FileHandler(config.LOG_FILENAME)
+    except FileNotFoundError:
+        with open(config.LOG_FILENAME, 'w') as logFile: pass
+        handler = logging.FileHandler(config.LOG_FILENAME)
+
+
     formatter = logging.Formatter('%(levelname)s,\t%(message)s')
     logger.addHandler(handler)
     handler.setFormatter(formatter)
