@@ -1,9 +1,10 @@
 # user.py
 # Functions returning information about users and their files.
-import glob, config, os, json, base64, hashlib, interconnection, random
+import glob, os, json, base64, hashlib, random
+from r3it import config, interconnection
 
 def userOwnsApp(email, app):
-    '''Returns true if the user is the member or the solar installer.'''
+    '''Returns true if the user is the member.'''
     return email == app.get('Email (Member)')
     
 def users():

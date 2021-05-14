@@ -1,16 +1,16 @@
-import config, mailer, stripe
 from datetime import datetime, timezone
-import base64, json, copy, csv, os, hashlib, random, uuid, glob
+import base64, json, copy, csv, os, hashlib, random, uuid, glob, stripe
 import flask_login, flask_session, flask_session_captcha
 from flask import Flask, redirect, request, render_template, url_for, send_from_directory, jsonify
 from werkzeug.utils import secure_filename
-from logger import log
 from multiprocessing import Process, Lock
+from r3it.logger import log
+from r3it import config, mailer
 if config.enableAutomaticScreening:
-    import interconnection
+    import r3it.interconnection
 else:
-    from interconnection import calcCapacityUsed, processQueue, withdraw
-    from appQueue import *
+    from r3it.interconnection import calcCapacityUsed, processQueue, withdraw
+    from r3it.appQueue import *
 
 
 # Instantiate app

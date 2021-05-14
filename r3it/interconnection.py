@@ -1,9 +1,9 @@
-import config
-import random, json, os, glob, mailer
+import random, json, os, glob
 from shutil import copy2, rmtree
-from appQueue import *
 from math import sqrt
-from logger import log
+from r3it import config, mailer
+from r3it.logger import log
+from r3it.appQueue import *
 if config.enableAutomaticScreening:
     from omf.models import derInterconnection
     from omf import feeder
