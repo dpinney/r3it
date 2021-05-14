@@ -1,6 +1,10 @@
 # R3it install script
 
-import config, os
+import sys, os
+
+sys.path.insert(0, '/opt/r3it/r3it')
+
+import config
 
 os.system("sudo apt-get update -y -q")
 os.system("sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -y -q") # TODO: Can we make this totally unattended? Still asking about old vs new config files.
