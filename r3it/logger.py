@@ -1,5 +1,5 @@
 import logging, config
-from datetime import datetime, timezone
+import datetime as dt
 
 # instantiate logger
 # if is needed because Werkzeug apparently starts the server twice,
@@ -15,16 +15,17 @@ if len(logger.handlers)==0:
     handler.setLevel(logging.DEBUG)
 
 def log(message, level='info'):
-    nowUTC = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S:%f %Z')
+    nowUTC = dt.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S:%f %Z')
     toWrite = nowUTC + ',\t' + '"' + message + '"'
     
     if level=='debug':
-        logger.debug('\t' + toWrite)
+        logger.debug(toWrite)
     elif level=='info':
-        logger.info('\t' + toWrite)
+        logger.info( toWrite)
     elif level=='warning':
         logger.warning(toWrite)
     elif level=='error':
-        logger.error('\t' + toWrite)
+        logger.error(toWrite)
     elif level=='critical':
         logger.critical(toWrite)
+    else: raise Exception('invalid logging level')
