@@ -8,3 +8,4 @@ flask_session_captcha
 pygeocodio
 stripe
 gunicorn
+pytest
