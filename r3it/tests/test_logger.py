@@ -1,12 +1,12 @@
-from ..logger import *
+from r3it import r3itDir
+from r3it.logger import *
 from shutil import copy2 as copy
 from os.path import join
 import os, pytest
 
 # define constants
-testDir = os.path.dirname(os.path.abspath(__file__))
-logName = join(testDir,'..','data','log.txt')
-logSaveName = join(testDir,'..','data','logSave.txt')
+logName = os.path.join(r3itDir, config.LOG_FILENAME)
+logSaveName = logName.replace('log.txt','logSave.txt')
 message = 'test'
     
 # save out the log before our tests make changes to it
