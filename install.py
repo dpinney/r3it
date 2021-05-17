@@ -2,9 +2,7 @@
 
 import sys, os
 
-sys.path.insert(0, '/opt/r3it/r3it')
-
-from r3it import config
+from r3it import config, r3itDir
 
 os.system("sudo apt-get update -y -q")
 os.system("sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -y -q")
@@ -12,7 +10,7 @@ os.system("sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -y -q")
 os.system("sudo apt-get install letsencrypt python3-pip authbind -y -q")
 
 # install requirements
-os.system("cd /opt/r3it")
+os.system("cd " + r3itDir)
 os.system("sudo pip3 install -r requirements.txt")
 
 # provision TLS
