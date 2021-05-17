@@ -39,7 +39,7 @@ os.system("sudo mkdir -p /opt/r3it/r3it/.well-known/acme-challenge")
 # Add r3it user:group
 os.system("sudo useradd -r r3it")
 os.system("sudo chown -R r3it:r3it /opt/r3it")
-os.system("sudo chown -R r3it:r3it /etc/letsencrypy")
+os.system("sudo chown -R r3it:r3it /etc/letsencrypt")
 
 # configure authbind so r3it can bind to low-numbered ports sans root.
 os.system("sudo touch /etc/authbind/byport/80")
