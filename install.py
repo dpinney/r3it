@@ -2,6 +2,8 @@
 
 import sys, os
 
+sys.path.insert(0, '/opt/r3it/r3it')
+
 from r3it.defaults import r3itDir
 from r3it import config
 
