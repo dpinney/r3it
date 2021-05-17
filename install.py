@@ -7,7 +7,7 @@ sys.path.insert(0, '/opt/r3it/r3it')
 from r3it import config
 
 os.system("sudo apt-get update -y -q")
-os.system("sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -y -q") # TODO: Can we make this totally unattended? Still asking about old vs new config files.
+os.system("sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -y -q")
 
 os.system("sudo apt-get install letsencrypt python3-pip authbind -y -q")
 
@@ -39,6 +39,7 @@ os.system("sudo mkdir -p /opt/r3it/r3it/.well-known/acme-challenge")
 # Add r3it user:group
 os.system("sudo useradd -r r3it")
 os.system("sudo chown -R r3it:r3it /opt/r3it")
+os.system("sudo chown -R r3it:r3it /etc/letsencrypy")
 
 # configure authbind so r3it can bind to low-numbered ports sans root.
 os.system("sudo touch /etc/authbind/byport/80")
