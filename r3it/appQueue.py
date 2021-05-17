@@ -2,8 +2,8 @@
 # Functions for managing the interconnection application queue.
 
 import glob, json, os
-from r3it.user import *
-from r3it.config import *
+from user import *
+from config import *
 
 def authorizedToView(email, app):
     '''Returns true if the user is authorized to view the application.'''

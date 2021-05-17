@@ -1,11 +1,9 @@
 # R3it install script
 
 import sys, os
+
+from r3it.defaults import r3itDir
 from r3it import config
-from r3it import r3itDir
-
-sys.path.insert(0, r3itDir)
-
 
 os.system("sudo apt-get update -y -q")
 os.system("sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -y -q")

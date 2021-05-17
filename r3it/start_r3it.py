@@ -1,5 +1,5 @@
 import os, logging
-from r3it import config
+import config
 from flask import Flask, redirect, request, render_template, url_for, send_from_directory
 from subprocess import Popen
 

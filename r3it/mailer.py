@@ -1,7 +1,7 @@
 import smtplib, ssl
 from email.message import EmailMessage
-from r3it.config import *
-from r3it.logger import log
+from config import *
+from logger import log
 
 def sendEmail(recipient, subject='', body=''):
     '''Sends an email using creds in config.py'''

@@ -1,7 +1,7 @@
 # user.py
 # Functions returning information about users and their files.
 import glob, os, json, base64, hashlib, random
-from r3it import config, interconnection
+import config, interconnection
 
 def userOwnsApp(email, app):
     '''Returns true if the user is the member.'''

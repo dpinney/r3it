@@ -4,7 +4,7 @@ import os
 
 # import default settings -----------------------------------------------------
 
-from r3it.defaults import *
+from defaults import *
 
 # Important configuration variables - SET THESE
 

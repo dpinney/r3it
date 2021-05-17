@@ -236,3 +236,7 @@ gridlabdInputs = {
     'faultVoltsThreshold': '138',
     'newGenerationInsolation': '30'
 }
+
+# moved from __init__.py --------------------------------------------------
+
+r3itDir = os.path.dirname(os.path.abspath(__file__))

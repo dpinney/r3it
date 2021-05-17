@@ -1,4 +1,5 @@
-from r3it import config, r3itDir
+import config
+from defaults import r3itDir
 import datetime as dt
 import logging,os,errno
 

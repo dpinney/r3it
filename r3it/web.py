@@ -4,13 +4,14 @@ import flask_login, flask_session, flask_session_captcha
 from flask import Flask, redirect, request, render_template, url_for, send_from_directory, jsonify
 from werkzeug.utils import secure_filename
 from multiprocessing import Process, Lock
-from r3it.logger import log
-from r3it import config, mailer
+from logger import log
+import config, mailer
 if config.enableAutomaticScreening:
-    import r3it.interconnection
+    import interconnection
 else:
-    from r3it.interconnection import calcCapacityUsed, processQueue, withdraw
-    from r3it.appQueue import *
+    from interconnection import calcCapacityUsed, processQueue, withdraw
+    from appQueue import *
+
 
 
 # Instantiate app
