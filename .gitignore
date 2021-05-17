@@ -137,5 +137,6 @@ flask_session/
 r3it/data/
 r3it/static/*.jpg
 r3it/config.py
+*config.py
 Icon
 r3it/Icon
