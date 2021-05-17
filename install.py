@@ -2,9 +2,9 @@
 
 import sys, os
 
-sys.path.insert(0, '/opt/r3it/r3it')
+from r3it.defaults import r3itDir
+sys.path.insert(0, r3itDir)
 
-from defaults import r3itDir
 import config
 
 os.system("sudo apt-get update -y -q")
