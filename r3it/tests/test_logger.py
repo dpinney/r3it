@@ -1,4 +1,7 @@
+import sys
 from r3it.defaults import r3itDir
+sys.path.insert(0, r3itDir)
+
 from r3it.logger import *
 from shutil import copy2 as copy
 from os.path import join
