@@ -141,13 +141,13 @@ table.sortable th {
     margin-bottom: -2em;
 }
 
-#logo {
+/* #logo {
     height: 3em;
     margin: 0.5em;
     float: left;
-}
+} */
 
-#menuBar {        
+/* #menuBar {        
     z-index: 1;
     position: fixed;
     top: 0;
@@ -189,7 +189,7 @@ table.sortable th {
     display: inline-block;
 } #menuSpacer {
     height: 4em;
-} 
+}  */
 
 #title {
     font-size: 2em;
@@ -291,13 +291,14 @@ table.sortable th {
 
 #footerSpacer {
     height: 2em;
-} #footer {
+}
+/* #footer {
     padding-left: 0.5em;
     color: #fff;
     background-color: #000;
     height: 2em;
     line-height: 2em;
-} #footer a { color: #fff;}
+} #footer a { color: #fff;} */
 
 
 /*----------------------------------------------------------------------------*/
