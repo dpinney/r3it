@@ -19,10 +19,10 @@ if platform.system() == "Linux":
     os.system("sudo certbot certonly --standalone --agree-tos -n -m " + config.r3itEmailAddress + " -d " + config.DOMAIN)
 
 # install certs
-    os.system("sudo ln -s /etc/letsencrypt/live/" + config.DOMAIN + "/fullchain.pem /opt/r3it/r3it/")
-    os.system("sudo ln -s /etc/letsencrypt/live/" + config.DOMAIN + "/privkey.pem /opt/r3it/r3it/")
-    os.system("sudo ln -s /etc/letsencrypt/live/" + config.DOMAIN + "/cert.pem /opt/r3it/r3it/")
-    os.system("sudo ln -s /etc/letsencrypt/live/" + config.DOMAIN + "/chain.pem /opt/r3it/r3it/")
+    os.system("sudo ln -s /etc/letsencrypt/live/" + config.DOMAIN + "/fullchain.pem " + r3itDir)
+    os.system("sudo ln -s /etc/letsencrypt/live/" + config.DOMAIN + "/privkey.pem " + r3itDir)
+    os.system("sudo ln -s /etc/letsencrypt/live/" + config.DOMAIN + "/cert.pem " + r3itDir)
+    os.system("sudo ln -s /etc/letsencrypt/live/" + config.DOMAIN + "/chain.pem " + r3itDir)
 
 # install systemd unit files for r3it and certificate renewal.
     os.system("sudo ln -s " + r3itDir + "r3it.service /etc/systemd/system/r3it.service")
