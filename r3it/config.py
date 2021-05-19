@@ -13,6 +13,7 @@ STRIPE_PRIVATE_KEY = 'sk_test_2Mf8zBV1IqZkwtajeeK5lMCj00j0MxxuOu'
 STRIPE_PUBLIC_KEY = 'pk_test_LAZ0aEKWMLHbPSFIms7YzLkK00EHoWgCGB'
 
 DOMAIN = 'demo.r3it.ghw.io' # Fully qualified domain name for this site.
+certDir = '/etc/letsencrypt/' + DOMAIN + '/'
 
 # Email configuration
 r3itEmailAddress    = 'donotreply@r3it.ghw.io'  # Email address this app uses to send emails.
