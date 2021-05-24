@@ -1,13 +1,25 @@
 {% extends 'base.html' %}
 
 {% block banner %}
-<style type="text/css">#bg{background-image:url({{bg}})</style>
+<style type="text/css">#bg{background-image:url({{bg}})}</style>
 	<div id="titleContainer" class="content">
 		<p id="title">Rapid, Rural, and Resilient Interconnection Toolkit</p>
 		<div id="bannerButtons">
 			<a href="/login">LOGIN</a> <a href="/register">REGISTER</a>
 		</div>
 	</div>
+<!-- <div class='bg-image' style='
+		background-image:url({{bg}}); 
+		background-repeat: no-repeat;
+		background-size: cover;
+		width: 100vw;
+		height: 60vh;'>
+</div> -->
+<!-- <div class='container'>
+	<h1>Rapid, Rural, and Resilient Interconnection Toolkit</h1>
+	<a href='/login' class='btn btn-dark'>LOGIN</a>
+	<a href='/register' class='btn btn-dark'>REGISTER</a>
+</div> -->
 {% endblock %}
 
 {% block engineer %}
@@ -32,25 +44,34 @@
 	{{ interconnectionTable('My Interconnection Applications', data)}}
 {% endblock %}
 
+<!-- Bootstrap anonymous cards -->
 {% block anonymous %}
-	<div class="card">
-	<H1>Interconnecting Distributed Generation</H1>
-	<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+	<div class='card'>
+		<div class='card-body'>
+			<h2 class='card-title'>Interconnecting Distributed Generation</h2>
+			<p class='card-text'>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+		</div>
 	</div>
 
-	<div class="card">
-	<H1>Case Study</H1>
-	<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+	<div class='card'>
+		<div class='card-body'>
+			<h2 class='card-title'>Case Study</h2>
+			<p class='card-text'>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+		</div>
 	</div>
 
-	<div class="card">
-	<H1>Getting Started</H1>
-	<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+	<div class='card'>
+		<div class='card-body'>
+			<h2 class='card-title'>Getting Started</h2>
+			<p class='card-text'>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+		</div>
 	</div>
 
-	<div class="card">
-	<H1>FAQ</H1>
-	<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+	<div class='card'>
+		<div class='card-body'>
+			<h2 class='card-title'>FAQ</h2>
+			<p class='card-text'>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+		</div>
 	</div>
 {% endblock %}
 
