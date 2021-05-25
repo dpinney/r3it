@@ -30,7 +30,7 @@ if platform.system() == "Linux":
 
 # Add r3it user:group
     os.system("sudo useradd -r r3it")
-    os.system("sudo chown -R r3it:r3it " + r3itDir + "..")
+    os.system("sudo chown -R r3it:r3it " + r3itDir + "/..")
     os.system("sudo chown -R r3it:r3it /etc/letsencrypt")
 
 # configure authbind so r3it can bind to low-numbered ports sans root.
