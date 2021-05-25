@@ -5,40 +5,40 @@
     <script src="https://js.stripe.com/v3/"></script>
 
     <H1>Interconnection Application Payment</H1>
-
-        <div class="product">
-          <div class="description">
+    <div class="product">
+        <div class="description">
             <h3>Interconnection Application Fee</h3>
             <h5>$50.00</h5>
-          </div>
-          <button id="checkout-button">Checkout</button>
         </div>
-        <script type="text/javascript">
-          // Create an instance of the Stripe object with your publishable API key
-          var stripe = Stripe("pk_test_LAZ0aEKWMLHbPSFIms7YzLkK00EHoWgCGB");
-          var checkoutButton = document.getElementById("checkout-button");
-      
-          checkoutButton.addEventListener("click", function () {
+        <button class="btn btn-dark" id="checkout-button">Checkout</button>
+    </div>
+
+    <script type="text/javascript">
+        // Create an instance of the Stripe object with your publishable API key
+        var stripe = Stripe("pk_test_LAZ0aEKWMLHbPSFIms7YzLkK00EHoWgCGB");
+        var checkoutButton = document.getElementById("checkout-button");
+    
+        checkoutButton.addEventListener("click", function () {
             fetch("/create-checkout-session/{{ id }}", {
-              method: "POST",
+                method: "POST",
             })
-              .then(function (response) {
+            .then(function (response) {
                 return response.json();
-              })
-              .then(function (session) {
+            })
+            .then(function (session) {
                 return stripe.redirectToCheckout({ sessionId: session.id });
-              })
-              .then(function (result) {
+            })
+            .then(function (result) {
                 // If redirectToCheckout fails due to a browser or network
                 // error, you should display the localized error message to your
                 // member using error.message.
                 if (result.error) {
-                  alert(result.error.message);
+                    alert(result.error.message);
                 }
-              })
-              .catch(function (error) {
+            })
+            .catch(function (error) {
                 console.error("Error:", error);
-              });
-          });
-        </script>
+            });
+        });
+    </script>
 {% endblock %}
