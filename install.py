@@ -5,14 +5,16 @@ from r3it.defaults import r3itDir
 sys.path.insert(0, r3itDir)
 import config
 
-os.system("cd " + r3itDir + "/..")
-os.system("sudo pip3 install -r requirements.txt")
-
 if platform.system() == "Linux":
     os.system("sudo apt-get update -y -q")
     os.system("sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -y -q")
     os.system("sudo apt-get install letsencrypt python3-pip authbind -y -q")
 
+os.system("cd " + r3itDir + "/..")
+os.system("sudo pip3 install -r requirements.txt")
+
+# Deployment - TLS, permissions, systemd
+if platform.system() == "Linux":
 # provision TLS
     os.system("sudo certbot certonly --standalone --agree-tos -n -m " + config.r3itEmailAddress + " -d " + config.DOMAIN)
 
