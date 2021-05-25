@@ -5,7 +5,7 @@ from r3it.defaults import r3itDir
 sys.path.insert(0, r3itDir)
 import config
 
-os.system("cd " + r3itDir)
+os.system("cd " + r3itDir + "/..")
 os.system("sudo pip3 install -r requirements.txt")
 
 if platform.system() == "Linux":
