@@ -26,5 +26,5 @@ def test_users():
     for fakeUser in fakeUsers:
         os.removedirs(os.path.join(USERS_DIR,fakeUser))
     
-    assert(usersFound == (currentUsers+fakeUsers))
+    assert(set(usersFound) == set(currentUsers+fakeUsers))
     
