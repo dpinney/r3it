@@ -82,15 +82,12 @@ def register():
             except:
                 log('Registration for ' + email + ' failed; Account already exists')
                 return redirect(f"/register?{urlencode({'notification': 'Error: Account already exists.'})}")
-                # return redirect('/register?notification=Account%20already%20exists%2E')
             with userAccountFile(email, 'w') as userFile: json.dump(userDict, userFile)
             log('Registration successful for ' + email)
             return redirect(f"/login?{urlencode({'notification': 'Success: Registration completed.'})}")
-            # return redirect('/login?notification=Registration%20successful%2E')
         else:
             log('Registration for ' + email + ' failed; CAPTCHA error')
             return redirect(f"/register?{urlencode({'notification': 'Error: Invalid CAPTCHA.'})}")
-            # return redirect('/register?notification=CAPTCHA%20error%2E')
 
 @app.route('/forgot', methods=['GET', 'POST'])
 def forgot():
@@ -105,14 +102,12 @@ def forgot():
         except: 
             log('Password reset requested for ' + email + '; account not found')
             return redirect(f"/forgot?{urlencode({'notification': 'Error: Account not found.'})}")
-            # return redirect('/forgot?notification=The%20email%20address%20you%20entered%20does%20match%20our%20records%2E')
         userDict[email]['resetToken'] = str(random.randint(100000,1000000))
         with userAccountFile(email, 'w') as userFile: json.dump(userDict, userFile)
         link = 'demo.r3it.ghw.io/newpassword/' + email + '/' + userDict[email]['resetToken']
         mailer.sendEmail(email,'R3IT Password Reset Link','Use the following link to reset your password: ' + link)
         log('Password reset link sent to ' + email)
         return redirect(f"/forgot?{urlencode({'notification': 'Success: Password reset email sent.'})}")
-        # return redirect('/forgot?notification=Password%20reset%20email%20sent%2E')
 
 @app.route('/newpassword/<email>/<token>', methods=['GET', 'POST'])
 def newpassword(email, token):
@@ -122,11 +117,9 @@ def newpassword(email, token):
         try:
             userDict = userAccountDict(email)
         except: return redirect(f"/forgot?{urlencode({'notification': 'Error: Invalid password reset link.'})}")
-        # except: return redirect('/forgot?notification=Not%20a%20valid%20password%20reset%20link.')
         if userDict[email].get('resetToken','') == token:
             return render_template("newpassword.html", email=email, token=token, notification=notification)
         else: return redirect(f"/forgot?{urlencode({'notification': 'Error:  Invalid password reset link.'})}")
-        # else: return redirect('/forgot?notification=Not%20a%20valid%20password%20reset%20link.')
     
     if request.method == "POST":
         password = request.form['password']
@@ -135,7 +128,6 @@ def newpassword(email, token):
         mailer.sendEmail(email,'R3IT Password Reset successfully','Your R3IT password has been reset successfully.')
         log('Password reset successfully for ' + email)
         return redirect(f"/login?{urlencode({'notification': 'Success: Password successfully updated.'})}")
-        # return redirect('/login?notification=Password%20updated%20successfully%2E')
 
 @app.route('/sendDelegationEmail/<id>')
 @flask_login.login_required
@@ -150,8 +142,6 @@ def sendDelegationEmail(id, notification=''):
     	hashPassword('delegation', id)) 
     return redirect(f"""/report/{id}?{urlencode(
         {'notification': f'Success: {notification} Delegation email sent.'})}""") # Does notification insert really need to be there?
-    # return redirect('/report/' + id + '?notification=' + 
-    # 	notification+'Delegation%20email%20sent%2E')
 
 @app.route('/delegate/<id>/<token>')
 def delegate(id, token):
@@ -161,11 +151,8 @@ def delegate(id, token):
         if hashPassword('delegation', id) == token:
             update_status(id, 'Application Submitted')
             return redirect(f"/?{urlencode({'notification': 'Success: Account permission delegated.'})}")
-            # return redirect('/?notification=Account%20permission%20delegated%2E')
         else: return redirect(f"/?{urlencode({'notification': 'Error: Delegation failed.'})}")
-        # else: return redirect('/?notification=Delegation%20error%2E')
     else: return redirect(f"/?{urlencode({'notification': 'Info: Delegation already completed.'})}")
-    # else: return redirect('/?notification=Delegation%20already%20completed%2E')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -182,7 +169,6 @@ def login():
         else:
             log('User login failed; incorrect username or password')
             return redirect(f"/login?{urlencode({'notification': 'Error: Invalid username or password.'})}")
-            # return redirect('/login?notification=Username%20or%20password%20does%20not%20match%20our%20records%2E')
 
 @app.route('/logout')
 def logout():
@@ -265,7 +251,6 @@ def upload(id, doc):
         if 'file' not in request.files:
             log('Document ' + doc + 'Upload for application ' + id + ' failed; no file part')
             return redirect(f"/report/{id}?{urlencode({'notification': 'Error: No file recieved.'})}")
-            # return redirect('/report/' + id + '?notification=No%20file%20part%2E')
         file = request.files['file']
   
         # if user does not select file, browser also
@@ -273,12 +258,10 @@ def upload(id, doc):
         if file.filename == '':
             log('Document ' + doc + 'Upload for application ' + id + ' failed; no file selected')
             return redirect(f"/report/{id}?{urlencode({'notification': 'Error: No file selected.'})}")
-            # return redirect('/report/' + id + '?notification=No%20file%20selected%2E')
   
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
         else: return redirect(f"/report/{id}?{urlencode({'notification': 'Error: File type not supported.'})}")
-        # else: return redirect('/report/' + id + '?notification=File%20type%20not%20supported%2E')
 
         try:
             os.makedirs(os.path.join(app.root_path, "data", 'applications', id, "uploads", doc))
@@ -288,7 +271,6 @@ def upload(id, doc):
         file.save(os.path.join(app.root_path, "data", 'applications', id, 'uploads', doc, filename))
         log('Document ' + doc + 'Upload for application ' + id + ' successful; document saved')
         return redirect(f"/report/{id}?{urlencode({'notification': 'Success: File upload successful.'})}")
-        # return redirect('/report/' + id + '?notification=Upload%20successful%2E')
   
     else: return redirect(request.referrer)
 
@@ -346,9 +328,6 @@ def add_to_appQueue():
     return redirect(f"""/payment/{app['ID']}?{urlencode(
         {'notification': f'''Success: Application submitted. 
         Please click 'checkout' to complete payment.'''})}""")
-    # return redirect('/payment/' + app['ID'] + "?notification=" +
-    #     "Application%20submitted%20successfully!%20" + 
-    #     "Please%20click%20'checkout'%20to%20complete%20payment.")
 
 @app.route('/application')
 @flask_login.login_required
@@ -424,9 +403,6 @@ def updateApp(id):
     return redirect(f"""/report/{id}?{urlencode(
         {'notification': '''Success: Application edits submitted. 
         Awaiting engineer approval.'''})}""")
-    # return redirect('/report/' + id + '?notification=' + \
-    #     'Application%20edits%20submitted%20successfully%2E' +
-    #     '%20Awaiting%20engineer%20approval')
 
 @app.route('/reviewEdits/<id>/<decision>')
 @flask_login.login_required
@@ -470,7 +446,6 @@ def reviewEdits(id, decision):
         json.dump(app, appfile, indent=4)
 
     return redirect(f"/report/{id}?{urlencode({'notification': notification})}")
-    # return redirect('/report/' + id + '?notification=' + notification)
 
 @app.route('/update-status/<id>/<status>')
 @flask_login.login_required
@@ -500,13 +475,11 @@ def success(id, token):
     
     if token != hashPassword(id, COOKIE_KEY) : 
         return redirect(f"/?{urlencode({'notification': 'Error: Payment failed.'})}")
-    	# return redirect('/?notification=Payment&20failed&2E')
 
     if appDict(id).get('Installation Type', '') ==  'Self-install':
         update_status(id, 'Application Submitted')
         notification = 'Success: Application submitted.'
         return redirect(f"/report/{id}?{urlencode({'notification': notification})}")
-        # return redirect('/report/' + id + '?notification=' + notification)
     
     else: 
     	update_status(id, 'Delegation Required')
@@ -533,9 +506,7 @@ def create_checkout_session(id):
             ],
             mode='payment',
             success_url=f"https://{DOMAIN}/success/{id}/{hashPassword(id, COOKIE_KEY)}",
-            # success_url='https://' + DOMAIN + '/success/' + id + '/' + hashPassword(id,COOKIE_KEY),
             cancel_url=f"https://{DOMAIN}/?{urlencode({'notification': 'Error: Payment failed.'})}",
-            # cancel_url='https://' + DOMAIN + '/?notification=Payment%20failed%2E',
         )
         return jsonify({'id': checkout_session.id})
     except Exception as e:
