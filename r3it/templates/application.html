@@ -63,260 +63,418 @@
 
     </script>
 
-    <H1>New Interconnection Application</H1>
-
+    <!-- Bootstrap application form -->
+    <h1>New Interconnection Application</h1>
     <form id="application" action="{{formAction}}" method='post'>
         
         <div class="card">
-            
-            <div class="leftForm">
-                <H3>Application Name</H3>
-                <input type='text' id='applicationName' name='Application Name' value="{{default['Application Name']}}"><br>
-            </div>
-            
-            <div class="rightForm">
-            
-                <H3>Tariff</H3>
-                
-                <input id="aprilRadio" type="radio" name="Tariff" value="Net metering April kWh reset" {% if (default['Tariff'] == 'Net metering April kWh reset') %} checked="True" {% endif %}>
-                <label for="aprilRadio">Net metering April kWh reset</label>
-                <br>
-
-                <input id="novemberRadio" type="radio" name="Tariff" value="Net metering November kWh reset" {% if (default['Tariff'] == 'Net metering November kWh reset') %} checked="True" {% endif %}>
-                <label for="novemberRadio">Net metering November kWh reset</label>
-                <br>
-
-                <input id="valueRadio" type="radio" name="Tariff" value="Value of energy" {% if (default['Tariff'] == 'Value of energy') %} checked="True" {% endif %}>
-                <label for="valueRadio">Value of energy</label>
-                <br>
-            
-            </div>
-        
-        </div>
-
-        <div class="card">
-
-            <!TODO: Figure out "same as member" button.>
-            <!TODO: Decide if drop-down for partnered solar installers is good idea, maybe implement?>
-            <div class="leftForm">
-            
-                <H3>Installation Type</H3>
-                
-                <input onclick="showCorrectFormParts(this)" id="contractorElecRadio" type="radio" name="Installation Type" value="Contractor and Electrician" {% if (default['Installation Type'] == 'Contractor and Electrician') %} checked="True" {% endif %}>
-                <label for="contractorElecRadio">Contractor and Electrician</label>
-                <br>
-
-                <input onclick="showCorrectFormParts(this)" id="contractorRadio" type="radio" name="Installation Type" value="Contractor only" {% if (default['Installation Type'] == 'Contractor only') %} checked="True" {% endif %}>
-                <label for="contractorRadio">Contractor only</label>
-                <br>
-
-                <input onclick="showCorrectFormParts(this)" id="selfRadio" type="radio" name="Installation Type" value="Self-install" {% if (default['Installation Type'] == 'Self-install') %} checked="True" {% endif %}>
-                <label for="selfRadio">Self-install</label>
-                <br>
-
-                <div id='contractor'>
-
-                    <H3>Contractor</H3>
-
-                    <label for='contractorName'>Contractor:</label><br>
-                    <input type='text' id='contractorName' name='Contractor' value="{{default['Contractor']}}" required><br>
-
-                    <label for='contactPersonContractor'>Contact Person:</label><br>
-                    <input type='text' id='contactPersonContractor' name='Contact Person (Contractor)' value="{{default['Contact Person (Contractor)']}}" required><br>
-
-                    <label for='addressContractor'>Address:</label><br>
-                    <input type='text' id='addressContractor' name='Address (Contractor)' value="{{default['Address (Contractor)']}}" required><br>
-
-                    <label for='cityContractor'>City:</label><br>
-                    <input type='text' id='cityContractor' name='City (Contractor)' value="{{default['City (Contractor)']}}" required><br>
-
-                    <label for='stateContractor'>State:</label><br>
-                    <input type='text' id='stateContractor' name='State (Contractor)' value="{{default['State (Contractor)']}}" required><br>
-
-                    <label for='zipContractor'>Zip Code:</label><br>
-                    <input type='text' id='zipContractor' name='Zip (Contractor)' value="{{default['Zip (Contractor)']}}" required><br>
-
-                    <label for='primaryTelephoneContractor'>Telephone (Primary):</label><br>
-                    <input type='text' id='primaryTelephoneContractor' name='Primary Telephone (Contractor)' value="{{default['Primary Telephone (Contractor)']}}" required><br>
-
-                    <label for='secondaryTelephoneContractor'>Telephone (Secondary):</label><br>
-                    <input type='text' id='secondaryTelephoneContractor' name='Secondary Telephone (Contractor)' value="{{default['Secondary Telephone (Contractor)']}}"><br>
-
-                    <label for='emailContractor'>Email Address:</label><br>
-                    <input type='email' id='emailContractor' name='Email (Contractor)' value="{{default['Email (Contractor)']}}" onchange="ensureMemberIsNotContractor(this.id)" required><br>
-
-                    <label for='docketNum'>Docket Number:</label><br>
-                    <input type='text' id='docketNum' name='Docket Num' value="{{default['Docket Num']}}" required><br>
-
+            <div class="card-body">
+                <div class="form-group">
+                    <h3 class="card-title">
+                        <label for="applicationName">Application Name</label>
+                    </h3>
+                    <input 
+                        class="form-control" 
+                        type="text" 
+                        id="applicationName" 
+                        name="Application Name" 
+                        value="{{default['Application Name']}}"
+                    >
                 </div>
-                
-                <div id='electrician'>
-
-                    <H3>Electrician</H3>
-                    
-                    <label for='electricianName'>Electrician:</label><br>
-                    <input type='text' id='electricianName' name='Electrician' value="{{default['Electrician']}}" required><br>
-                    
-                    <label for='contactPersonElectrician'>Contact Person:</label><br>
-                    <input type='text' id='contactPersonElectrician' name='Contact Person (Electrician)' value="{{default['Contact Person (Electrician)']}}" required><br>
-                    
-                    <label for='addressElectrician'>Address:</label><br>
-                    <input type='text' id='addressElectrician' name='Address (Electrician)' value="{{default['Address (Electrician)']}}" required><br>
-                    
-                    <label for='cityElectrician'>City:</label><br>
-                    <input type='text' id='cityElectrician' name='City (Electrician)' value="{{default['City (Electrician)']}}" required><br>
-                    
-                    <label for='stateElectrician'>State:</label><br>
-                    <input type='text' id='stateElectrician' name='State (Electrician)' value="{{default['State (Electrician)']}}" required><br>
-                    
-                    <label for='zipElectrician'>Zip Code:</label><br>
-                    <input type='text' id='zipElectrician' name='Zip (Electrician)' value="{{default['Zip (Electrician)']}}" required><br>
-                    
-                    <label for='primaryTelephoneElectrician'>Telephone (Primary):</label><br>
-                    <input type='text' id='primaryTelephoneElectrician' name='Primary Telephone (Electrician)' value="{{default['Primary Telephone (Electrician)']}}" required><br>
-                    
-                    <label for='secondaryTelephoneElectrician'>Telephone (Secondary):</label><br>
-                    <input type='text' id='secondaryTelephoneElectrician' name='Secondary Telephone (Electrician)' value="{{default['Secondary Telephone (Electrician)']}}"><br>
-                    
-                    <label for='emailElectrician'>Email Address:</label><br>
-                    <input type='email' id='emailElectrician' name='Email (Electrician)' value="{{default['Email (Electrician)']}}" required><br>
-                
+                <div class="form-group">
+                    <h3 class="card-title">Tariff</h3>
+                    <div class="form-check">
+                        <input 
+                            class="form-check-input" 
+                            type="radio" 
+                            name="Tariff" 
+                            id="aprilRadio" 
+                            value="Net metering April kWh reset" 
+                            {% if (default['Tariff'] == 'Net metering April kWh reset') %} checked="True" {% endif %}
+                        >
+                        <label class="form-check-label" for="aprilRadio">
+                            Net metering April kWh reset
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input 
+                            class="form-check-input" 
+                            type="radio" 
+                            name="Tariff" 
+                            id="novemberRadio" 
+                            value="Net metering November kWh reset" 
+                            {% if (default['Tariff'] == 'Net metering November kWh reset') %} checked="True" {% endif %}
+                        >
+                        <label class="form-check-label" for="novemberRadio">
+                            Net metering November kWh reset
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input 
+                            class="form-check-input" 
+                            type="radio" 
+                            name="Tariff" 
+                            id="valueRadio" 
+                            value="Value of energy" 
+                            {% if (default['Tariff'] == 'Value of energy') %} checked="True" {% endif %}
+                        >
+                        <label class="form-check-label" for="valueRadio">
+                            Value of energy
+                        </label>
+                    </div>
                 </div>
-                
             </div>
-
-            <div class="rightForm">
-            
-                <H3 id='member'>Member</H3>
-                
-                <label for='memberName'>Member:</label><br>
-                <input type='text' id='memberName' name='Member' value="{{default['Member']}}" required><br>
-                <!Is name vs. contact confusing? How to clarify? Maybe ask for Organization?>
-                
-                <label for='contactPersonMember'>Contact Person:</label><br>
-                <input type='text' id='contactPersonMember' name='Contact Person (Member)' value="{{default['Contact Person (Member)']}}" required><br>
-                
-                <label for='addressBilling'>Address:</label><br>
-                <input type='text' id='addressBilling' name='Address (Billing)' value="{{default['Address (Billing)']}}" required><br>
-                
-                <label for='cityBilling'>City:</label><br>
-                <input type='text' id='cityBilling' name='City (Billing)' value="{{default['City (Billing)']}}" required><br>
-                
-                <label for='stateBilling'>State:</label><br>
-                <input type='text' id='stateBilling' name='State (Billing)' value="{{default['State (Billing)']}}" required><br>
-                
-                <label for='zipBilling'>Zip Code:</label><br>
-                <input type='text' id='zipBilling' name='Zip (Billing)' value="{{default['Zip (Billing)']}}" required><br>
-                
-                <label for='primaryTelephoneMember'>Telephone (Primary):</label><br>
-                <input type='text' id='primaryTelephoneMember' name='Telephone (Primary, Member)' value="{{default['Telephone (Primary, Member)']}}" required><br>
-                
-                <label for='secondaryTelephoneMember'>Telephone (Secondary):</label><br>
-                <input type='text' id='secondaryTelephoneMember' name='Telephone (Secondary, Member)' value="{{default['Telephone (Secondary, Member)']}}"><br>
-                
-                <label for='emailMember'>Email Address:</label><br>
-                <input type='email' id='emailMember' name='Email (Member)' value="{{default['Email (Member)']}}" onchange="ensureMemberIsNotContractor(this.id)" required><br>
-                
-            </div>
-
         </div>
 
         <div class="card">
+            <div class="card-body">
+                <!--TODO: Figure out "same as member" button.-->
+                <!--TODO: Decide if drop-down for partnered solar installers is good idea, maybe implement?-->
+                <div class="form-group">
+                    <h3 class="card-title">Installation Type</h3>
+                    <div class="form-check">
+                        <input 
+                            class="form-check-input" 
+                            type="radio" 
+                            name="Installation Type" 
+                            id="contractorElecRadio" 
+                            value="Contractor and Electrician" 
+                            onclick="showCorrectFormParts(this)"
+                            {% if (default['Installation Type'] == 'Contractor and Electrician') %} checked="True" {% endif %}
+                        >
+                        <label class="form-check-label" for="contractorElecRadio">
+                            Contractor and Electrician
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input 
+                            class="form-check-input" 
+                            type="radio" 
+                            name="Installation Type" 
+                            id="contractorRadio" 
+                            value="Contractor only" 
+                            onclick="showCorrectFormParts(this)" 
+                            {% if (default['Installation Type'] == 'Contractor only') %} checked="True" {% endif %}
+                        >
+                        <label class="form-check-label" for="contractorRadio">
+                            Contractor only
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input 
+                            class="form-check-input" 
+                            type="radio" 
+                            name="Installation Type" 
+                            id="selfRadio" 
+                            value="Self-install" 
+                            onclick="showCorrectFormParts(this)" 
+                            {% if (default['Installation Type'] == 'Self-install') %} checked="True" {% endif %}
+                        >
+                        <label class="form-check-label" for="selfRadio">
+                            Self-install
+                        </label>
+                    </div>
+                </div>
 
-            <H3 style="width: 100%;">Interconnection Service Information</H3>
-            
-            <div class="leftForm">
-           
-                <H4>Service Information</H4>
-               
-                <label for='utility'>Utility:</label><br>
-                <input type='text' id='utility' name='Utility' value="{{default['Utility']}}"><br>
-               
-                <label for='accountNumber'>Account Number:</label><br>
-                <input type='text' id='accountNumber' name='Account Number' value="{{default['Account Number']}}"><br>
-               
-                <label for='meterID'>Meter ID:</label><br>
-                <input type='text' id='meterID' name='Meter ID' value="{{default['Meter ID']}}"><br>
-               
-                <!TODO: Allow drop-down for pre-certified inverters? Separate application?>
-                <label for='inverterManf'>Inverter Manufacturer:</label><br>
-                <input type='text' id='inverterManf' name='Inverter Manufacturer' value="{{default['Inverter Manufacturer']}}"><br>
-               
-                <label for='inverterModel'>Inverter Model:</label><br>
-                <input type='text' id='inverterModel' name='Inverter Model' value="{{default['Inverter Model']}}"><br>
-               
-                <label for='nameplateRatingkW'>Nameplate Rating (kW-AC):</label><br>
-                <input type='text' id='nameplateRatingkW' name='Nameplate Rating (kW)' value="{{default['Nameplate Rating (kW)']}}"><br>
-               
-                <label for='nameplateRatingkVA'>Nameplate Rating (kVA-AC):</label><br>
-                <input type='text' id='nameplateRatingkVA' name='Nameplate Rating (kVA)' value="{{default['Nameplate Rating (kVA)']}}"><br>
-               
-                <label for='nameplateRatingV'>Nameplate Rating (V-AC):</label><br>
-                <input type='text' id='nameplateRatingV' name='Nameplate Rating (V)' value="{{default['Nameplate Rating (V)']}}"><br>
+                <div class="form-group" id="contractor">
+                    <h3 class="card-title">Contractor Info</h3>
 
-                <label>Phases:</label><br>
-                <input id="threePhaseRadio" type="radio" name="Phases" value="Three" {% if (default['Phases'] == 'Three') %} checked="True" {% endif %}>
-                <label for="threePhaseRadio">Three</label>
-                <input id="onePhaseRadio" type="radio" name="Phases" value="One" {% if (default['Phases'] == 'One') %} checked="True" {% endif %}>
-                <label for="onePhaseRadio">One</label> <br>
-               
-                <label for='primeMover'>Prime Mover:</label><br>
-                <input type='text' id='primeMover' name='Prime Mover' value="{{default['Prime Mover']}}"><br>
-               
-                <!TODO: Make dropdown or radio button>
-                <label for='energySource'>Energy Source:</label><br>
-                <input type='text' id='energySource' name='Energy Source' value="{{default['Energy Source']}}"><br>
-               
-                <label>Is the equipment UL1741 listed?:</label><br>
-                <input id="yesListedRadio" type="radio" name="UL1741 listed" value="Yes" {% if (default['UL1741 listed'] == 'Yes') %} checked="True" {% endif %}>
-                <label for="yesListedRadio">Yes</label>
-                <input id="noListedRadio" type="radio" name="UL1741 listed" value="No" {% if (default['UL1741 listed'] == 'No') %} checked="True" {% endif %}>
-                <label for="noListedRadio">No</label><br>
+                    <div class="form-group">
+                        <label for="contractorName">Contractor:</label>
+                        <input type="text" class="form-control" id="contractorName" name="Contractor" value="{{default['Contractor']}}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contactPersonContractor">Contact Person:</label>
+                        <input type="text" class="form-control" id="contactPersonContractor" name="Contact Person (Contractor)" value="{{default['Contact Person (Contractor)']}}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="addressContractor">Address:</label>
+                        <input type="text" class="form-control" id="addressContractor" name="Address (Contractor)" value="{{default['Address (Contractor)']}}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cityContractor">City:</label>
+                        <input type="text" class="form-control" id="cityContractor" name="City (Contractor)" value="{{default['City (Contractor)']}}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="stateContractor">State:</label>
+                        <input type="text" class="form-control" id="stateContractor" name="State (Contractor)" value="{{default['State (Contractor)']}}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="zipContractor">Zip Code:</label>
+                        <input type="text" class="form-control" id="zipContractor" name="Zip (Contractor)" value="{{default['Zip (Contractor)']}}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="primaryTelephoneContractor">Telephone (Primary):</label>
+                        <input type="text" class="form-control" id="primaryTelephoneContractor" name="Primary Telephone (Contractor)" value="{{default['Primary Telephone (Contractor)']}}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="secondaryTelephoneContractor">Telephone (Secondary):</label>
+                        <input type="text" class="form-control" id="secondaryTelephoneContractor" name="Secondary Telephone (Contractor)" value="{{default['Secondary Telephone (Contractor)']}}">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="emailContractor">Email Address:</label>
+                        <input type="email" class="form-control" id="emailContractor" name="Email (Contractor)" value="{{default['Email (Contractor)']}}" onchange="ensureMemberIsNotContractor(this.id)" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="docketNum">Docket Number:</label>
+                        <input type="text" class="form-control" id="docketNum" name="Docket Num" value="{{default['Docket Num']}}" required>
+                    </div>
+                </div>
+
+                <div class="form-group" id="electrician">
+                    <h3 class="card-title">Electrician Info</h3>
+                    
+                    <div class="form-group">
+                        <label for="electricianName">Electrician:</label>
+                        <input type="text" class="form-control" id="electricianName" name="Electrician" value="{{default['Electrician']}}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="contactPersonElectrician">Contact Person:</label>
+                        <input type="text" class="form-control" id="contactPersonElectrician" name="Contact Person (Electrician)" value="{{default['Contact Person (Electrician)']}}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="addressElectrician">Address:</label>
+                        <input type="text" class="form-control" id="addressElectrician" name="Address (Electrician)" value="{{default['Address (Electrician)']}}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="cityElectrician">City:</label>
+                        <input type="text" class="form-control" id="cityElectrician" name="City (Electrician)" value="{{default['City (Electrician)']}}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="stateElectrician">State:</label>
+                        <input type="text" class="form-control" id="stateElectrician" name="State (Electrician)" value="{{default['State (Electrician)']}}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="zipElectrician">Zip Code:</label>
+                        <input type="text" class="form-control" id="zipElectrician" name="Zip (Electrician)" value="{{default['Zip (Electrician)']}}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="primaryTelephoneElectrician">Telephone (Primary):</label>
+                        <input type="text" class="form-control" id="primaryTelephoneElectrician" name="Primary Telephone (Electrician)" value="{{default['Primary Telephone (Electrician)']}}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="secondaryTelephoneElectrician">Telephone (Secondary):</label>
+                        <input type="text" class="form-control" id="secondaryTelephoneElectrician" name="Secondary Telephone (Electrician)" value="{{default['Secondary Telephone (Electrician)']}}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="emailElectrician">Email Address:</label>
+                        <input type="email" class="form-control" id="emailElectrician" name="Email (Electrician)" value="{{default['Email (Electrician)']}}" required>
+                    </div>
+                </div>
+
+                <div class="form-group" id="member">
+                    <h3 class="card-title">Member Info</h3>
                 
-                <!TODO: Date pickers>
-                <label for='installDateEstimated'>Estimated Install Date:</label><br>
-                <input type='date' id='installDateEstimated' name='Estimated Install Date' value="{{default['Estimated Install Date']}}"><br>
-               
-                <label for='inServiceDateEstimated'>Estimated In-Service Date:</label><br>
-                <input type='date' id='inServiceDateEstimated' name='Estimated In-Service Date' value="{{default['Estimated In-Service Date']}}"><br>
-               
-                <!TODO: Table for Equipment - Certification>
-            
+                    <div class="form-group">
+                        <label for="memberName">Member:</label>
+                        <input type="text" class="form-control" id="memberName" name="Member" value="{{default['Member']}}" required>
+                    </div>
+
+                    <!--Is name vs. contact confusing? How to clarify? Maybe ask for Organization?-->
+                    
+                    <div class="form-group">
+                        <label for="contactPersonMember">Contact Person:</label>
+                        <input type="text" class="form-control" id="contactPersonMember" name="Contact Person (Member)" value="{{default['Contact Person (Member)']}}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="addressBilling">Address:</label>
+                        <input type="text" class="form-control" id="addressBilling" name="Address (Billing)" value="{{default['Address (Billing)']}}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="cityBilling">City:</label>
+                        <input type="text" class="form-control" id="cityBilling" name="City (Billing)" value="{{default['City (Billing)']}}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="stateBilling">State:</label>
+                        <input type="text" class="form-control" id="stateBilling" name="State (Billing)" value="{{default['State (Billing)']}}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="zipBilling">Zip Code:</label>
+                        <input type="text" class="form-control" id="zipBilling" name="Zip (Billing)" value="{{default['Zip (Billing)']}}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="primaryTelephoneMember">Telephone (Primary):</label>
+                        <input type="text" class="form-control" id="primaryTelephoneMember" name="Telephone (Primary, Member)" value="{{default['Telephone (Primary, Member)']}}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="secondaryTelephoneMember">Telephone (Secondary):</label>
+                        <input type="text" class="form-control" id="secondaryTelephoneMember" name="Telephone (Secondary, Member)" value="{{default['Telephone (Secondary, Member)']}}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="emailMember">Email Address:</label>
+                        <input type="email" class="form-control" id="emailMember" name="Email (Member)" value="{{default['Email (Member)']}}" onchange="ensureMemberIsNotContractor(this.id)" required>
+                    </div>
+                </div>
+
             </div>
+        </div>
 
-            <!TODO: Figure out how to add multiple owners.>
-            <div class="rightForm">
+        <div class="card">
+            <div class="card-body">
+                <div class="form-group">
+                    <h3 class="card-title">Interconnection Service Information</h3>
+               
+                    <div class="form-group">
+                        <label for="utility">Utility:</label>
+                        <input type="text" class="form-control" id="utility" name="Utility" value="{{default['Utility']}}">
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="accountNumber">Account Number:</label>
+                        <input type="text" class="form-control" id="accountNumber" name="Account Number" value="{{default['Account Number']}}">
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="meterID">Meter ID:</label>
+                        <input type="text" class="form-control" id="meterID" name="Meter ID" value="{{default['Meter ID']}}">
+                    </div>
+                
+                    <!--TODO: Allow drop-down for pre-certified inverters? Separate application?-->
+                    <div class="form-group">
+                        <label for="inverterManf">Inverter Manufacturer:</label>
+                        <input type="text" class="form-control" id="inverterManf" name="Inverter Manufacturer" value="{{default['Inverter Manufacturer']}}">
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="inverterModel">Inverter Model:</label>
+                        <input type="text" class="form-control" id="inverterModel" name="Inverter Model" value="{{default['Inverter Model']}}">
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="nameplateRatingkW">Nameplate Rating (kW-AC):</label>
+                        <input type="text" class="form-control" id="nameplateRatingkW" name="Nameplate Rating (kW)" value="{{default['Nameplate Rating (kW)']}}">
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="nameplateRatingkVA">Nameplate Rating (kVA-AC):</label>
+                        <input type="text" class="form-control" id="nameplateRatingkVA" name="Nameplate Rating (kVA)" value="{{default['Nameplate Rating (kVA)']}}">
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="nameplateRatingV">Nameplate Rating (V-AC):</label>
+                        <input type="text" class="form-control" id="nameplateRatingV" name="Nameplate Rating (V)" value="{{default['Nameplate Rating (V)']}}">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Phases:</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="Phases" id="threePhaseRadio" value="Three" {% if (default['Phases'] == 'Three') %} checked="True" {% endif %}>
+                            <label class="form-check-label" for="threePhaseRadio">Three</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="Phases" id="onePhaseRadio" value="One" {% if (default['Phases'] == 'One') %} checked="True" {% endif %}>
+                            <label class="form-check-label" for="onePhaseRadio">One</label> 
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="primeMover">Prime Mover:</label>
+                        <input type="text" class="form-control" id="primeMover" name="Prime Mover" value="{{default['Prime Mover']}}">
+                    </div>
+                
+                    <!--TODO: Make dropdown or radio button-->
+                    <div class="form-group">
+                        <label for="energySource">Energy Source:</label>
+                        <input type="text" class="form-control" id="energySource" name="Energy Source" value="{{default['Energy Source']}}">
+                    </div>
+                
+                    <div class="form-group">
+                        <label>Is the equipment UL1741 listed?:</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="UL1741 listed" id="yesListedRadio" value="Yes" {% if (default['UL1741 listed'] == 'Yes') %} checked="True" {% endif %}>
+                            <label class="form-check-label" for="yesListedRadio">Yes</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="UL1741 listed" id="noListedRadio" value="No" {% if (default['UL1741 listed'] == 'No') %} checked="True" {% endif %}>
+                            <label class="form-check-label" for="noListedRadio">No</label>
+                        </div>
+                    </div>
+                
+                    <!--TODO: Date pickers-->
+                    <div class="form-group">
+                        <label for="installDateEstimated">Estimated Install Date:</label>
+                        <input type="date" class="form-control" id="installDateEstimated" name="Estimated Install Date" value="{{default['Estimated Install Date']}}">
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="inServiceDateEstimated">Estimated In-Service Date:</label>
+                        <input type="date" class="form-control" id="inServiceDateEstimated" name="Estimated In-Service Date" value="{{default['Estimated In-Service Date']}}">
+                    </div>
+                
+                    <!--TODO: Table for Equipment - Certification-->
+                </div>
+
+                <div class="form-group">
+                    <h3 class="card-title">Owner</h3>
             
-                <H4>Owner</H4>
-            
-                <label for='owner'>Owner:</label><br>
-                <input type='text' id='owner' name='Owner' value="{{default['Owner']}}"><br>
+                    <div class="form-group">
+                        <label for="owner">Owner:</label>
+                        <input type="text" class="form-control" id="owner" name="Owner" value="{{default['Owner']}}">
+                    </div>
+                    
+                    <h3 class="card-title">Location</h3>
+                    
+                    <!--TODO: Figure out "same as above" button.-->
+                    <div class="form-group">
+                        <label for="addressService">Address:</label>
+                        <input type="text" class="form-control" id="addressService" name="Address (Service)" value="{{default['Address (Service)']}}">
+                    </div>
                 
-                <H4>Location</H4>
-                
-                <!TODO: Figure out "same as above" button.>
-                <label for='addressService'>Address:</label><br>
-                <input type='text' id='addressService' name='Address (Service)' value="{{default['Address (Service)']}}"><br>
-                
-                <label for='cityService'>City:</label><br>
-                <input type='text' id='cityService' name='City (Service)' value="{{default['City (Service)']}}"><br>
-                
-                <label for='stateService'>State:</label><br>
-                <input type='text' id='stateService' name='State (Service)' value="{{default['State (Service)']}}"><br>
-                
-                <label for='zipService'>Zip Code:</label><br>
-                <input type='text' id='zipService' name='Zip (Service)' value="{{default['Zip (Service)']}}"><br>
-                
+                    <div class="form-group">
+                        <label for="cityService">City:</label>
+                        <input type="text" class="form-control" id="cityService" name="City (Service)" value="{{default['City (Service)']}}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="stateService">State:</label>
+                        <input type="text" class="form-control" id="stateService" name="State (Service)" value="{{default['State (Service)']}}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="zipService">Zip Code:</label>
+                        <input type="text" class="form-control" id="zipService" name="Zip (Service)" value="{{default['Zip (Service)']}}">
+                    </div>
+                </div>
             </div>
-        
         </div>
         
         <div class="card">
-            <p> By clicking the checkbox and typing their name below, the applicant agrees to provide the Cooperative with any additional information required to complete the interconnection. The applicant shall operate his equipment within the guidelines set forth by the cooperative. </p>
-            <p><input required type="checkbox" id="agreement" name="Agreement">
-            <label for="agreement"> I accept the terms above</label> </p>
-            <p><input required type="text" placeholder="Please type your name here" id="signed" name="Signed"></p>
-            <input type='submit' value='Submit'>
+            <div class="card-body">
+                <p>By clicking the checkbox and typing their name below, the applicant agrees to provide the Cooperative with any additional information required to complete the interconnection. The applicant shall operate his equipment within the guidelines set forth by the cooperative.</p>
+                <div class="form-check form-group">
+                    <input class="form-check-input" type="checkbox" name="Agreement" id="agreement" required>
+                    <label class="form-check-label" for="agreement">I accept the terms above</label>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" id="signed" name="Signed" placeholder="Your name here" required>
+                    <label for="signed" class="sr-only">Signature</label>
+                </div>
+                <button type="submit" class="btn">Submit Application</button>
+            </div>
         </div>
 
     </form>
