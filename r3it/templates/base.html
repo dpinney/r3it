@@ -47,6 +47,19 @@
 			</nav>
 
 			<div class="content">
+
+				<!-- Bootstrap notification display -->
+				{% if notification %}
+					{% if notification.startswith('Error') or notification.startswith('Rejected') %}
+						<div class="alert alert-danger" role="alert">{{ notification }}</div>
+					{% elif notification.startswith('Success') %}
+						<div class="alert alert-success" role="alert">{{ notification }}</div>
+					{% elif notification.startswith('Info') %}
+						<div class="alert alert-info" role="alert">{{ notification }}</div>
+					{% else %}
+						<div class="alert alert-secondary" role="alert">{{ notification }}</div>
+					{% endif %}
+				{% endif %}
 				
 				{% if not current_user.is_authenticated %}
 					{% block banner %}{% endblock %}
@@ -55,9 +68,6 @@
 
 				<!-- <hr> -->
 
-				{% if notification%}
-				<H3 id='notification'> {{ notification }} </H3>
-				{% endif %}
 
 				{% if current_user.is_authenticated %}
 					{% block content %} {% endblock %}
