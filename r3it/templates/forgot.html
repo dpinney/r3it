@@ -4,10 +4,21 @@
 <style type="text/css">#bg{background-image:url({{bg}})</style>
 <style type="text/css">#bg{height: 100%;}</style>
 <div id="login" >
-    <h1>Enter the email address associated with your account, and then click the link in the email to reset your password.</h1>
-    <form action='/forgot' method='post'>
-        <input type='text' placeholder="Email" id='email' name='email' required>
-        <button type="submit" formaction="/forgot" method="post">Send email</button>
+    <!-- Bootstrap forgot password block -->
+    <h1>Forgot Password</h1>
+    <p>Enter the email address associated with your account, and you will recieve an account recovery email with a link to reset your password.</p>
+    <form action="/forgot" method="post">
+        <div class="form-group">
+            <label for="email" class="sr-only">Email Address</label>
+            <input 
+                type="email" 
+                class="form-control" 
+                id="email" 
+                name="email" 
+                placeholder="Email Address" 
+                required>
+        </div>
+        <button type="submit" formaction="/forgot" method="post" class="btn btn-block btn-light">Send Email</button>
     </form>
 </div>
 {% endblock %}
