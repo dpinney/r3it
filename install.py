@@ -17,16 +17,16 @@ if platform.system() == "Linux":
     os.system("sudo certbot certonly --standalone --agree-tos -n -m " + config.r3itEmailAddress + " -d " + config.DOMAIN)
 
 # install systemd unit files for r3it and certificate renewal.
-    os.system("sudo ln -s " + r3itDir + "r3it.service /etc/systemd/system/r3it.service")
-    os.system("sudo ln -s " + r3itDir + "cert.service /etc/systemd/system/")
-    os.system("sudo ln -s " + r3itDir + "cert.timer /etc/systemd/system/")
+    os.system("sudo ln -s " + r3itDir + "/r3it.service /etc/systemd/system/r3it.service")
+    os.system("sudo ln -s " + r3itDir + "/cert.service /etc/systemd/system/")
+    os.system("sudo ln -s " + r3itDir + "/cert.timer /etc/systemd/system/")
 
 # create log file
-    os.system("sudo mkdir " + r3itDir + "data")
-    os.system("sudo touch " + r3itDir + "data/log")
+    os.system("sudo mkdir " + r3itDir + "/data")
+    os.system("sudo touch " + r3itDir + "/data/log")
 
 # create directory for LetsEncrypt acme challenges.
-    os.system("sudo mkdir -p " + r3itDir + ".well-known/acme-challenge")
+    os.system("sudo mkdir -p " + r3itDir + "/.well-known/acme-challenge")
 
 # Add r3it user:group
     os.system("sudo useradd -r r3it")
