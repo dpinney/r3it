@@ -107,6 +107,7 @@ def getMockData(dataType):
             random.choice(
                 interconnection.getMeterNameList( 
                     os.path.join(
+                        config.r3itDir,
                         config.STATIC_DIR, 
                         config.GRIDLABD_DIR,
                         config.omdFilename))))
