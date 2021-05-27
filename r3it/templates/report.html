@@ -592,20 +592,11 @@
 {% endblock %}
 
 {% macro notes() %}
-
-<div id="notesContainer">
-    <H3>Notes:</H3>
-    <textarea class="notesText" rows=10 disabled="True" placeholder="There are no notes for this application at the current time.">{{data['Notes']}}</textarea>
-    <H3></H3>
-    <form id="notes" action='{{"/save-notes/" + data["ID"]}}' method='post'>
-        <textarea class="notesText" name="notesText" rows=3 placeholder="Enter note text here and hit save to update the notes."></textarea>
-        <button  name="save" id="notesSave">Save</button>
-    </form>
-<hr></div>
-
 <div>
     <h3>Notes Log:</h3>
-    <textarea class="form-control" rows="10" disabled="True" placeholder="There are no notes for this application at the current time.">{{data['Notes']}}</textarea>
+    <div class="form-group">
+        <textarea class="form-control" rows="10" disabled="True" placeholder="There are no notes for this application at the current time.">{{data['Notes']}}</textarea>
+    </div>
     <form id="notes" action="{{'/save-notes/' + data['ID']}}" method="post">
         <div class="form-group">
             <label for="not" class="sr-only"></label>
@@ -613,6 +604,7 @@
         </div>
         <button type="submit" class="btn btn-dark" name="save" id="notesSave">Save</button>
     </form>
+    <hr>
 </div>
 
 {% endmacro %}
