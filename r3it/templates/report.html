@@ -9,7 +9,7 @@
     
     <H1>Interconnection report for request {{data['ID']}}</H1>
    
-    <h3><hr><h3>
+    <hr>
 
     {% if (
         ('engineer' in current_user.roles) or 
@@ -602,5 +602,17 @@
         <button  name="save" id="notesSave">Save</button>
     </form>
 <hr></div>
+
+<div>
+    <h3>Notes Log:</h3>
+    <textarea class="form-control" rows="10" disabled="True" placeholder="There are no notes for this application at the current time.">{{data['Notes']}}</textarea>
+    <form id="notes" action="{{'/save-notes/' + data['ID']}}" method="post">
+        <div class="form-group">
+            <label for="not" class="sr-only"></label>
+            <textarea class="form-control" name="notesText" id="noteInput" rows="3" placeholder="Enter note text here and click save to add a note."></textarea>
+        </div>
+        <button type="submit" class="btn btn-dark" name="save" id="notesSave">Save</button>
+    </form>
+</div>
 
 {% endmacro %}
