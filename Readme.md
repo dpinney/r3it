@@ -30,3 +30,7 @@ The application can be configured to match your utility branding and integrate w
 #### Updating the Application
 
 In the main r3it directory, run a `git pull`. Updated code will be installed, while the database and configuration values will be preserved.
+
+## Acknowledgments
+
+This material is based upon work supported by the U.S. Department of Energy's Office of Energy Efficiency and Renewable Energy (EERE) under the Solar Energy Technologies Office Award Number DE-EE0009011.
