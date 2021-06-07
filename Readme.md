@@ -31,6 +31,10 @@ The application can be configured to match your utility branding and integrate w
 
 In the main r3it directory, run a `git pull`. Updated code will be installed, while the database and configuration values will be preserved.
 
+## License
+
+This software is available for free under the open source GNU General Public License, [GPLv3](https://github.com/dpinney/r3it/blob/master/license-gplv3.txt).
+
 ## Acknowledgments
 
 This material is based upon work supported by the U.S. Department of Energy's Office of Energy Efficiency and Renewable Energy (EERE) under the Solar Energy Technologies Office Award Number DE-EE0009011. The views expressed herein do not necessarily represent the views of the U.S.Department of Energy or the United States Government.
