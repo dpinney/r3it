@@ -282,15 +282,15 @@ html, body {
     padding: 10px;
 } 
 
-#pay, #withdraw, #editDetails, #acceptEdits, #rejectEdits, #sendDelegationEmail {
+/* #pay, #withdraw, #editDetails, #acceptEdits, #rejectEdits, #sendDelegationEmail {
     width: 100%;
-}
+} */
 
-#attachments {
+/* #attachments {
     background: #fff;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
     padding: 2em;
-}
+} */
 
 #footerSpacer {
     height: 2em;
