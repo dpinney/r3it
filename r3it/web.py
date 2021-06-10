@@ -246,7 +246,7 @@ def upload(id, doc):
   
     if request.method == 'POST': # File uploads
         log('Uploading file')
-  
+
         # check if the post request has the file part
         if 'file' not in request.files:
             log('Document ' + doc + 'Upload for application ' + id + ' failed; no file part')
@@ -277,7 +277,7 @@ def upload(id, doc):
 @app.route('/download/<id>/<doc>/<path:filename>')
 @flask_login.login_required
 def download(id, doc, filename):
-    log('Attempting to download document ' + doc + 'for application ' + id)
+    log('Attempting to download document ' + doc + ' for application ' + id)
     if authorizedToView(currentUser(), appDict(id)) and doc in appAttachments:
         log('Download initiated')
         return send_from_directory(os.path.join(appDir(id),'uploads',doc), filename)
@@ -321,9 +321,10 @@ def add_to_appQueue():
 
     # TODO: Figure out the fork-but-not-exec issue (below -> many errors)
     # run analysis on the queue as a separate process
-    p = Process(target=interconnection.processQueue, 
-        args=(processQueueLock,))
-    p.start()
+    if config.enableAutomaticScreening == True:
+        p = Process(target=interconnection.processQueue, 
+            args=(processQueueLock,))
+        p.start()
     
     return redirect(f"""/payment/{app['ID']}?{urlencode(
         {'notification': f'''Success: Application submitted. 
@@ -408,54 +409,61 @@ def updateApp(id):
 @flask_login.login_required
 def reviewEdits(id, decision):
 
-    app = appDict(id)
+    if userHasUtilityRole(currentUser()):
 
-    if decision == 'accept':
+        app = appDict(id)
 
-        # update application info
-        edits = appEditsDict(id)
-        for key in edits.keys():
-            app[key] = edits[key]
+        if decision == 'accept':
 
-        # delete edits file
-        os.remove(appEditsPath(id))
+            # update application info
+            edits = appEditsDict(id)
+            for key in edits.keys():
+                app[key] = edits[key]
 
-        # log event
-        log('Edits accepted for application ' + id)
+            # delete edits file
+            os.remove(appEditsPath(id))
 
-        # return to report with 'approved' message
-        notification = 'Success: Application edits accepted.'
+            # log event
+            log('Edits accepted for application ' + id)
 
-    if decision == 'reject':
+            # return to report with 'approved' message
+            notification = 'Success: Application edits accepted.'
 
-        # delete edits file
-        os.remove(appEditsPath(id))
+        if decision == 'reject':
 
-        # log event
-        log('Edits rejected for application ' + id)
+            # delete edits file
+            os.remove(appEditsPath(id))
 
-        # return to report with 'reject' message
-        notification = 'Rejected: Application edits rejected.'
+            # log event
+            log('Edits rejected for application ' + id)
 
-    #return app to previous status
-    app['Status'] = app['Previous Status']
-    del(app['Previous Status'])
+            # return to report with 'reject' message
+            notification = 'Rejected: Application edits rejected.'
 
-    # save appliction info
-    with appFile(app['ID'], 'w') as appfile:
-        json.dump(app, appfile, indent=4)
+        #return app to previous status
+        app['Status'] = app['Previous Status']
+        del(app['Previous Status'])
+
+        # save appliction info
+        with appFile(app['ID'], 'w') as appfile:
+            json.dump(app, appfile, indent=4)
+    
+
+    else: notification = 'Current user is not authorized to approve edits.'
 
     return redirect(f"/report/{id}?{urlencode({'notification': notification})}")
-
+    
 @app.route('/update-status/<id>/<status>')
 @flask_login.login_required
 def update_status(id, status):
-    interconnection.updateStatus(id, status)
+
+    notification = interconnection.updateStatus(id, status)
     if status == 'Withdrawn':
         p = Process( target=interconnection.withdraw, 
             args=(withdrawLock, processQueueLock, id) )
         p.start()
-    return redirect('/')
+    else: notification = 'Unauthorized attempt to update application status. Status not updated'
+    return redirect(f"/?{urlencode({'notification': notification})}")
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -466,7 +474,11 @@ stripe.api_key = STRIPE_PRIVATE_KEY
 @flask_login.login_required
 @app.route('/payment/<id>')
 def payment(id):
-    notification = request.args.get('notification', None)
+    if userOwnsApp(currentUser(), appDict(id)):
+        notification = request.args.get('notification', None)
+    else: notification = \
+        'Current user is not authorized to make a payment on this application. ' + \
+            'Please log in with the Member email provided in the application.'
     return render_template('payment.html', id=id, notification=notification)
 
 @flask_login.login_required
@@ -527,7 +539,7 @@ def save_notes(id):
         with appFile(app['ID'], 'w') as appfile:
             json.dump(app, appfile)
 
-    return redirect(request.referrer)
+    return redirect(f"/report/{id}")
 
 if __name__ == '__main__':
     app.run(debug=True, host= '0.0.0.0')
