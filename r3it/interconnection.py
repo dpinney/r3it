@@ -562,6 +562,8 @@ def updateStatus(id, status):
     mailer.sendEmail( data.get('Email (Member)', ''), subject, message )
     mailer.mailEngineers( subject, message )
 
+    return 'Status updated to ' + status
+
 # run tests when file is run --------------------------------------------------
 
 def _tests():

@@ -107,7 +107,7 @@
                     <tr>
                     <th>{{file}}</th>
                     <th style='font-weight: normal'>
-                        <a href='{{"/download/" + data['ID']+'/'+doc+'/'+file}}'>Download</a>
+                        <a href="{{'/download/' + data['ID']+'/'+doc+'/'+file}}">Download</a>
                     </th>
                     </tr>
                 {% endfor %}
@@ -141,7 +141,7 @@
     {% endif %}
 
     {% for update in updates %}
-    <form action='{{"/update-status/" + data['ID'] + '/' + update}}'>
+    <form action="{{'/update-status/' + data['ID'] + '/' + update}}">
       <input type='submit' value='{{"Update status to " + update}}'>
     </form>
     {% endfor %}
@@ -154,7 +154,7 @@
     
     {% if data['Status'] == 'Payment Required' %}
         <H3>Payment required</H3>
-        <a href='{{"/payment/" + data['ID']}}'>
+        <a href="{{'/payment/' + data['ID']}}">
             <button id='pay'>Pay Application Fee</button>
         </a>
         <hr>
@@ -163,7 +163,7 @@
     
 
     <H3>Click below to Withdraw Interconnection Application</H3>
-    <form action='{{"/update-status/" + data['ID'] + "/Withdrawn"}}'>
+    <form action="{{'/update-status/' + data['ID'] + '/Withdrawn'}}">
         <input id='withdraw' type='submit' value='Withdraw Interconnection Application'/>
     </form>
     

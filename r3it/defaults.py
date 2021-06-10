@@ -4,6 +4,8 @@ import os
 
 # constants--------------------------------------------------------------------
 
+r3itDir = os.path.dirname(os.path.abspath(__file__))
+
 STATIC_DIR = 'static'       # Name of directory for static assets, like the logo.
 GRIDLABD_DIR = 'gridlabd'   # Name of directory for gridlabd output files.
 
@@ -11,7 +13,7 @@ INFO_FILENAME = 'application.json' # Name for interconnection application files.
 INPUT_FILENAME = 'allInputData.json' 
 OUTPUT_FILENAME = 'allOutputData.json'
 
-DATA_DIR = 'data' # Directory for user and application data.
+DATA_DIR = os.path.join(r3itDir,'data') # Directory for user and application data.
 LOG_FILENAME = os.path.join(DATA_DIR,'log.txt') # Name of log file.
 USERS_DIR = os.path.join(DATA_DIR,'users') # Directory for user account data.
 APPLICATIONS_DIR = os.path.join(DATA_DIR,'applications') # Directory for application data.
@@ -237,7 +239,3 @@ gridlabdInputs = {
     'faultVoltsThreshold': '138',
     'newGenerationInsolation': '30'
 }
-
-# moved from __init__.py --------------------------------------------------
-
-r3itDir = os.path.dirname(os.path.abspath(__file__))
