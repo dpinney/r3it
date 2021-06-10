@@ -24,7 +24,7 @@ STRIPE_PRIVATE_KEY = 'sk_test_2Mf8zBV1IqZkwtajeeK5lMCj00j0MxxuOu'
 STRIPE_PUBLIC_KEY = 'pk_test_LAZ0aEKWMLHbPSFIms7YzLkK00EHoWgCGB'
 
 DOMAIN = 'demo.r3it.ghw.io'
-certDir = '/etc/letsencrypt/' + DOMAIN
+certDir = '/etc/letsencrypt/live/' + DOMAIN
 
 # application processing options ----------------------------------------------
 

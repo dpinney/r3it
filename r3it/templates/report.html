@@ -7,9 +7,8 @@
 
 {% block content %}
     
-    <H1>Interconnection report for request {{data['ID']}}</H1>
-   
-    <h3><hr><h3>
+    <h1>Interconnection report for request {{data['ID']}}</h1>
+    <hr>
 
     {% if (
         ('engineer' in current_user.roles) or 
@@ -92,9 +91,10 @@
 
     <h3><hr></h3>
 
-    <H3>Attachments</H3>
+
+    <h3>Attachments</h3>
     
-    <div id='attachments'>
+    <!-- <div id='attachments'>
 
         {% for doc in appAttachments %}
         
@@ -122,7 +122,50 @@
 
         <hr>
 
+    </div> -->
+
+    <!-- Bootstrap attachments -->
+    <div>
+    {% for doc in appAttachments %}
+        <h5>{{doc}}</h5>
+
+        <!-- TODO: Bootstrap table -->
+        <table>
+            {% for file in files.get(doc, None) %}
+                <tr>
+                <th>{{file}}</th>
+                <th style='font-weight: normal'>
+                    <a href='{{"/download/" + data['ID']+'/'+doc+'/'+file}}'>Download</a>
+                </th>
+                </tr>
+            {% endfor %}
+        </table>
+
+        <form action="{{'/upload/' + data['ID'] + '/' + doc}}" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label class="btn btn-dark mb-0" for="{{doc.replace(' ', '')}}FileUpload">
+                    <input type="file" class="form-control-file d-none" id="{{doc.replace(' ', '')}}FileUpload" name="file">
+                    Choose File
+                </label>
+                <span class="label label-info" id="{{doc.replace(' ', '')}}FileInfo">No file chosen</span>
+                <label for="{{doc.replace(' ', '')}}FileSubmit" class="sr-only">Upload {{doc}}</label>
+                <input type="submit" class="btn btn-dark" id="{{doc.replace(' ', '')}}FileSubmit" value="{{'Upload ' + doc}}">
+            </div>
+        </form>
+        
+        <script type="text/javascript">
+            {
+                let docFileUpload = document.getElementById("{{doc}}".replace(/\s+/g, "") + "FileUpload")
+                let docFileInfo = document.getElementById("{{doc}}".replace(/\s+/g, "") + "FileInfo")
+                docFileUpload.addEventListener("change", () => {
+                    docFileInfo.innerHTML = docFileUpload.files.length ? docFileUpload.files[0].name : "No file chosen"
+                })
+            }
+        </script>
+    {% endfor %}
     </div>
+
+    <hr>
     
 
     {% if (data.get('Screen Results','') != '') %}
@@ -140,9 +183,17 @@
     </table>
     {% endif %}
 
+    <h3>Status</h3>
+
+    <!-- Bootstrap update buttons -->
     {% for update in updates %}
     <form action="{{'/update-status/' + data['ID'] + '/' + update}}">
-      <input type='submit' value='{{"Update status to " + update}}'>
+        <div class="form-group">
+            <button type="submit" class="btn btn-dark" value="{{'Update status to ' + update}}">
+                {{'Update status to '}}
+                <span class="font-italic">{{update}}</span>
+            </button>
+        </div>
     </form>
     {% endfor %}
 
@@ -152,21 +203,38 @@
 
 {% block member %}
     
+    <!-- Bootstrap payment button -->
     {% if data['Status'] == 'Payment Required' %}
-        <H3>Payment required</H3>
+        <h5>Payment required</h5>
         <a href="{{'/payment/' + data['ID']}}">
-            <button id='pay'>Pay Application Fee</button>
+            <button class="btn btn-dark" id="pay">Pay Application Fee</button>
         </a>
-        <hr>
     {% endif %}
     
-    
+    <!-- Bootstrap modal -->
+    <div class="modal fade" id="withdrawModal" tabindex="-1" role="dialog" aria-labelledby="withdrawModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="withdrawModalTitle" >Withdraw Interconnection Application</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">Are you sure you want to withdraw the application?</div>
+                <div class="modal-footer">
+                    <form action="{{'/update-status/' + data['ID'] + '/Withdrawn'}}">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-danger" id="withdraw">Withdraw</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <H3>Click below to Withdraw Interconnection Application</H3>
-    <form action="{{'/update-status/' + data['ID'] + '/Withdrawn'}}">
-        <input id='withdraw' type='submit' value='Withdraw Interconnection Application'/>
-    </form>
-    
+    <!-- Bootstrap withdraw button -->
+    <h5>Click below to Withdraw Interconnection Application</h5>
+    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#withdrawModal">Withdraw Application</button>    
     <hr>
 
 {% endblock %}
@@ -591,16 +659,21 @@
     {% endif %}   
 {% endblock %}
 
+<!-- Bootstrap notes block -->
 {% macro notes() %}
-
-<div id="notesContainer">
-    <H3>Notes:</H3>
-    <textarea class="notesText" rows=10 disabled="True" placeholder="There are no notes for this application at the current time.">{{data['Notes']}}</textarea>
-    <H3></H3>
-    <form id="notes" action='{{"/save-notes/" + data["ID"]}}' method='post'>
-        <textarea class="notesText" name="notesText" rows=3 placeholder="Enter note text here and hit save to update the notes."></textarea>
-        <button  name="save" id="notesSave">Save</button>
+<div>
+    <h3>Notes Log:</h3>
+    <div class="form-group">
+        <label for="notesDisplay" class="sr-only"></label>
+        <textarea class="form-control" id="notesDisplay" rows="10" disabled="True" placeholder="There are no notes for this application at the current time.">{{data['Notes']}}</textarea>
+    </div>
+    <form id="notes" action="{{'/save-notes/' + data['ID']}}" method="post">
+        <div class="form-group">
+            <label for="noteInput" class="sr-only"></label>
+            <textarea class="form-control" name="notesText" id="noteInput" rows="3" placeholder="Enter note text here and click save to add a note."></textarea>
+        </div>
+        <button type="submit" class="btn btn-dark" name="save" id="notesSave">Save</button>
     </form>
-<hr></div>
-
+    <hr>
+</div>
 {% endmacro %}

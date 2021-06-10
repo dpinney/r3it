@@ -532,7 +532,8 @@ def save_notes(id):
     
     now = datetime.now().strftime('%Y-%m-%d %H:%M:%S:%f %Z')
     newNote = request.form['notesText']
-    notes = oldNotes + '\n\n' + now + ' ' + currentUser() + ': \n' + newNote
+    newEntry = f"{now} {currentUser()}: \n{newNote}"
+    notes = f"{oldNotes}\n\n{newEntry}" if oldNotes else newEntry
 
     if newNote != '':
         app['Notes'] = notes

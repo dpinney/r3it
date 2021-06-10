@@ -37,7 +37,7 @@
 {% block member %}
 	<H1>Interconnecting Distributed Generation</H1>
 	<p>Welcome to NRECA's Interconnection tool! To learn more about...</p>
-	<a href='/application'><button>Apply for Interconnection</button></a>
+	<a href="/application" class="btn btn-dark">Apply for Interconnection</a>
 	<p></p>
 	{{progressBar()}}
 	{{ interconnectionTable('Action Needed', priorities)}}
@@ -75,28 +75,33 @@
 	</div>
 {% endblock %}
 
+<!-- Bootstrap interconnection table -->
 {% macro interconnectionTable(header, passedData) %}
 {% if passedData %}
-	<H1>{{ header }}</H1>
-	<table style='width:100%' border='1'>
-	    <tr>
-	        <th>Queue Position</th>
-	        <th>Time of Request</th>
-					<th>Application ID</th>
-	        <th>Address (Service)</th>
-	        <th>Status</th>
-	        <th>Report</th>
-	    </tr>
-	    {% for row in passedData %}
-	    <tr>
-	        <th style='font-weight: normal'>{{row[0]}}</th>
-	        <th style='font-weight: normal'>{{row[1]}}</th>
-	        <th style='font-weight: normal'>{{row[2]}}</th>
-	        <th style='font-weight: normal'>{{row[3]}}</th>
-	        <th style='font-weight: normal'>{{row[4]}}</th>
-	        <th style='font-weight: normal'><a href='{{"report/" + row[2]}}'>See report</a></th>
-	    </tr>
-	    {% endfor %}
+	<h3>{{ header }}</h3>
+	<table class="table table-bordered table-striped">
+		<thead class="thead-light">
+			<tr>
+				<th scope="col">Queue Position</th>
+				<th scope="col">Time of Request</th>
+				<th scope="col">Application ID</th>
+				<th scope="col">Address (Service)</th>
+				<th scope="col">Status</th>
+				<th scope="col">Report</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for row in passedData %}
+				<tr>
+					<td>{{row[0]}}</td>
+					<td>{{row[1]}}</td>
+					<td>{{row[2]}}</td>
+					<td>{{row[3]}}</td>
+					<td>{{row[4]}}</td>
+					<td><a href="{{'report/' + row[2]}}" class="btn btn-dark btn-sm">See report</a></td>
+				</tr>
+			{% endfor %}
+		</tbody>
 	</table>
 {% endif %}
 {% endmacro %}
