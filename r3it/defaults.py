@@ -6,7 +6,7 @@ import os
 
 r3itDir = os.path.dirname(os.path.abspath(__file__))
 
-STATIC_DIR = os.path.join(r3itDir,'static') # Name of directory for static assets, like the logo.
+STATIC_DIR = 'static'       # Name of directory for static assets, like the logo.
 GRIDLABD_DIR = 'gridlabd'   # Name of directory for gridlabd output files.
 
 INFO_FILENAME = 'application.json' # Name for interconnection application files.
@@ -225,7 +225,7 @@ appFormDefaults = {
 # gridlabd power flow sim params ----------------------------------------------
 
 gridlabdInputs = {
-    'modelType': 'omfDerInterconnection',
+    'modelType': 'derInterconnection',
     'layoutAlgorithm': 'forceDirected',
     'flickerThreshold': '2',
     'newGeneration': 'addedDer',

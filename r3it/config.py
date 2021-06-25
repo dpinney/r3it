@@ -45,7 +45,7 @@ roles = {
 
 # application processing options ----------------------------------------------
 
-enableAutomaticScreening = True # If True, this runs power flow analysis with the OMF. Requires the OMF.
+enableAutomaticScreening = False # If True, this runs power flow analysis with the OMF. Requires the OMF.
 useMockApplications = True # For testing purposes, this can create dummy interconnection applications.
 
 # Set these if automatic screening is turned on.
