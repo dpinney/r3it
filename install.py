@@ -20,7 +20,7 @@ os.system("sudo pip3 install -r requirements.txt")
 os.system("cd " + r3itDir + "/static/gridlabd")
 os.system("sudo apt install -y alien")
 os.system("sudo alien -i omf_solvers_gridlabd_gridlabd-3.1.0-1.x86_64.rpm")
-os.system("cd " + r3itDir)
+os.system("cd " + r3itDir + "/..")
 
 # Deployment - TLS, permissions, systemd
 if platform.system() == "Linux":
@@ -39,18 +39,19 @@ if platform.system() == "Linux":
 # create directory for LetsEncrypt acme challenges.
     os.system("sudo mkdir -p " + r3itDir + "/.well-known/acme-challenge")
 
-# Add r3it user:group
-    os.system("sudo useradd -r r3it")
-    os.system("sudo chown -R r3it:r3it " + r3itDir + "/..")
-    os.system("sudo chown -R r3it:r3it /etc/letsencrypt")
+    if sys.argv[1] == '-deploy':
+        # Add r3it user:group
+        os.system("sudo useradd -r r3it")
+        os.system("sudo chown -R r3it:r3it " + r3itDir + "/..")
+        os.system("sudo chown -R r3it:r3it /etc/letsencrypt")
 
-# configure authbind so r3it can bind to low-numbered ports sans root.
-    os.system("sudo touch /etc/authbind/byport/80")
-    os.system("sudo touch /etc/authbind/byport/443")
-    os.system("sudo chown r3it:r3it /etc/authbind/byport/80")
-    os.system("sudo chown r3it:r3it /etc/authbind/byport/443")
-    os.system("sudo chmod 710 /etc/authbind/byport/80")
-    os.system("sudo chmod 710 /etc/authbind/byport/443")
+        # configure authbind so r3it can bind to low-numbered ports sans root.
+        os.system("sudo touch /etc/authbind/byport/80")
+        os.system("sudo touch /etc/authbind/byport/443")
+        os.system("sudo chown r3it:r3it /etc/authbind/byport/80")
+        os.system("sudo chown r3it:r3it /etc/authbind/byport/443")
+        os.system("sudo chmod 710 /etc/authbind/byport/80")
+        os.system("sudo chmod 710 /etc/authbind/byport/443")
 
 # enable r3it
     os.system("sudo systemctl enable /etc/systemd/system/r3it.service")
