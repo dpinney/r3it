@@ -8,3 +8,6 @@ pygeocodio
 stripe
 gunicorn
 pytest
+networkx
+matplotlib
+pygraphviz

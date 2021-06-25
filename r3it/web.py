@@ -8,10 +8,11 @@ from urllib.parse import urlencode
 from logger import log
 import config, mailer
 if config.enableAutomaticScreening:
-    import interconnection
+    from interconnection import *
 else:
-    from interconnection import calcCapacityUsed, processQueue, withdraw
     from appQueue import *
+    from interconnection import calcCapacityUsed, processQueue, withdraw
+    
 
 
 
@@ -462,7 +463,6 @@ def update_status(id, status):
         p = Process( target=interconnection.withdraw, 
             args=(withdrawLock, processQueueLock, id) )
         p.start()
-    else: notification = 'Unauthorized attempt to update application status. Status not updated'
     return redirect(f"/?{urlencode({'notification': notification})}")
 
 def allowed_file(filename):

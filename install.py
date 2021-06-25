@@ -11,7 +11,15 @@ if platform.system() == "Linux":
     os.system("sudo apt-get install letsencrypt python3-pip authbind -y -q")
 
 os.system("cd " + r3itDir + "/..")
+os.system("sudo apt-get install python3-dev")
+os.system("sudo pip3 install wheel")
 os.system("sudo pip3 install -r requirements.txt")
+
+#install gridlabd
+os.system("cd " + r3itDir + "/static/gridlabd")
+os.system("sudo apt install -y alien")
+os.system("sudo alien -i omf_solvers_gridlabd_gridlabd-3.1.0-1.x86_64.rpm")
+os.system("cd " + r3itDir)
 
 # Deployment - TLS, permissions, systemd
 if platform.system() == "Linux":

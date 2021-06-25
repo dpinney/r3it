@@ -5,8 +5,7 @@ import config, mailer
 from logger import log
 from appQueue import *
 if config.enableAutomaticScreening:
-    from omf.models import derInterconnection
-    from omf import feeder
+    import omfDerInterconnection
     from geocodio import GeocodioClient
 
 # globals ---------------------------------------------------------------------
@@ -156,7 +155,7 @@ def runAllScreensAndUpdateStatus(requestPosition, requestFolders):
 
     # run the omf derInterconnection model
     log('Running Gridlab-D powerflow simulation')
-    derInterconnection.runForeground(gridlabdWorkingDir)
+    omfDerInterconnection.runForeground(gridlabdWorkingDir)
     outputFilename = os.path.join(gridlabdWorkingDir,config.OUTPUT_FILENAME)
     with open(outputFilename) as modelOutputFile:
         modelOutputs = json.load(modelOutputFile)
@@ -309,7 +308,7 @@ def initializePowerflowModel(requestPosition, requestFolders):
         'rated_power':25000,
         'phases':'' }
     inverter['phases'] = meter['phases']
-    feeder.insert(tree, inverter)
+    omfDerInterconnection.insert(tree, inverter)
 
     # get attributes for the solar object
     kW = request['Nameplate Rating (kW)']
@@ -330,7 +329,7 @@ def initializePowerflowModel(requestPosition, requestFolders):
         'efficiency': SOLAR_EFFICIENCY,
         'phases':'' }
     solar['phases'] = inverter['phases']
-    feeder.insert(tree, solar)
+    omfDerInterconnection.insert(tree, solar)
 
     # get transformer from meterS
     transformer = {}
@@ -375,7 +374,7 @@ def initializePowerflowModel(requestPosition, requestFolders):
         transformerFromItem = nameKeyedTree[transformerFrom]['item']
         poi['nominal_voltage'] = transformerFromItem['nominal_voltage']
         poi['phases'] = transformerFromItem['phases']
-        feeder.insert(tree, poi)
+        omfDerInterconnection.insert(tree, poi)
 
         # update transformer name and set transformer 'from' to new node
         transformer['name'] = addedDerStepUp
@@ -393,11 +392,11 @@ def initializePowerflowModel(requestPosition, requestFolders):
         fuse['from'] = transformerFrom
         fuse['to'] = poi['name']
         fuse['phases'] = poi['phases']
-        feeder.insert(tree, fuse)
+        omfDerInterconnection.insert(tree, fuse)
 
     # save changes to file
     with open(omdFileName,'w') as omdFile:
-        omd = dict(feeder.newFeederWireframe)
+        omd = dict(omfDerInterconnection.newFeederWireframe)
         omd['tree'] = tree
         json.dump(omd, omdFile, indent=4)
 
