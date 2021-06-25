@@ -39,7 +39,7 @@ if platform.system() == "Linux":
 # create directory for LetsEncrypt acme challenges.
     os.system("sudo mkdir -p " + r3itDir + "/.well-known/acme-challenge")
 
-    if sys.argv[1] == '-deploy':
+    if (len(sys.argv)==2) and (sys.argv[1]=='-deploy'):
         # Add r3it user:group
         os.system("sudo useradd -r r3it")
         os.system("sudo chown -R r3it:r3it " + r3itDir + "/..")
