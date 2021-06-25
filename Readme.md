@@ -15,7 +15,7 @@ For full details on the application, please see our [presentation on automated i
 3. Ensure ports 443 and 80 are open (e.g., on hosting provider's firewall).
 4. Clone the repo: `git clone https://github.com/dpinney/r3it`to /opt/
 5. Edit r3it/config.py to add API keys, domain name, emails, etc. as appropriate.
-6. Run the install script `cd /opt/r3it; sudo bash install.sh`
+6. Run the install script `cd /opt/r3it; sudo python install.py`
 
 #### Configuration
 
