@@ -5,7 +5,7 @@ import config, interconnection
 
 def userOwnsApp(email, app):
     '''Returns true if the user is the member.'''
-    return email == app.get('Email (Member)') # TODO: Support multiple owners
+    return email == app.get('Email (Member)') or email == app.get('Email (Contractor)') # TODO: Support multiple owners
     
 def users():
     '''Returns list of users, identified by email address.'''
@@ -69,46 +69,46 @@ def getMockData(dataType):
     states = ['WI']
     zips = range(54601, 54650)
     suffixes = ['Ave.', 'Ln.', 'St.', 'Way', 'Blvd']
-    trees = ['Oak', 'Birch', 'Cypress', 'Maple', 'Pine', 'Hickory', 'Ash', 
+    trees = ['Oak', 'Birch', 'Cypress', 'Maple', 'Pine', 'Hickory', 'Ash',
         'Aspen', 'Elder Berry']
-    firstNames = ['James', 'John', 'Robert', 'Michael', 'William', 'David', 
-        'Richard', 'Charles', 'Mary', 'Patricia', 'Linda', 'Barbara', 
+    firstNames = ['James', 'John', 'Robert', 'Michael', 'William', 'David',
+        'Richard', 'Charles', 'Mary', 'Patricia', 'Linda', 'Barbara',
         'Elizabeth', 'Jennifer', 'Maria', 'Susan', 'Margaret']
-    lastNames = ['Smith', 'Jones', 'Williams', 'Brown', 'Jones', 'Garcia', 
+    lastNames = ['Smith', 'Jones', 'Williams', 'Brown', 'Jones', 'Garcia',
         'Miller', 'Davis']
 
     # define data types based on cobination of the above lists
     mockData = ''
-    if dataType == 'name': 
-        mockData = '{} {}'.format(random.choice(firstNames), 
+    if dataType == 'name':
+        mockData = '{} {}'.format(random.choice(firstNames),
             random.choice(lastNames))
-    elif dataType == 'address': 
-        mockData = "{} {} {}".format(str(random.choice(range(9999))), 
+    elif dataType == 'address':
+        mockData = "{} {} {}".format(str(random.choice(range(9999))),
             random.choice(trees), random.choice(suffixes))
-    elif dataType == 'city': 
+    elif dataType == 'city':
         mockData = '{}'.format(random.choice(cities))
-    elif dataType == 'state': 
+    elif dataType == 'state':
         mockData = '{}'.format(random.choice(states))
-    elif dataType == 'zip': 
+    elif dataType == 'zip':
         mockData = '{}'.format(random.choice(zips))
-    elif dataType == 'phone': 
+    elif dataType == 'phone':
         mockData = '({}{}) {}{} - {}'.format(
-            random.choice(range(2,9)), 
-            random.choice(range(10,99)), 
-            random.choice(range(2,9)), 
-            random.choice(range(10,99)), 
+            random.choice(range(2,9)),
+            random.choice(range(10,99)),
+            random.choice(range(2,9)),
+            random.choice(range(10,99)),
             random.choice(range(1000,9999)))
-    elif dataType == 'size' : 
+    elif dataType == 'size' :
         mockData = '{}'.format(random.choice(sizes))
-    elif dataType == 'voltage' : 
+    elif dataType == 'voltage' :
         mockData = random.choice(voltages)
-    elif dataType == 'meterID' : 
-        mockData = '{}'.format( 
+    elif dataType == 'meterID' :
+        mockData = '{}'.format(
             random.choice(
-                interconnection.getMeterNameList( 
+                interconnection.getMeterNameList(
                     os.path.join(
                         config.r3itDir,
-                        config.STATIC_DIR, 
+                        config.STATIC_DIR,
                         config.GRIDLABD_DIR,
                         config.omdFilename))))
 
