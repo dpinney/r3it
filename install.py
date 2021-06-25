@@ -33,8 +33,8 @@ if platform.system() == "Linux":
     os.system("sudo ln -s " + r3itDir + "/cert.timer /etc/systemd/system/")
 
 # create log file
-    os.system("sudo mkdir " + r3itDir + "/data")
-    os.system("sudo touch " + r3itDir + "/data/log")
+    os.system("mkdir " + r3itDir + "/data")
+    os.system("touch " + r3itDir + "/data/log.txt")
 
 # create directory for LetsEncrypt acme challenges.
     os.system("sudo mkdir -p " + r3itDir + "/.well-known/acme-challenge")
