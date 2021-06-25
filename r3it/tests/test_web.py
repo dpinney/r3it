@@ -1,5 +1,4 @@
 import pytest, os, shutil, glob, io
-from flask import request
 from r3it import web
 from r3it.appQueue import appEditsDict, appDict
 from .testHelpers import *
