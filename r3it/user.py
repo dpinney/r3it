@@ -5,8 +5,8 @@ import config, interconnection
 
 def userOwnsApp(email, app):
     '''Returns true if the user is the member.'''
-    return email == app.get('Email (Member)') or email == app.get('Email (Contractor)') # TODO: Support multiple owners
-    
+    return email == app.get('Email (Member)') or email == app.get('Email (Contractor)')
+    ()
 def users():
     '''Returns list of users, identified by email address.'''
     userPaths = glob.glob(config.USERS_DIR+'/*')
