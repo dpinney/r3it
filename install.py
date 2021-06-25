@@ -13,8 +13,8 @@ if platform.system() == "Linux":
 os.system("cd " + r3itDir + "/..")
 os.system("sudo apt-get install python3-dev")
 os.system("sudo apt-get install graphviz graphviz-dev")
-os.system("sudo pip3 install wheel")
-os.system("sudo pip3 install -r requirements.txt")
+os.system("sudo python3 -m pip install wheel")
+os.system("sudo python3 -m pip install -r requirements.txt")
 
 #install gridlabd
 os.system("cd " + r3itDir + "/static/gridlabd")
