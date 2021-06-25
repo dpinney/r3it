@@ -12,6 +12,7 @@ if platform.system() == "Linux":
 
 os.system("cd " + r3itDir + "/..")
 os.system("sudo apt-get install python3-dev")
+os.system("sudo apt-get install graphviz graphviz-dev")
 os.system("sudo pip3 install wheel")
 os.system("sudo pip3 install -r requirements.txt")
 
