@@ -1,9 +1,8 @@
-import pytest, os, json, shutil, glob, io
-from flask import app, request
+import pytest, os, shutil, glob, io
+from flask import request
 from r3it import web
-from r3it.config import USERS_DIR, APPLICATIONS_DIR, r3itDir, COOKIE_KEY
-from r3it.user import hashPassword, userAccountDict, userAccountFile
-from r3it.appQueue import appEditsDict, appFile, appDict
+from r3it.appQueue import appEditsDict, appDict
+from .testHelpers import *
 
 # -----------------------------------------------------------------------
 
@@ -12,51 +11,6 @@ def client():
     web.app.config['TESTING'] = True
     with web.app.test_client() as client:
         yield client
-
-# -----------------------------------------------------------------------
-
-fakeEmail, fakePassword = 'a@email.com', 'password'
-fakePrivledgedEmail = 'engineer@electric.coop'
-fakeApp = {'ID': '123', 'Email (Member)': fakeEmail, 'Status':'fake', 'placeholder':'data'}
-editedFakeApp = {}
-for key in fakeApp: editedFakeApp[key] = fakeApp[key]
-editedFakeApp['placeholder'] = 'newData'
-
-def checkResponseStatusOnGet(client, route, code, redirect=True):
-    response = client.get(route, follow_redirects=redirect)
-    # print(request.path, request.args)
-    assert(response.status_code == code)
-
-def createFakeUser(email):
-    if not os.path.isdir(USERS_DIR): os.makedirs(USERS_DIR)
-    userDict = {email : {'password' : hashPassword(email, fakePassword)}}
-    os.makedirs(os.path.join(USERS_DIR,email), exist_ok=True)
-    with userAccountFile(email, 'w') as userFile: 
-        json.dump(userDict, userFile)
-
-def createFakePasswordResetToken():
-    userDict = userAccountDict(fakeEmail)
-    token = '654321'
-    userDict[fakeEmail]['resetToken'] = token
-    with userAccountFile(fakeEmail, 'w') as userFile: json.dump(userDict, userFile)
-    return token
-
-def loginFakeUser(client,email):
-    fakeForm = {'email':email,'password':fakePassword}
-    client.post('/login', data=fakeForm, follow_redirects=True)
-    # print(request.path, request.args)
-
-def deleteFakeUser(email):
-    shutil.rmtree(os.path.join(USERS_DIR,email))
-
-def createFakeApp():
-    os.makedirs(os.path.join(APPLICATIONS_DIR,fakeApp['ID']),exist_ok=True)
-    with appFile(fakeApp['ID'], 'w') as appfile:
-        json.dump(fakeApp, appfile)
-
-def deleteFakeApp():
-    shutil.rmtree(os.path.join(APPLICATIONS_DIR,fakeApp['ID']))
-
 
 # ------------------------------------------------------------------------
 
@@ -76,35 +30,35 @@ def test_logoutBeforeLogin(client):
     checkResponseStatusOnGet(client, '/logout', 200)
 
 def test_logoutAfterLogin(client):
-    createFakeUser(fakeEmail)
+    createFakeUser()
     loginFakeUser(client,fakeEmail)
     checkResponseStatusOnGet(client, '/logout', 200)
-    deleteFakeUser(fakeEmail)
+    deleteFakeUser()
     
 def test_applicationAfterLogin(client):
-    createFakeUser(fakeEmail)
+    createFakeUser()
     loginFakeUser(client,fakeEmail)
     checkResponseStatusOnGet(client, '/application', 200)
-    deleteFakeUser(fakeEmail)
+    deleteFakeUser()
 
 def test_newPasswordGetValidToken(client):
-    createFakeUser(fakeEmail)
+    createFakeUser()
     token = createFakePasswordResetToken()    
     checkResponseStatusOnGet(client,'/newpassword/'+fakeEmail+'/'+token, 200)
-    deleteFakeUser(fakeEmail)
+    deleteFakeUser()
 
 def test_newPasswordGetInvalidToken(client):
     checkResponseStatusOnGet(client, '/newpassword/'+fakeEmail+'/123456', 200)
 
 def test_newPasswordPost(client):
-    createFakeUser(fakeEmail)
+    createFakeUser()
     token = createFakePasswordResetToken()    
     newPassword = 'newPassword'
     fakeForm = {'password':newPassword}
     client.post('/newpassword/'+fakeEmail+'/'+token, data=fakeForm, follow_redirects=True)
     # print(request.path, request.args)
     userDict = userAccountDict(fakeEmail)
-    deleteFakeUser(fakeEmail)
+    deleteFakeUser()
     assert(userDict[fakeEmail]['password'] == hashPassword(fakeEmail, newPassword))
 
 def test_reportNotLoggedIn(client):
@@ -112,16 +66,16 @@ def test_reportNotLoggedIn(client):
     # print(request.path, request.args)
 
 def test_reportLoggedIn(client):
-    createFakeUser(fakeEmail)
+    createFakeUser()
     createFakeApp()
     loginFakeUser(client,fakeEmail)
     checkResponseStatusOnGet(client,'/report/'+fakeApp['ID'], 200)
     # print(request.path, request.args)
     deleteFakeApp()
-    deleteFakeUser(fakeEmail)
+    deleteFakeUser()
 
 def test_add_to_appQueue(client):
-    createFakeUser(fakeEmail)
+    createFakeUser()
     loginFakeUser(client,fakeEmail)
 
     oldApps = glob.glob(os.path.join(APPLICATIONS_DIR,'*'))
@@ -133,24 +87,24 @@ def test_add_to_appQueue(client):
     app = appDict(newAppID)
     assert(app['placeholder']=='data')
     shutil.rmtree(newApps[0])
-    deleteFakeUser(fakeEmail)
+    deleteFakeUser()
 
 def test_editNotLoggedIn(client):
     checkResponseStatusOnGet(client,'/edit/'+fakeApp['ID'], 200)
     # print(request.path, request.args)
 
 def test_editLoggedIn(client):
-    createFakeUser(fakeEmail)
+    createFakeUser()
     createFakeApp()
     loginFakeUser(client,fakeEmail)
     checkResponseStatusOnGet(client,'/edit/'+fakeApp['ID'], 200)
     # print(request.path, request.args)
     deleteFakeApp()
-    deleteFakeUser(fakeEmail)
+    deleteFakeUser()
 
 def test_editLoggedIn(client):
     
-    createFakeUser(fakeEmail)
+    createFakeUser()
     loginFakeUser(client,fakeEmail)    
     createFakeApp()
 
@@ -163,12 +117,12 @@ def test_editLoggedIn(client):
     )
     
     deleteFakeApp()
-    deleteFakeUser(fakeEmail)
+    deleteFakeUser()
 
 def test_reviewEditsAccept(client):
 
-    createFakeUser(fakePrivledgedEmail)
-    loginFakeUser(client,fakePrivledgedEmail)
+    createFakeUser(fakePriviledgedEmail)
+    loginFakeUser(client,fakePriviledgedEmail)
     createFakeApp()
 
     client.post('/updateApp/'+fakeApp['ID'], data=editedFakeApp, follow_redirects=True)
@@ -180,13 +134,13 @@ def test_reviewEditsAccept(client):
         (editedFakeApp['placeholder'], fakeApp['Status'], None) 
     )
 
-    deleteFakeUser(fakePrivledgedEmail)
+    deleteFakeUser(fakePriviledgedEmail)
     deleteFakeApp()
 
 def test_reviewEditsReject(client):
 
-    createFakeUser(fakePrivledgedEmail)
-    loginFakeUser(client,fakePrivledgedEmail)
+    createFakeUser(fakePriviledgedEmail)
+    loginFakeUser(client,fakePriviledgedEmail)
     createFakeApp()
 
     client.post('/updateApp/'+fakeApp['ID'], data=editedFakeApp, follow_redirects=True)
@@ -198,11 +152,11 @@ def test_reviewEditsReject(client):
         (fakeApp['placeholder'], fakeApp['Status'], None) 
     )
 
-    deleteFakeUser(fakePrivledgedEmail)
+    deleteFakeUser(fakePriviledgedEmail)
     deleteFakeApp()
 
 def test_reviewEditsUnauthorized(client):
-    createFakeUser(fakeEmail)
+    createFakeUser()
     loginFakeUser(client,fakeEmail)
     createFakeApp()
 
@@ -210,13 +164,13 @@ def test_reviewEditsUnauthorized(client):
     checkResponseStatusOnGet(client,'/reviewEdits/'+fakeApp['ID']+'/accept', 200)
     # print(request.path, request.args)
 
-    deleteFakeUser(fakeEmail)
+    deleteFakeUser()
     deleteFakeApp()
 
 def test_updateStatusValid(client):
     
-    createFakeUser(fakePrivledgedEmail)
-    loginFakeUser(client,fakePrivledgedEmail)
+    createFakeUser(fakePriviledgedEmail)
+    loginFakeUser(client,fakePriviledgedEmail)
     createFakeApp()
 
     client.get('/update-status/'+fakeApp['ID']+'/Engineering Review', 
@@ -225,14 +179,14 @@ def test_updateStatusValid(client):
     app = appDict(fakeApp['ID'])
     assert( app['Status'] == 'Engineering Review' ) 
 
-    deleteFakeUser(fakePrivledgedEmail)
+    deleteFakeUser(fakePriviledgedEmail)
     deleteFakeApp()
     
 
 def test_updateStatusInvalid(client):
     
-    createFakeUser(fakePrivledgedEmail)
-    loginFakeUser(client,fakePrivledgedEmail)
+    createFakeUser(fakePriviledgedEmail)
+    loginFakeUser(client,fakePriviledgedEmail)
     createFakeApp()
 
     client.get('/update-status/'+fakeApp['ID']+'/Invalid Status', 
@@ -241,23 +195,23 @@ def test_updateStatusInvalid(client):
     app = appDict(fakeApp['ID'])
     assert( app['Status'] == fakeApp['Status'] ) 
 
-    deleteFakeUser(fakePrivledgedEmail)
+    deleteFakeUser(fakePriviledgedEmail)
     deleteFakeApp()
 
 def test_updateStatusUnauthorized(client):
-    createFakeUser(fakeEmail)
+    createFakeUser()
     loginFakeUser(client,fakeEmail)
     createFakeApp()
     checkResponseStatusOnGet(client,
         '/update-status/'+fakeApp['ID']+'/Engineering Review',  200
     )
     # print(request.path, request.args)
-    deleteFakeUser(fakeEmail)
+    deleteFakeUser()
     deleteFakeApp()
     
 def test_delegateValidToken(client):
     
-    createFakeUser(fakeEmail)
+    createFakeUser()
     loginFakeUser(client,fakeEmail)
 
     fakeApp['Status'] = 'Delegation Required'
@@ -269,7 +223,7 @@ def test_delegateValidToken(client):
     app = appDict(fakeApp['ID'])
     assert(app['Status']=='Application Submitted')
 
-    deleteFakeUser(fakeEmail)
+    deleteFakeUser()
     deleteFakeApp()
 
 def test_delegateInvalidToken(client):
@@ -289,30 +243,29 @@ def test_delegatePreviouslyDelegated(client):
     deleteFakeApp()
 
 def test_uploadNoInput(client):
-    createFakeUser(fakeEmail)
+    createFakeUser()
     createFakeApp()
     loginFakeUser(client,fakeEmail)
     response = client.post('/upload/'+fakeApp['ID']+'/One Line Diagram', data={}, follow_redirects=True)
     assert(response.status_code == 200)
     # print(request.path, request.args)
-    deleteFakeUser(fakeEmail)
+    deleteFakeUser()
     deleteFakeApp()
 
 def test_uploadEmptyInput(client):
-    createFakeUser(fakeEmail)
+    createFakeUser()
     createFakeApp()
     loginFakeUser(client,fakeEmail)
     data = {'file': (io.BytesIO(b"abcdef"), '')}
     response = client.post('/upload/'+fakeApp['ID']+'/One Line Diagram', data=data, follow_redirects=True)
     assert(response.status_code == 200)
     # print(request.path, request.args)
-    deleteFakeUser(fakeEmail)
+    deleteFakeUser()
     deleteFakeApp()
-
 
 def test_uploadValidInput(client):
 
-    createFakeUser(fakeEmail)
+    createFakeUser()
     createFakeApp()
     loginFakeUser(client,fakeEmail)
     
@@ -325,13 +278,31 @@ def test_uploadValidInput(client):
         os.path.join(APPLICATIONS_DIR,fakeApp['ID'],'uploads','One Line Diagram'))
     assert((condition0,condition1)==(True,True))
 
-    deleteFakeUser(fakeEmail)
+    deleteFakeUser()
+    deleteFakeApp()
+
+def test_uploadValidInputWithSpaces(client):
+
+    createFakeUser()
+    createFakeApp()
+    loginFakeUser(client,fakeEmail)
+    
+    data = {'file': (io.BytesIO(b"abcdef"), 'test with spaces.jpg')}
+    response = client.post('/upload/'+fakeApp['ID']+'/One Line Diagram', data=data, follow_redirects=True)
+    # print(request.path, request.args)
+
+    condition0 = response.status_code == 200
+    condition1 = 'test_with_spaces.jpg' in os.listdir(
+        os.path.join(APPLICATIONS_DIR,fakeApp['ID'],'uploads','One Line Diagram'))
+    assert((condition0,condition1)==(True,True))
+
+    deleteFakeUser()
     deleteFakeApp()
 
 
 def test_uploadInvalidInput(client):
     
-    createFakeUser(fakeEmail)
+    createFakeUser()
     createFakeApp()
     loginFakeUser(client,fakeEmail)
     
@@ -340,12 +311,12 @@ def test_uploadInvalidInput(client):
     # print(request.path, request.args)
     assert(response.status_code == 200)
 
-    deleteFakeUser(fakeEmail)
+    deleteFakeUser()
     deleteFakeApp()
 
 def test_downloadAuthorized(client):
     
-    createFakeUser(fakeEmail)
+    createFakeUser()
     createFakeApp()
     loginFakeUser(client,fakeEmail)
     data = {'file': (io.BytesIO(b"abcdef"), 'test.txt')}
@@ -353,12 +324,12 @@ def test_downloadAuthorized(client):
     route = '/download/123/One Line Diagram/test.txt'
     checkResponseStatusOnGet(client, route, 200)
 
-    deleteFakeUser(fakeEmail)
+    deleteFakeUser()
     deleteFakeApp()
 
 def test_downloadUnauthorized(client):
     
-    createFakeUser(fakeEmail)
+    createFakeUser()
     createFakeApp()
     loginFakeUser(client,fakeEmail)
     data = {'file': (io.BytesIO(b"abcdef"), 'test.txt')}
@@ -371,32 +342,32 @@ def test_downloadUnauthorized(client):
     route = '/download/123/One Line Diagram/test.txt'
     checkResponseStatusOnGet(client, route, 200)
 
-    deleteFakeUser(fakeEmail)
+    deleteFakeUser()
     deleteFakeUser(newEmail)
     deleteFakeApp()
 
 def test_payment(client):
 
-    createFakeUser(fakeEmail)
+    createFakeUser()
     createFakeApp()
     loginFakeUser(client,fakeEmail)
     route = '/payment/'+fakeApp['ID']
     checkResponseStatusOnGet(client, route, 200)
-    deleteFakeUser(fakeEmail)
+    deleteFakeUser()
     deleteFakeApp()
 
 def test_paymentBeforeLogin(client):
 
-    createFakeUser(fakeEmail)
+    createFakeUser()
     createFakeApp()
     route = '/payment/'+fakeApp['ID']
     checkResponseStatusOnGet(client, route, 200)
-    deleteFakeUser(fakeEmail)
+    deleteFakeUser()
     deleteFakeApp()
 
 def test_successInvalidToken(client):
 
-    createFakeUser(fakeEmail)
+    createFakeUser()
     createFakeApp()
     loginFakeUser(client,fakeEmail)
 
@@ -404,12 +375,12 @@ def test_successInvalidToken(client):
     route = '/success/'+fakeApp['ID']+'/'+token
     checkResponseStatusOnGet(client, route, 200)
 
-    deleteFakeUser(fakeEmail)
+    deleteFakeUser()
     deleteFakeApp()
 
 def test_successValidTokenSelfInstall(client):
      
-    createFakeUser(fakeEmail)
+    createFakeUser()
     fakeApp['Installation Type'] = 'Self-install'
     createFakeApp()
     loginFakeUser(client,fakeEmail)
@@ -421,12 +392,12 @@ def test_successValidTokenSelfInstall(client):
     app = appDict(fakeApp['ID'])
     assert(app['Status']=='Application Submitted')
 
-    deleteFakeUser(fakeEmail)
+    deleteFakeUser()
     deleteFakeApp()
 
 def test_successValidToken(client):
       
-    createFakeUser(fakeEmail)
+    createFakeUser()
     fakeApp['Installation Type'] = 'Contractor only'
     fakeApp['Email (Contractor)'] = 'contractor@email.com'
     fakeApp['Address (Service)'] = 'address'
@@ -440,7 +411,7 @@ def test_successValidToken(client):
     app = appDict(fakeApp['ID'])
     assert(app['Status']=='Delegation Required')
 
-    deleteFakeUser(fakeEmail)
+    deleteFakeUser()
     deleteFakeApp()
 
 def test_create_checkout_session(client):
@@ -450,7 +421,7 @@ def test_create_checkout_session(client):
 
 def test_save_notes(client):
     
-    createFakeUser(fakeEmail)
+    createFakeUser()
     fakeApp['Notes'] = 'oldNote'
     createFakeApp()
     loginFakeUser(client,fakeEmail)
@@ -468,11 +439,11 @@ def test_save_notes(client):
 
     assert((condition0,condition1,condition2) == (True, True, True))
     deleteFakeApp()
-    deleteFakeUser(fakeEmail)
+    deleteFakeUser()
 
 def test_save_notesEmpty(client):
     
-    createFakeUser(fakeEmail)
+    createFakeUser()
     fakeApp['Notes'] = 'oldNote'
     createFakeApp()
     loginFakeUser(client,fakeEmail)
@@ -486,7 +457,7 @@ def test_save_notesEmpty(client):
     
     assert((condition0,condition1) == (True, True))
     deleteFakeApp()
-    deleteFakeUser(fakeEmail)
+    deleteFakeUser()
 
 '''
 @app.route('/sendDelegationEmail/<id>')
