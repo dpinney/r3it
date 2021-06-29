@@ -5,7 +5,7 @@ from config import smtpServer
 from mailer import *
 
 userEmail = 'testing@r3it.ghw.io'
-userPass = os.environ['EMAIL_PASS_TESTING_AT_R3IT_GHW_IO']
+userPass = 'tTSvwucnuw5J'#os.environ['EMAIL_PASS_TESTING_AT_R3IT_GHW_IO']
 
 emailToSend = ('test', 'test message')
 
