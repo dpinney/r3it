@@ -238,8 +238,8 @@
         const withdrawSpinner = document.getElementById("withdrawSpinner")
         const withdrawButton = document.getElementById("withdraw")
         withdrawButton.addEventListener("click", () => {
-            if (withdrawSpinner.attributes.hidden) {
-                withdrawSpinner.attributes.removeNamedItem('hidden');
+            if (withdrawSpinner.hasAttribute("hidden")) {
+                withdrawSpinner.removeAttribute("hidden")
             }
         })
     </script>
