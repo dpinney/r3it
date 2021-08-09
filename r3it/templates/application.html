@@ -143,7 +143,7 @@
             </div>
         </div>
 
-        <div id="altContact" class="mb-5">
+        <div id="altContact" class="mb-5" hidden>
             <h3 class="mb-3">Alternate Contact Information</h3>
 
             <div class="row mb-3">
@@ -207,6 +207,18 @@
                 </div>
             </div>
         </div>
+
+        <script type="text/javascript">
+            const useAltContact = document.getElementById("useAltContact")
+            const altContact = document.getElementById("altContact")
+            useAltContact.addEventListener("click", () => {
+                if (altContact.hasAttribute("hidden")) {
+                    altContact.removeAttribute("hidden")
+                } else {
+                    altContact.setAttribute("hidden", "true")
+                }
+            })
+        </script>
 
         <div id="contractor" class="mb-5">
             <h3 class="mb-3">Equipment Contractor Information</h3>
