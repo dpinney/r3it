@@ -68,81 +68,73 @@
     <h1 class="mb-4">New Interconnection Application</h1>
     <form id="application" action="{{formAction}}" method='post'>
 
-        <div id="applicant" class="mb-5">
-            <h3 class="mb-3">Applicant Contact Information</h3>
+        <!-- Member Block -->
+        <div id="member" class="mb-5">
+            <h3 class="mb-3">Member Contact Information</h3>
 
-            <fieldset class="row mb-3">
-                <legend class="col-form-label pt-0 pb-0 mb-2">Full Name</legend>
-                <div class="col-3">
-                    <input type="text" class="form-control" id="firstNameApplicant" name="First Name (Applicant)" value="{{default['Member'].split()[0]}}" placeholder="First Name" aria-label="first name">
+            <div class="row mb-3">
+                <div class="col-6">
+                    <label for="nameMember" class="form-label">Full Name</label>
+                    <input type="text" class="form-control" id="nameMember" name="Name (Member)" value="{{default['Name (Member)']}}" placeholder="">
                 </div>
-                <div class="col-3">
-                    <input type="text" class="form-control" id="lastNameApplicant" name="Last Name (Applicant)" value="{{default['Member'].split()[1]}}" placeholder="Last Name" aria-label="last name">
-                </div>
-            </fieldset>
-
-            <!--Is name vs. contact confusing? How to clarify? Maybe ask for Organization?-->
+            </div>
 
             <fieldset>
                 <legend class="col-form-label pt-0 pb-0 mb-2">Mailing Address</legend>
                 <div class="row mb-2">
                     <div class="col-6">
-                        <input type="text" class="form-control" id="addressApplicant" name="Address (Applicant)" value="{{default['Address (Applicant)']}}" placeholder="Street Address" aria-label="street address">
+                        <input type="text" class="form-control" id="addressMember" name="Address (Member)" value="{{default['Address (Member)']}}" placeholder="Street Address" aria-label="street address">
                     </div>
                 </div>
                 <div class="row mb-2">
                     <div class="col-6">
-                        <input type="text" class="form-control" id="address2Applicant" name="Address 2 (Applicant)" value="{{default['Address 2 (Applicant)']}}" placeholder="Address Line 2" aria-label="address line 2">
+                        <input type="text" class="form-control" id="address2Member" name="Address 2 (Member)" value="{{default['Address 2 (Member)']}}" placeholder="Address Line 2" aria-label="address line 2">
                     </div>
                 </div>
                 <div class="row mb-2">
                     <div class="col-3">
-                        <input type="text" class="form-control" id="cityApplicant" name="City (Applicant)" value="{{default['City (Applicant)']}}" placeholder="City" aria-label="city">
+                        <input type="text" class="form-control" id="cityMember" name="City (Member)" value="{{default['City (Member)']}}" placeholder="City" aria-label="city">
                     </div>
                     <div class="col-3">
-                        <input type="text" class="form-control" id="stateApplicant" name="State (Applicant)" value="{{default['State (Applicant)']}}" placeholder="State / Province / Region" aria-label="state, province, or region">
+                        <input type="text" class="form-control" id="stateMember" name="State (Member)" value="{{default['State (Member)']}}" placeholder="State / Province / Region" aria-label="state, province, or region">
                     </div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-3">
-                        <input type="text" class="form-control" id="zipApplicant" name="Zip (Applicant)" value="{{default['Zip (Applicant)']}}" placeholder="Postal / Zip Code" aria-label="postal or zip code">
-                    </div>
-                    <div class="col-3">
-                        <select class="form-select" id="countryApplicant" name="Country (Applicant)" aria-label="country">
-                            <option value="United States" selected>United States</option>
-                        </select>
+                        <input type="text" class="form-control" id="zipMember" name="Zip (Member)" value="{{default['Zip (Member)']}}" placeholder="Postal / Zip Code" aria-label="postal or zip code">
                     </div>
                 </div>
             </fieldset>
 
-            <div class="row mb-2">
+            <div class="row mb-3">
                 <div class="col-4">
-                    <label for="primaryPhoneApplicant" class="form-label">Primary Phone</label>
-                    <input type="tel" class="form-control" id="primaryPhoneApplicant" name="Phone (Primary, Applicant)" value="{{default['Phone (Primary, Applicant)']}}">
+                    <label for="primaryPhoneMember" class="form-label">Primary Phone</label>
+                    <input type="tel" class="form-control" id="primaryPhoneMember" name="Phone (Primary, Member)" value="{{default['Phone (Primary, Member)']}}">
                 </div>
                 <div class="col-4">
-                    <label for="secondaryPhoneApplicant" class="form-label">Alternate Phone</label>
-                    <input type="tel" class="form-control" id="secondaryPhoneApplicant" name="Phone (Secondary, Applicant)" value="{{default['Phone (Secondary, Applicant)']}}">
-                </div>
-            </div>
-
-            <div class="row mb-2">
-                <div class="col-4">
-                    <label for="emailApplicant" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="emailApplicant" name="Email (Applicant)" value="{{default['Email (Applicant)']}}" onchange="ensureMemberIsNotContractor(this.id)">
-                </div>
-                <div class="col-4">
-                    <label for="faxApplicant" class="form-label">Fax</label>
-                    <input type="tel" class="form-control" id="faxApplicant" name="Fax (Applicant)" value="{{default['Fax (Applicant)']}}">
+                    <label for="secondaryPhoneMember" class="form-label">Secondary Phone</label>
+                    <input type="tel" class="form-control" id="secondaryPhoneMember" name="Phone (Secondary, Member)" value="{{default['Phone (Secondary, Member)']}}">
                 </div>
             </div>
 
-            <div class="form-check ms-1 pt-2">
+            <div class="row mb-3">
+                <div class="col-4">
+                    <label for="emailMember" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="emailMember" name="Email (Member)" value="{{default['Email (Member)']}}" onchange="ensureMemberIsNotContractor(this.id)">
+                </div>
+                <div class="col-4">
+                    <label for="faxMember" class="form-label">Fax</label>
+                    <input type="tel" class="form-control" id="faxMember" name="Fax (Member)" value="{{default['Fax (Member)']}}">
+                </div>
+            </div>
+
+            <div class="form-check mb-3 ms-1 pt-2">
                 <input type="checkbox" class="form-check-input" id="useAltContact">
                 <label for="useAltContact" class="form-check-label">Use Alternate Contact</label>
             </div>
         </div>
 
+        <!-- Alternate Contact Block -->
         <div id="altContact" class="mb-5" hidden>
             <h3 class="mb-3">Alternate Contact Information</h3>
 
@@ -177,26 +169,21 @@
                     <div class="col-3">
                         <input type="text" class="form-control" id="zipAltContact" name="Zip (Alt Contact)" value="{{default['Zip (Alt Contact)']}}" placeholder="Postal / Zip Code" aria-label="postal or zip code">
                     </div>
-                    <div class="col-3">
-                        <select class="form-select" id="countryAltContact" name="Country (Alt Contact)" aria-label="country">
-                            <option value="United States" selected>United States</option>
-                        </select>
-                    </div>
                 </div>
             </fieldset>
 
-            <div class="row mb-2">
+            <div class="row mb-3">
                 <div class="col-4">
                     <label for="primaryPhoneAltContact" class="form-label">Primary Phone</label>
                     <input type="tel" class="form-control" id="primaryPhoneAltContact" name="Phone (Primary, Alt Contact)" value="{{default['Phone (Primary, Alt Contact)']}}">
                 </div>
                 <div class="col-4">
-                    <label for="secondaryPhoneAltContact" class="form-label">Alternate Phone</label>
+                    <label for="secondaryPhoneAltContact" class="form-label">Secondary Phone</label>
                     <input type="tel" class="form-control" id="secondaryPhoneAltContact" name="Phone (Secondary, Alt Contact)" value="{{default['Phone (Secondary, Alt Contact)']}}">
                 </div>
             </div>
 
-            <div class="row mb-2">
+            <div class="row mb-3">
                 <div class="col-4">
                     <label for="emailAltContact" class="form-label">Email</label>
                     <input type="email" class="form-control" id="emailAltContact" name="Email (Alt Contact)" value="{{default['Email (Alt Contact)']}}" onchange="ensureMemberIsNotContractor(this.id)">
@@ -208,6 +195,7 @@
             </div>
         </div>
 
+        <!-- Script to show/hide alt contact based on checkbox -->
         <script type="text/javascript">
             const useAltContact = document.getElementById("useAltContact")
             const altContact = document.getElementById("altContact")
@@ -220,10 +208,11 @@
             })
         </script>
 
+        <!-- Equipment Contractor Block -->
         <div id="contractor" class="mb-5">
             <h3 class="mb-3">Equipment Contractor Information</h3>
 
-            <div class="row mb-3">
+            <div class="row mb-3" id="contractorNameBlock">
                 <div class="col-4">
                     <label for="nameContractor" class="form-label">Equipment Contractor Name</label>
                     <input type="text" class="form-control" id="nameContractor" name="Name (Contractor)" value="{{default['Name (Contractor)']}}">
@@ -234,8 +223,6 @@
                     <label for="contractorIsElectrician" class="form-check-label">Acting as Electric Contractor</label>
                 </div>
             </div>
-
-            <!--Is name vs. contact confusing? How to clarify? Maybe ask for Organization?-->
 
             <fieldset>
                 <legend class="col-form-label pt-0 pb-0 mb-2">Equipment Contractor Address</legend>
@@ -261,26 +248,21 @@
                     <div class="col-3">
                         <input type="text" class="form-control" id="zipContractor" name="Zip (Contractor)" value="{{default['Zip (Contractor)']}}" placeholder="Postal / Zip Code" aria-label="postal or zip code">
                     </div>
-                    <div class="col-3">
-                        <select class="form-select" id="countryContractor" name="Country (Contractor)" aria-label="country">
-                            <option value="United States" selected>United States</option>
-                        </select>
-                    </div>
                 </div>
             </fieldset>
 
-            <div class="row mb-2">
+            <div class="row mb-3">
                 <div class="col-4">
                     <label for="primaryPhoneContractor" class="form-label">Equipment Contractor Primary Phone</label>
                     <input type="tel" class="form-control" id="primaryPhoneContractor" name="Phone (Primary, Contractor)" value="{{default['Phone (Primary, Contractor)']}}">
                 </div>
                 <div class="col-4">
-                    <label for="secondaryPhoneContractor" class="form-label">Equipment Contractor Alternate Phone</label>
+                    <label for="secondaryPhoneContractor" class="form-label">Equipment Contractor Secondary Phone</label>
                     <input type="tel" class="form-control" id="secondaryPhoneContractor" name="Phone (Secondary, Contractor)" value="{{default['Phone (Secondary, Contractor)']}}">
                 </div>
             </div>
 
-            <div class="row mb-4">
+            <div class="row mb-3">
                 <div class="col-4">
                     <label for="emailContractor" class="form-label">Equipment Contractor Email</label>
                     <input type="email" class="form-control" id="emailContractor" name="Email (Contractor)" value="{{default['Email (Contractor)']}}" onchange="ensureMemberIsNotContractor(this.id)">
@@ -291,36 +273,35 @@
                 </div>
             </div>
 
-            <div class="row mb-2">
+            <div class="row mb-3 mt-4">
                 <div class="alert alert-info col-8 mb-0" role="alert">
                     All interconnected Facilities must be either installed or inspected by a certified distributed generation installer in accordance with [83 Ill. Adm. Code 468].  Click <a href="https://www.icc.illinois.gov/Electricity/authorities/DistributedGenerationCertification.aspx" class="alert-link">HERE</a> for additional information.
                 </div>
             </div>
 
-            <div class="row mb-2">
+            <div class="row mb-3">
                 <div class="col-4">
                     <label for="docketNumber" class="form-label">Installer Certificate Docket Number</label>
                     <input type="text" class="form-control" id="docketNumber" name="Docket Number" value="{{default['Docket Number']}}">
                 </div>
             </div>
-
-            <!-- Render Electrical Contractor License row here if they are the same -->
         </div>
 
-        <div id="electrical" class="mb-5">
+        <!-- Electrical Contractor Block -->
+        <div id="electrician" class="mb-5">
             <h3 class="mb-3">Electrical Contractor Information</h3>
 
-            <div class="row mb-2">
+            <div class="row mb-3" id="electricianNameBlock">
                 <div class="col-4">
-                    <label for="nameElectrical" class="form-label">Electrical Contractor Name</label>
-                    <input type="text" class="form-control" id="nameElectrical" name="Name (Electrical)" value="{{default['Name (Electrical)']}}">
+                    <label for="nameElectrician" class="form-label">Electrical Contractor Name</label>
+                    <input type="text" class="form-control" id="nameElectrician" name="Name (Electrician)" value="{{default['Name (Electrician)']}}">
                 </div>
             </div>
 
-            <div class="row mb-3">
+            <div class="row mb-3" id="licenseBlock">
                 <div class="col-4">
-                    <label for="licenseElectrical" class="form-label">Electrical Contractor License</label>
-                    <input type="text" class="form-control" id="licenseElectrical" name="License (Electrical)" value="{{default['License (Electrical)']}}">
+                    <label for="licenseElectrician" class="form-label">Electrical Contractor License</label>
+                    <input type="text" class="form-control" id="licenseElectrician" name="License (Electrician)" value="{{default['License (Electrician)']}}">
                 </div>
 
                 <div class="form-check col-4 ms-3 mt-4 pt-3">
@@ -333,90 +314,115 @@
                 <legend class="col-form-label pt-0 pb-0 mb-2">Electrical Contractor Address</legend>
                 <div class="row mb-2">
                     <div class="col-6">
-                        <input type="text" class="form-control" id="addressElectrical" name="Address (Electrical)" value="{{default['Address (Electrical)']}}" placeholder="Street Address" aria-label="street address">
+                        <input type="text" class="form-control" id="addressElectrician" name="Address (Electrician)" value="{{default['Address (Electrician)']}}" placeholder="Street Address" aria-label="street address">
                     </div>
                 </div>
                 <div class="row mb-2">
                     <div class="col-6">
-                        <input type="text" class="form-control" id="address2Electrical" name="Address 2 (Electrical)" value="{{default['Address 2 (Electrical)']}}" placeholder="Address Line 2" aria-label="address line 2">
+                        <input type="text" class="form-control" id="address2Electrician" name="Address 2 (Electrician)" value="{{default['Address 2 (Electrician)']}}" placeholder="Address Line 2" aria-label="address line 2">
                     </div>
                 </div>
                 <div class="row mb-2">
                     <div class="col-3">
-                        <input type="text" class="form-control" id="cityElectrical" name="City (Electrical)" value="{{default['City (Electrical)']}}" placeholder="City" aria-label="city">
+                        <input type="text" class="form-control" id="cityElectrician" name="City (Electrician)" value="{{default['City (Electrician)']}}" placeholder="City" aria-label="city">
                     </div>
                     <div class="col-3">
-                        <input type="text" class="form-control" id="stateElectrical" name="State (Electrical)" value="{{default['State (Electrical)']}}" placeholder="State / Province / Region" aria-label="state, province, or region">
+                        <input type="text" class="form-control" id="stateElectrician" name="State (Electrician)" value="{{default['State (Electrician)']}}" placeholder="State / Province / Region" aria-label="state, province, or region">
                     </div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-3">
-                        <input type="text" class="form-control" id="zipElectrical" name="Zip (Electrical)" value="{{default['Zip (Electrical)']}}" placeholder="Postal / Zip Code" aria-label="postal or zip code">
+                        <input type="text" class="form-control" id="zipElectrician" name="Zip (Electrician)" value="{{default['Zip (Electrician)']}}" placeholder="Postal / Zip Code" aria-label="postal or zip code">
+                    </div>
+                </div>
+            </fieldset>
+
+            <div class="row mb-3">
+                <div class="col-4">
+                    <label for="primaryPhoneElectrician" class="form-label">Electrical Contractor Primary Phone</label>
+                    <input type="tel" class="form-control" id="primaryPhoneElectrician" name="Phone (Primary, Electrician)" value="{{default['Phone (Primary, Electrician)']}}">
+                </div>
+                <div class="col-4">
+                    <label for="secondaryPhoneElectrician" class="form-label">Electrical Contractor Secondary Phone</label>
+                    <input type="tel" class="form-control" id="secondaryPhoneElectrician" name="Phone (Secondary, Electrician)" value="{{default['Phone (Secondary, Electrician)']}}">
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-4">
+                    <label for="emailElectrician" class="form-label">Electrical Contractor Email</label>
+                    <input type="email" class="form-control" id="emailElectrician" name="Email (Electrician)" value="{{default['Email (Electrician)']}}" onchange="ensureMemberIsNotContractor(this.id)">
+                </div>
+                <div class="col-4">
+                    <label for="faxElectrician" class="form-label">Electrical Contractor Fax</label>
+                    <input type="tel" class="form-control" id="faxElectrician" name="Fax (Electrician)" value="{{default['Fax (Electrician)']}}">
+                </div>
+            </div>
+        </div>
+
+        <!-- Script to show/hide electrician based on contractorIsElectrician checkbox -->
+        <script type="text/javascript">
+            const contractorIsElectrician = document.getElementById("contractorIsElectrician")
+            const electrician = document.getElementById("electrician")
+            const licenseBlock = document.getElementById("licenseBlock")
+            contractorIsElectrician.addEventListener("click", () => {
+                if (electrician.hasAttribute("hidden")) {
+                    document.getElementById("electricianNameBlock").after(licenseBlock)
+                    electrician.removeAttribute("hidden")
+                } else {
+                    document.getElementById("contractorNameBlock").after(licenseBlock)
+                    electrician.setAttribute("hidden", "true")
+                }
+            })
+        </script>
+
+        <!-- Interconnection Service Block -->
+        <div id="facility" class="mb-5">
+            <h3 class="mb-3">Interconnection Service Information</h3>
+
+            <div class="row mb-3">
+                <div class="col-3">
+                    <label for="" class="form-label">Member Account Number</label>
+                    <input type="text" class="form-control" id="" name="" value="">
+                </div>
+                <div class="col-5">
+                    <label for="" class="form-label">Meter ID</label>
+                    <input type="text" class="form-control" id="" name="" value="">
+                </div>
+            </div>
+
+            <fieldset>
+                <legend class="col-form-label pt-0 pb-0 mb-2">Service Address</legend>
+                <div class="row mb-2">
+                    <div class="col-6">
+                        <input type="text" class="form-control" id="addressService" name="Address (Service)" value="{{default['Address (Service)']}}" placeholder="Street Address" aria-label="street address">
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-6">
+                        <input type="text" class="form-control" id="address2Service" name="Address 2 (Service)" value="{{default['Address 2 (Service)']}}" placeholder="Address Line 2" aria-label="address line 2">
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-3">
+                        <input type="text" class="form-control" id="cityService" name="City (Service)" value="{{default['City (Service)']}}" placeholder="City" aria-label="city">
                     </div>
                     <div class="col-3">
-                        <select class="form-select" id="countryElectrical" name="Country (Electrical)" aria-label="country">
-                            <option value="United States" selected>United States</option>
-                        </select>
+                        <input type="text" class="form-control" id="stateService" name="State (Service)" value="{{default['State (Service)']}}" placeholder="State / Province / Region" aria-label="state, province, or region">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-3">
+                        <input type="text" class="form-control" id="zipService" name="Zip (Service)" value="{{default['Zip (Service)']}}" placeholder="Postal / Zip Code" aria-label="postal or zip code">
                     </div>
                 </div>
             </fieldset>
 
             <div class="row mb-2">
-                <div class="col-4">
-                    <label for="primaryPhoneElectrical" class="form-label">Electrical Contractor Primary Phone</label>
-                    <input type="tel" class="form-control" id="primaryPhoneElectrical" name="Phone (Primary, Electrical)" value="{{default['Phone (Primary, Electrical)']}}">
-                </div>
-                <div class="col-4">
-                    <label for="secondaryPhoneElectrical" class="form-label">Electrical Contractor Alternate Phone</label>
-                    <input type="tel" class="form-control" id="secondaryPhoneElectrical" name="Phone (Secondary, Electrical)" value="{{default['Phone (Secondary, Electrical)']}}">
-                </div>
-            </div>
-
-            <div class="row mb-2">
-                <div class="col-4">
-                    <label for="emailElectrical" class="form-label">Electrical Contractor Email</label>
-                    <input type="email" class="form-control" id="emailElectrical" name="Email (Electrical)" value="{{default['Email (Electrical)']}}" onchange="ensureMemberIsNotContractor(this.id)">
-                </div>
-                <div class="col-4">
-                    <label for="faxElectrical" class="form-label">Electrical Contractor Fax</label>
-                    <input type="tel" class="form-control" id="faxElectrical" name="Fax (Electrical)" value="{{default['Fax (Electrical)']}}">
-                </div>
-            </div>
-        </div>
-
-        <div id="facility" class="mb-5">
-            <h3 class="mb-3">Distributed Generation Facility</h3>
-
-            <div class="row mb-2">
-                <div class="col-6">
-                    <label for="" class="form-label">DG Facility Street Address</label>
-                    <input type="text" class="form-control" id="" name="" value="">
-                </div>
                 <div class="col-3">
-                    <label for="" class="form-label">Member Account Number</label>
-                    <input type="text" class="form-control" id="" name="" value="">
-                </div>
-            </div>
-
-            <div class="row mb-2">
-                <div class="col-3">
-                    <label for="" class="form-label">DG Facility City</label>
-                    <input type="text" class="form-control" id="" name="" value="">
-                </div>
-                <div class="col-3">
-                    <label for="" class="form-label">DG Facility State</label>
-                    <input type="text" class="form-control" id="" name="" value="">
-                </div>
-                <div class="col-3">
-                    <label for="" class="form-label">DG Facility Zip</label>
-                    <input type="text" class="form-control" id="" name="" value="">
-                </div>
-            </div>
-
-            <div class="row mb-2">
-                <div class="col-3">
-                    <label for="" class="form-label">Inverter Manufacturer - Model</label>
-                    <select class="form-select" id="" name="">
+                    <label for="inverter" class="form-label">Inverter Manufacturer & Model</label>
+                    <select class="form-select" id="inverter">
+                        <option hidden selected disabled>--- Select Inverter ---</option>
                         <optgroup label="SolarEdge">
                             <option value="SE3000H-US">SE3000H-US</option>
                             <option value="SE3800H-US">SE3800H-US</option>
@@ -437,6 +443,49 @@
                         <option value="Other">Other</option>
                     </select>
                 </div>
+            </div>
+
+            <div id="inverterOther" hidden>
+                <div class="row mb-2">
+                    <div class="col-3">
+                        <input type="text" class="form-control" id="inverterManufacturer" name="Inverter Manufacturer" value="" placeholder="Manufacturer" aria-label="inverter manufacturer">
+                    </div>
+                    <div class="col-3">
+                        <input type="text" class="form-control" id="inverterModel" name="Inverter Model" value="" placeholder="Model" aria-label="inverter model">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label for="inverterSpec" class="col-form-label col-2">Specification Sheet</label>
+                    <div class="col-4">
+                        <input type="file" class="form-control" id="inverterSpec" name="Inverter Specification" placeholder="Specification Sheet" aria-label="inverter specification sheet">
+                    </div>
+                </div>
+            </div>
+
+            <script type="text/javascript">
+                const inverter = document.getElementById("inverter")
+
+                inverter.addEventListener("change", () => {
+                    const selected = inverter[inverter.selectedIndex]
+                    const optgroup = selected.parentNode.label
+
+                    const inverterManufacturer = document.getElementById("inverterManufacturer")
+                    const inverterModel = document.getElementById("inverterModel")
+                    const inverterOther = document.getElementById("inverterOther")
+
+                    if (selected.value == "Other") {
+                        inverterManufacturer.value = ""
+                        inverterModel.value = ""
+                        inverterOther.removeAttribute("hidden")
+                    } else {
+                        inverterManufacturer.value = optgroup
+                        inverterModel.value = selected.value
+                        inverterOther.setAttribute("hidden", "true")
+                    }
+                })
+            </script>
+
+            <div class="row mb-3">
                 <div class="col-2">
                     <label for="" class="form-label">AC Volts</label>
                     <select class="form-select" id="" name="" aria-label="">
@@ -445,47 +494,48 @@
                         <option value="Third Choice">Third Choice</option>
                     </select>
                 </div>
-                <div class="col-1">
+                <div class="col-2">
                     <label for="" class="form-label">kW (AC)</label>
                     <input type="text" class="form-control" id="" name="" value="">
-                </div>
-                <fieldset class="col-3">
-                    <legend class="col-form-label pt-2">Is the inverter lab-certified?</legend>
-                    <div class="form-check form-check-inline ms-1">
-                        <input type="radio" class="form-check-input" id="" name="" value="">
-                        <label for="" class="form-check-label">Yes</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input type="radio" class="form-check-input" id="" name="" value="">
-                        <label for="" class="form-check-label">No</label>
-                    </div>
-                </fieldset>
-            </div>
-
-            <!-- manufacturer/model text if "other" selected -->
-
-            <div class="row mb-2">
-                <div class="col-3">
-                    <label for="" class="form-label">Energy Source</label>
-                    <select class="form-select" id="" name="" aria-label="">
-                        <option value="Solar" selected>Solar</option>
-                    </select>
                 </div>
                 <div class="col-2">
                     <label for="" class="form-label">Total kW (DC)</label>
                     <input type="text" class="form-control" id="" name="" value="">
                 </div>
+            </div>
+
+            <div class="row mb-3">
                 <div class="col-2">
                     <label for="" class="form-label">Number of panels</label>
                     <input type="text" class="form-control" id="" name="" value="">
                 </div>
+
+                <fieldset class="col-3">
+                    <legend class="col-form-label pt-2">Is the equipment UL1741 listed?</legend>
+                    <div class="form-check form-check-inline ms-1">
+                        <input type="radio" class="form-check-input" id="yesListedRadio" name="UL1741 listed" value="Yes" {% if (default['UL1741 listed'] == 'Yes') %} checked="True" {% endif %}>
+                        <label for="yesListedRadio" class="form-check-label">Yes</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input type="radio" class="form-check-input" id="noListedRadio" name="UL1741 listed" value="No" {% if (default['UL1741 listed'] == 'No') %} checked="True" {% endif %}>
+                        <label for="noListedRadio" class="form-check-label">No</label>
+                    </div>
+                </fieldset>
             </div>
 
-            <div class="row mb-2">
+            <div class="row mb-3">
                 <div class="col-3">
-                    <label for="" class="form-label">Commissioning Date</label>
-                    <input type="date" class="form-control" id="" name="" value="" min="">
+                    <label for="installDateEstimated" class="form-label">Estimated Install Date</label>
+                    <input type="date" class="form-control" id="installDateEstimated" name="Estimated Install Date" value="{{default['Estimated Install Date']}}" min="">
                 </div>
+
+                <div class="col-3">
+                    <label for="inServiceDateEstimated" class="form-label">Estimated In-Service Date</label>
+                    <input type="date" class="form-control" id="inServiceDateEstimated" name="Estimated In-Service Date" value="{{default['Estimated In-Service Date']}}" min="">
+                </div>
+            </div>
+
+            <div class="row mb-3">
                 <fieldset class="col-6">
                     <legend class="col-form-label pt-2">Is the interconnection Member requesting Net Metering?</legend>
                     <div class="form-check form-check-inline ms-1">
