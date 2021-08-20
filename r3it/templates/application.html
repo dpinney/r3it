@@ -95,8 +95,9 @@
                     <div class="col-3">
                         <input type="text" class="form-control" id="cityMember" name="City (Member)" value="{{default['City (Member)']}}" placeholder="City" aria-label="city">
                     </div>
-                    <div class="col-3">
-                        <input type="text" class="form-control" id="stateMember" name="State (Member)" value="{{default['State (Member)']}}" placeholder="State / Province / Region" aria-label="state, province, or region">
+                    <div class="col-2">
+                        <!-- <input type="text" class="form-control" id="stateMember" name="State (Member)" value="{{default['State (Member)']}}" placeholder="State / Province / Region" aria-label="state, province, or region"> -->
+                        {{stateInput('Member')}}
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -161,8 +162,9 @@
                     <div class="col-3">
                         <input type="text" class="form-control" id="cityAltContact" name="City (Alt Contact)" value="{{default['City (Alt Contact)']}}" placeholder="City" aria-label="city">
                     </div>
-                    <div class="col-3">
-                        <input type="text" class="form-control" id="stateAltContact" name="State (Alt Contact)" value="{{default['State (Alt Contact)']}}" placeholder="State / Province / Region" aria-label="state, province, or region">
+                    <div class="col-2">
+                        <!-- <input type="text" class="form-control" id="stateAltContact" name="State (Alt Contact)" value="{{default['State (Alt Contact)']}}" placeholder="State / Province / Region" aria-label="state, province, or region"> -->
+                        {{stateInput('Alt Contact')}}
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -240,8 +242,9 @@
                     <div class="col-3">
                         <input type="text" class="form-control" id="cityContractor" name="City (Contractor)" value="{{default['City (Contractor)']}}" placeholder="City" aria-label="city">
                     </div>
-                    <div class="col-3">
-                        <input type="text" class="form-control" id="stateContractor" name="State (Contractor)" value="{{default['State (Contractor)']}}" placeholder="State / Province / Region" aria-label="state, province, or region">
+                    <div class="col-2">
+                        <!-- <input type="text" class="form-control" id="stateContractor" name="State (Contractor)" value="{{default['State (Contractor)']}}" placeholder="State / Province / Region" aria-label="state, province, or region"> -->
+                        {{stateInput("Contractor")}}
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -326,8 +329,9 @@
                     <div class="col-3">
                         <input type="text" class="form-control" id="cityElectrician" name="City (Electrician)" value="{{default['City (Electrician)']}}" placeholder="City" aria-label="city">
                     </div>
-                    <div class="col-3">
-                        <input type="text" class="form-control" id="stateElectrician" name="State (Electrician)" value="{{default['State (Electrician)']}}" placeholder="State / Province / Region" aria-label="state, province, or region">
+                    <div class="col-2">
+                        <!-- <input type="text" class="form-control" id="stateElectrician" name="State (Electrician)" value="{{default['State (Electrician)']}}" placeholder="State / Province / Region" aria-label="state, province, or region"> -->
+                        {{stateInput('Electrician')}}
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -407,8 +411,9 @@
                     <div class="col-3">
                         <input type="text" class="form-control" id="cityService" name="City (Service)" value="{{default['City (Service)']}}" placeholder="City" aria-label="city">
                     </div>
-                    <div class="col-3">
-                        <input type="text" class="form-control" id="stateService" name="State (Service)" value="{{default['State (Service)']}}" placeholder="State / Province / Region" aria-label="state, province, or region">
+                    <div class="col-2">
+                        <!-- <input type="text" class="form-control" id="stateService" name="State (Service)" value="{{default['State (Service)']}}" placeholder="State / Province / Region" aria-label="state, province, or region"> -->
+                        {{stateInput('Service')}}
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -462,6 +467,7 @@
                 </div>
             </div>
 
+            <!-- Script to show/hide manufacturer and model fields based on dropdown -->
             <script type="text/javascript">
                 const inverter = document.getElementById("inverter")
 
@@ -962,3 +968,12 @@
 
     </form>
 {% endblock %}
+
+{% macro stateInput(label) %}
+<select class="form-select" id="state{{label.replace(' ', '')}}" name="State ({{label}})" aria-label="{{label}} state">
+    <option hidden selected disabled>--- State ---</option>
+    {% for state in states %}
+        <option value="{{state}}">{{state}}</option>
+    {% endfor %}
+</select>
+{% endmacro %}
