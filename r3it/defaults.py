@@ -177,6 +177,7 @@ appFormDefaults = {
     "Nameplate Rating (kVA)": "",
     "Tariff": "Net metering April kWh reset",
     "Installation Type": "Contractor and Electrician",
+
     "Contractor": "",
     "Contact Person (Contractor)": "",
     "Address (Contractor)": "",
@@ -187,6 +188,7 @@ appFormDefaults = {
     "Secondary Telephone (Contractor)": "",
     "Email (Contractor)": "",
     "Docket Num": "",
+
     "Electrician": "",
     "Contact Person (Electrician)": "",
     "Address (Electrician)": "",
@@ -196,6 +198,7 @@ appFormDefaults = {
     "Primary Telephone (Electrician)": "",
     "Secondary Telephone (Electrician)": "",
     "Email (Electrician)": "",
+
     "Address (Billing)": "",
     "City (Billing)": "",
     "State (Billing)": "",
@@ -203,6 +206,7 @@ appFormDefaults = {
     "Telephone (Primary, Member)": "",
     "Telephone (Secondary, Member)": "",
     "Email (Member)": "",
+
     "Utility": "",
     "Account Number": "",
     "Meter ID": "",
@@ -215,12 +219,27 @@ appFormDefaults = {
     "UL1741 listed": "Yes",
     "Estimated Install Date": "", #YYYY-MM-DD
     "Estimated In-Service Date": "", #YYYY-MM-DD
+
     "Owner": "",
     "Address (Service)": "",
     "City (Service)": "",
     "State (Service)": "",
     "Zip (Service)": ""
 }
+
+# state abbreviations for form dropdowns
+states = [
+    "AL", "AK", "AZ", "AR", "CA", 
+    "CO", "CT", "DE", "FL", "GA", 
+    "HI", "ID", "IL", "IN", "IA", 
+    "KS", "KY", "LA", "ME", "MD", 
+    "MA", "MI", "MN", "MS", "MO", 
+    "MT", "NE", "NV", "NH", "NJ", 
+    "NM", "NY", "NC", "ND", "OH", 
+    "OK", "OR", "PA", "RI", "SC", 
+    "SD", "TN", "TX", "UT", "VT", 
+    "VA", "WA", "WV", "WI", "WY",
+]
 
 # gridlabd power flow sim params ----------------------------------------------
 
