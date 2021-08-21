@@ -96,8 +96,12 @@
                         <input type="text" class="form-control" id="cityMember" name="City (Member)" value="{{default['City (Member)']}}" placeholder="City" aria-label="city">
                     </div>
                     <div class="col-2">
-                        <!-- <input type="text" class="form-control" id="stateMember" name="State (Member)" value="{{default['State (Member)']}}" placeholder="State / Province / Region" aria-label="state, province, or region"> -->
-                        {{stateInput('Member')}}
+                        <select class="form-select" id="stateMember" name="State (Member)" aria-label="member state">
+                            <option hidden selected disabled>--- State ---</option>
+                            {% for state in states %}
+                                <option value="{{state}}" {% if (state == default['State (Member)']) %} selected="true" {% endif %}>{{state}}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -163,8 +167,12 @@
                         <input type="text" class="form-control" id="cityAltContact" name="City (Alt Contact)" value="{{default['City (Alt Contact)']}}" placeholder="City" aria-label="city">
                     </div>
                     <div class="col-2">
-                        <!-- <input type="text" class="form-control" id="stateAltContact" name="State (Alt Contact)" value="{{default['State (Alt Contact)']}}" placeholder="State / Province / Region" aria-label="state, province, or region"> -->
-                        {{stateInput('Alt Contact')}}
+                        <select class="form-select" id="stateAltContact" name="State (Alt Contact)" aria-label="alt contact state">
+                            <option hidden selected disabled>--- State ---</option>
+                            {% for state in states %}
+                                <option value="{{state}}" {% if (state == default['State (Alt Contact)']) %} selected="true" {% endif %}>{{state}}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -243,8 +251,12 @@
                         <input type="text" class="form-control" id="cityContractor" name="City (Contractor)" value="{{default['City (Contractor)']}}" placeholder="City" aria-label="city">
                     </div>
                     <div class="col-2">
-                        <!-- <input type="text" class="form-control" id="stateContractor" name="State (Contractor)" value="{{default['State (Contractor)']}}" placeholder="State / Province / Region" aria-label="state, province, or region"> -->
-                        {{stateInput("Contractor")}}
+                        <select class="form-select" id="stateContractor" name="State (Contractor)" aria-label="contractor state">
+                            <option hidden selected disabled>--- State ---</option>
+                            {% for state in states %}
+                                <option value="{{state}}" {% if (state == default['State (Contractor)']) %} selected="true" {% endif %}>{{state}}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -330,8 +342,12 @@
                         <input type="text" class="form-control" id="cityElectrician" name="City (Electrician)" value="{{default['City (Electrician)']}}" placeholder="City" aria-label="city">
                     </div>
                     <div class="col-2">
-                        <!-- <input type="text" class="form-control" id="stateElectrician" name="State (Electrician)" value="{{default['State (Electrician)']}}" placeholder="State / Province / Region" aria-label="state, province, or region"> -->
-                        {{stateInput('Electrician')}}
+                        <select class="form-select" id="stateElectrician" name="State (Electrician)" aria-label="electrician state">
+                            <option hidden selected disabled>--- State ---</option>
+                            {% for state in states %}
+                                <option value="{{state}}" {% if (state == default['State (Electrician)']) %} selected="true" {% endif %}>{{state}}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -412,8 +428,12 @@
                         <input type="text" class="form-control" id="cityService" name="City (Service)" value="{{default['City (Service)']}}" placeholder="City" aria-label="city">
                     </div>
                     <div class="col-2">
-                        <!-- <input type="text" class="form-control" id="stateService" name="State (Service)" value="{{default['State (Service)']}}" placeholder="State / Province / Region" aria-label="state, province, or region"> -->
-                        {{stateInput('Service')}}
+                        <select class="form-select" id="stateService" name="State (Service)" aria-label="service location state">
+                            <option hidden selected disabled>--- State ---</option>
+                            {% for state in states %}
+                                <option value="{{state}}" {% if (state == default['State (Service)']) %} selected="true" {% endif %}>{{state}}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -915,12 +935,3 @@
         </div>
     </form>
 {% endblock %}
-
-{% macro stateInput(label) %}
-<select class="form-select" id="state{{label.replace(' ', '')}}" name="State ({{label}})" aria-label="{{label}} state">
-    <option hidden selected disabled>--- State ---</option>
-    {% for state in states %}
-        <option value="{{state}}">{{state}}</option>
-    {% endfor %}
-</select>
-{% endmacro %}
