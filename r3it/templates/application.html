@@ -449,23 +449,13 @@
                     <div class="col-3">
                         <select class="form-select" id="inverter" aria-label="inverter manufacturer and model">
                             <option hidden selected disabled>--- Select Inverter ---</option>
-                            <optgroup label="SolarEdge">
-                                <option value="SE3000H-US">SE3000H-US</option>
-                                <option value="SE3800H-US">SE3800H-US</option>
-                                <option value="SE5000H-US">SE5000H-US</option>
-                                <option value="SE6000H-US">SE6000H-US</option>
-                                <option value="SE7600H-US">SE7600H-US</option>
-                                <option value="SE10000H-US">SE10000H-US</option>
-                                <option value="SE11400H-US">SE11400H-US</option>
-                            </optgroup>
-                            <optgroup label="Enphase Microinverters">
-                                <option value="M250">M250</option>
-                                <option value="IQ7+">IQ7+</option>
-                            </optgroup>
-                            <optgroup label="AP Systems">
-                                <option value="YC600">YC600</option>
-                                <option value="YC1000-3 (3 PH)">YC1000-3 (3 PH)</option>
-                            </optgroup>
+                            {% for manufacturer in inverters %}
+                                <optgroup label="{{manufacturer}}">
+                                    {% for model in inverters[manufacturer] %}
+                                        <option value="{{model}}" {% if (default['Inverter Model'] == model) %} selected="true" {% endif %}>{{model}}</option>
+                                    {% endfor %}
+                                </optgroup>
+                            {% endfor %}
                             <option value="Other">Other</option>
                         </select>
                     </div>
@@ -474,10 +464,10 @@
                 <div id="inverterOther" hidden>
                     <div class="row mb-2">
                         <div class="col-3">
-                            <input type="text" class="form-control" id="inverterManufacturer" name="Inverter Manufacturer" value="" placeholder="Manufacturer" aria-label="inverter manufacturer">
+                            <input type="text" class="form-control" id="inverterManufacturer" name="Inverter Manufacturer" value="{{default['Inverter Manufacturer']}}" placeholder="Manufacturer" aria-label="inverter manufacturer">
                         </div>
                         <div class="col-3">
-                            <input type="text" class="form-control" id="inverterModel" name="Inverter Model" value="" placeholder="Model" aria-label="inverter model">
+                            <input type="text" class="form-control" id="inverterModel" name="Inverter Model" value="{{default['Inverter Model']}}" placeholder="Model" aria-label="inverter model">
                         </div>
                     </div>
                     <div class="row mb-3">
@@ -492,14 +482,19 @@
             <!-- Script to show/hide manufacturer and model fields based on dropdown -->
             <script type="text/javascript">
                 const inverter = document.getElementById("inverter")
+                const inverterManufacturer = document.getElementById("inverterManufacturer")
+                const inverterModel = document.getElementById("inverterModel")
+                const inverterOther = document.getElementById("inverterOther")
+
+                // populates inverter field for saved inverter not in dropdown
+                if ((inverterManufacturer.value || inverterModel.value) && inverter.selectedIndex == 0) {
+                    inverter.value = "Other"
+                    inverterOther.removeAttribute("hidden")
+                }
 
                 inverter.addEventListener("change", () => {
                     const selected = inverter[inverter.selectedIndex]
                     const optgroup = selected.parentNode.label
-
-                    const inverterManufacturer = document.getElementById("inverterManufacturer")
-                    const inverterModel = document.getElementById("inverterModel")
-                    const inverterOther = document.getElementById("inverterOther")
 
                     if (selected.value == "Other") {
                         inverterManufacturer.value = ""
