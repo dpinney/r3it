@@ -677,9 +677,24 @@
             <button type="submit" class="btn btn-dark">Submit Application</button>
         </div>
 
+        <!-- Script to mask tel fields -->
+        <script src="https://unpkg.com/vanilla-masker@1.1.1/lib/vanilla-masker.js"></script>
+        <script type="text/javascript">
+            const tels = document.querySelectorAll("input[type='tel']")
+            Array.prototype.forEach.call(tels, function (tel) {
+                tel.placeholder = "(xxx) xxx - xxxx"
+                VMasker(tel).maskPattern("(999) 999 - 9999")
+            })
+        </script>
+
         <!-- Cleanup script on form submission -->
         <script type="text/javascript">
-            async function submitForm() {
+            function submitForm() {
+                // unmasks tel inputs
+                const tels = document.querySelectorAll("input[type='tel']")
+                Array.prototype.forEach.call(tels, function (tel) {
+                    VMasker(tel).unMask()
+                })
                 // removes alt contact fields if not shown
                 const useAltContact = document.getElementById("useAltContact")
                 if (!useAltContact.checked) {

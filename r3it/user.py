@@ -92,7 +92,7 @@ def getMockData(dataType):
     elif dataType == 'zip':
         mockData = '{}'.format(random.choice(zips))
     elif dataType == 'phone':
-        mockData = '({}{}) {}{} - {}'.format(
+        mockData = '{}{}{}{}{}'.format(
             random.choice(range(2,9)),
             random.choice(range(10,99)),
             random.choice(range(2,9)),
