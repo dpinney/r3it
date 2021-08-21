@@ -674,8 +674,23 @@
                     </div>
                 </div>
             </fieldset>
-            <button type="submit" class="btn btn-dark">Submit Application</button>
+            <button type="submit" class="btn btn-dark" id="submit">
+                <span class="spinner-border spinner-border-sm me-2" id="submitSpinner" role="status" aria-hidden="true" hidden></span>
+                Submit Application
+            </button>
         </div>
+
+        <!-- Script to display submit button spinner -->
+        <script type="text/javascript">
+            const submitSpinner = document.getElementById("submitSpinner")
+            const submitButton = document.getElementById("submit")
+            submitButton.addEventListener("click", () => {
+                if (submitSpinner.hasAttribute("hidden")) {
+                    submitSpinner.removeAttribute("hidden")
+                }
+                submitButton.childNodes[2].textContent = "Submitting Application..."
+            })
+        </script>
 
         <!-- Script to mask tel fields -->
         <script src="https://unpkg.com/vanilla-masker@1.1.1/lib/vanilla-masker.js"></script>
