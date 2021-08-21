@@ -224,7 +224,7 @@
                     <form action="{{'/update-status/' + data['ID'] + '/Withdrawn'}}">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancel">Cancel</button>
                         <button type="submit" class="btn btn-danger" id="withdraw">
-                            <span class="spinner-border spinner-border-sm" id="withdrawSpinner" role="status" aria-hidden="true" hidden></span>
+                            <span class="spinner-border spinner-border-sm me-2" id="withdrawSpinner" role="status" aria-hidden="true" hidden></span>
                             Withdraw
                         </button>
                     </form>
@@ -233,7 +233,7 @@
         </div>
     </div>
 
-    <!-- Custom script to display withdraw button spinner -->
+    <!-- Script to display withdraw button spinner -->
     <script type="text/javascript">
         const withdrawSpinner = document.getElementById("withdrawSpinner")
         const withdrawButton = document.getElementById("withdraw")
@@ -241,6 +241,7 @@
             if (withdrawSpinner.hasAttribute("hidden")) {
                 withdrawSpinner.removeAttribute("hidden")
             }
+            withdrawButton.childNodes[2].textContent = "Withdrawing..."
         })
     </script>
 
