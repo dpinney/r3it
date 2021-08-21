@@ -248,6 +248,27 @@ appFormDefaults = {
     "Owner": "",
 }
 
+# preapproved inverter manufacturers and models
+inverters = {
+    'SolarEdge' : [
+        'SE3000H-US',
+        'SE3800H-US',
+        'SE5000H-US',
+        'SE6000H-US',
+        'SE7600H-US',
+        'SE10000H-US',
+        'SE11400H-US'
+    ],
+    'Enphase Microinverters' : [
+        'M250',
+        'IQ7+'
+    ],
+    'AP Systems' : [
+        'YC600',
+        'YC1000-3 (3 PH)'
+    ]
+}
+
 # state abbreviations for form dropdowns
 states = [
     "AL", "AK", "AZ", "AR", "CA", 
