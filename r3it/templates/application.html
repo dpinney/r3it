@@ -66,7 +66,7 @@
 
     <!-- Bootstrap application form -->
     <h1 class="mb-4">New Interconnection Application</h1>
-    <form id="application" action="{{formAction}}" method='post'>
+    <form id="application" action="{{formAction}}" method='post' onsubmit="submitForm()">
 
         <!-- Member Block -->
         <div id="member" class="mb-5">
@@ -142,7 +142,7 @@
             <div class="row mb-3">
                 <div class="col-6">
                     <label for="nameAltContact" class="form-label">Contact Name</label>
-                    <input type="text" class="form-control" id="nameAltContact" name="Name (Alt Contact)">
+                    <input type="text" class="form-control" id="nameAltContact" name="Name (Alt Contact)" value="{{default['Name (Alt Contact)']}}">
                 </div>
             </div>
 
@@ -386,12 +386,12 @@
 
             <div class="row mb-3">
                 <div class="col-3">
-                    <label for="" class="form-label">Member Account Number</label>
-                    <input type="text" class="form-control" id="" name="" value="">
+                    <label for="accountNumber" class="form-label">Member Account Number</label>
+                    <input type="text" class="form-control" id="accountNumber" name="Account Number" value="{{default['Account Number']}}">
                 </div>
                 <div class="col-5">
-                    <label for="" class="form-label">Meter ID</label>
-                    <input type="text" class="form-control" id="" name="" value="">
+                    <label for="meterID" class="form-label">Meter ID</label>
+                    <input type="text" class="form-control" id="meterID" name="Meter ID" value="{{default['Meter ID']}}">
                 </div>
             </div>
 
@@ -491,7 +491,7 @@
                 })
             </script>
 
-            <div class="row mb-3">
+            <!-- <div class="row mb-3">
                 <div class="col-2">
                     <label for="" class="form-label">AC Volts</label>
                     <select class="form-select" id="" name="" aria-label="">
@@ -508,13 +508,28 @@
                     <label for="" class="form-label">Total kW (DC)</label>
                     <input type="text" class="form-control" id="" name="" value="">
                 </div>
-            </div>
+            </div> -->
+
+            <fieldset>
+                <legend class="col-form-label pt-0 pb-0 mb-2">Nameplate Ratings</legend>
+                <div class="row mb-3">
+                    <div class="col-2">
+                        <input type="text" class="form-control" id="nameplateRatingkW" name="Nameplate Rating (kW)" value="{{default['Nameplate Rating (kW)']}}" placeholder="kW-AC" aria-label="nameplate rating kilowatts AC">
+                    </div>
+                    <div class="col-2">
+                        <input type="text" class="form-control" id="nameplateRatingkVA" name="Nameplate Rating (kVA)" value="{{default['Nameplate Rating (kVA)']}}" placeholder="kVA-AC" aria-label="nameplate rating kilovolt-amperes AC">
+                    </div>
+                    <div class="col-2">
+                        <input type="text" class="form-control" id="nameplateRatingV" name="Nameplate Rating (V)" value="{{default['Nameplate Rating (V)']}}" placeholder="V-AC" aria-label="nameplate rating volts AC">
+                    </div>
+                </div>
+            </fieldset>
 
             <div class="row mb-3">
-                <div class="col-2">
+                <!-- <div class="col-2">
                     <label for="" class="form-label">Number of panels</label>
                     <input type="text" class="form-control" id="" name="" value="">
-                </div>
+                </div> -->
 
                 <fieldset class="col-3">
                     <legend class="col-form-label pt-2">Is the equipment UL1741 listed?</legend>
@@ -542,19 +557,127 @@
             </div>
 
             <div class="row mb-3">
-                <fieldset class="col-6">
-                    <legend class="col-form-label pt-2">Is the interconnection Member requesting Net Metering?</legend>
-                    <div class="form-check form-check-inline ms-1">
-                        <input type="radio" class="form-check-input" id="" name="" value="">
-                        <label for="" class="form-check-label">Yes</label>
+                <fieldset class="col-3" id="tariffType">
+                    <legend class="col-form-label pt-2">Tariff Type</legend>
+                    <div class="form-check ms-1">
+                        <input type="radio" class="form-check-input" id="netMeteringRadio" name="Tariff" value="Net metering" 
+                            
+                        >
+                        <label for="netMeteringRadio" class="form-check-label">Net metering</label>
                     </div>
-                    <div class="form-check form-check-inline">
-                        <input type="radio" class="form-check-input" id="" name="" value="">
-                        <label for="" class="form-check-label">No</label>
+                    <div class="form-check ms-1">
+                        <input type="radio" class="form-check-input" id="valueOfEnergyRadio" name="Tariff" value="Value of energy" 
+                            
+                        >
+                        <label for="valueOfEnergyRadio" class="form-check-label">Value of energy</label>
                     </div>
                 </fieldset>
+                <!-- <fieldset class="col-3" id="netMeteringResetMonth">
+                    <legend class="col-form-label pt-2">Net Metering kWh reset month</legend>
+                    <div class="form-check form-check-inline ms-1">
+                        <input type="radio" class="form-check-input" id="aprilRadio" name="Reset month" value="April kWh reset" 
+                            
+                        >
+                        <label for="aprilRadio" class="form-check-label">April</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input type="radio" class="form-check-input" id="novemberRadio" name="Reset month" value="November kWh reset" 
+                            
+                        >
+                        <label for="novemberRadio" class="form-check-label">November</label>
+                    </div>
+                </fieldset> -->
             </div>
+
+            <!-- Script to remove or recreate April/Nov radio buttons on tariff button clicks -->
+            <!-- Radio buttons could be hidden but not unchecked...bug? So remove them entirely to prevent submission of month with value of energy -->
+            <script type="text/javascript">
+                const tariffType = document.getElementById("tariffType")
+                const netMeteringRadio = document.getElementById("netMeteringRadio")
+                const valueOfEnergyRadio = document.getElementById("valueOfEnergyRadio")
+
+                netMeteringRadio.addEventListener("click", () => {
+                    let netMeteringResetMonth = document.querySelector("#netMeteringResetMonth")
+                    if (!netMeteringResetMonth) {
+                        netMeteringResetMonth = document.createElement("fieldset")
+                        netMeteringResetMonth.className = "col-3"
+                        netMeteringResetMonth.id = "netMeteringResetMonth"
+                        
+                        const legend = document.createElement("legend")
+                        legend.className = "col-form-label pt-2"
+                        legend.textContent = "Net Metering kWh reset month"
+                        netMeteringResetMonth.appendChild(legend)
+                        
+                        const aprilGroup = document.createElement("div")
+                        aprilGroup.className = "form-check form-check-inline ms-1"
+                        const aprilInput = document.createElement("input")
+                        aprilInput.type = "radio"
+                        aprilInput.className = "form-check-input"
+                        aprilInput.id = "aprilRadio"
+                        aprilInput.name = "Reset month"
+                        aprilInput.value = "April kWh reset"
+                        aprilGroup.appendChild(aprilInput)
+                        const aprilLabel = document.createElement("label")
+                        aprilLabel.htmlFor = "aprilRadio"
+                        aprilLabel.className = "form-check-label"
+                        aprilLabel.textContent = "April"
+                        aprilGroup.appendChild(aprilLabel)
+                        netMeteringResetMonth.appendChild(aprilGroup)
+                        
+                        const novemberGroup = document.createElement("div")
+                        novemberGroup.className = "form-check form-check-inline"
+                        const novemberInput = document.createElement("input")
+                        novemberInput.type = "radio"
+                        novemberInput.className = "form-check-input"
+                        novemberInput.id = "novemberRadio"
+                        novemberInput.name = "Reset month"
+                        novemberInput.value = "November kWh reset"
+                        novemberGroup.appendChild(novemberInput)
+                        const novemberLabel = document.createElement("label")
+                        novemberLabel.htmlFor = "novemberRadio"
+                        novemberLabel.className = "form-check-label"
+                        novemberLabel.textContent = "November"
+                        novemberGroup.appendChild(novemberLabel)
+                        netMeteringResetMonth.appendChild(novemberGroup)
+
+                        tariffType.after(netMeteringResetMonth)
+                    }
+                })
+                valueOfEnergyRadio.addEventListener("click", () => {
+                    const netMeteringResetMonth = document.querySelector("#netMeteringResetMonth")
+                    if (netMeteringResetMonth) {
+                        netMeteringResetMonth.remove()
+                    }
+                })
+            </script>
+            
         </div>
+
+        <!-- Cleanup script on form submission -->
+        <script type="text/javascript">
+            async function submitForm() {
+                // removes alt contact fields if not shown
+                const useAltContact = document.getElementById("useAltContact")
+                if (!useAltContact.checked) {
+                    document.getElementById("altContact").remove()
+                }
+                // combines tariff and month radio buttons
+                const netMeteringRadio = document.getElementById("netMeteringRadio")
+                if (netMeteringRadio.checked) {
+                    const aprilRadio = document.querySelector("#aprilRadio")
+                    const novemberRadio = document.querySelector("#novemberRadio")
+                    if (aprilRadio.checked) {
+                        netMeteringRadio.value += " " + aprilRadio.value
+                    } else if (novemberRadio.checked) {
+                        netMeteringRadio.value += " " + novemberRadio.value
+                    }
+                    const netMeteringResetMonth = document.querySelector("#netMeteringResetMonth")
+                    if (netMeteringResetMonth) {
+                        netMeteringResetMonth.remove()
+                    }
+                }
+            }
+        </script>
         
         <div class="card">
             <div class="card-body">
@@ -570,7 +693,7 @@
                         value="{{default['Application Name']}}"
                     >
                 </div>
-                <div class="form-group">
+                <!-- <div class="form-group">
                     <h3 class="card-title">Tariff</h3>
                     <div class="form-check">
                         <input 
@@ -611,7 +734,7 @@
                             Value of energy
                         </label>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
 
