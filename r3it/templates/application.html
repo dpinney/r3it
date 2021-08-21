@@ -423,49 +423,51 @@
                 </div>
             </fieldset>
 
-            <div class="row mb-2">
-                <div class="col-3">
-                    <label for="inverter" class="form-label">Inverter Manufacturer & Model</label>
-                    <select class="form-select" id="inverter">
-                        <option hidden selected disabled>--- Select Inverter ---</option>
-                        <optgroup label="SolarEdge">
-                            <option value="SE3000H-US">SE3000H-US</option>
-                            <option value="SE3800H-US">SE3800H-US</option>
-                            <option value="SE5000H-US">SE5000H-US</option>
-                            <option value="SE6000H-US">SE6000H-US</option>
-                            <option value="SE7600H-US">SE7600H-US</option>
-                            <option value="SE10000H-US">SE10000H-US</option>
-                            <option value="SE11400H-US">SE11400H-US</option>
-                        </optgroup>
-                        <optgroup label="Enphase Microinverters">
-                            <option value="M250">M250</option>
-                            <option value="IQ7+">IQ7+</option>
-                        </optgroup>
-                        <optgroup label="AP Systems">
-                            <option value="YC600">YC600</option>
-                            <option value="YC1000-3 (3 PH)">YC1000-3 (3 PH)</option>
-                        </optgroup>
-                        <option value="Other">Other</option>
-                    </select>
-                </div>
-            </div>
-
-            <div id="inverterOther" hidden>
+            <fieldset class="mb-2">
+                <legend class="col-form-label pt-0 pb-0 mb-2">Inverter Manufacturer & Model</legend>
                 <div class="row mb-2">
                     <div class="col-3">
-                        <input type="text" class="form-control" id="inverterManufacturer" name="Inverter Manufacturer" value="" placeholder="Manufacturer" aria-label="inverter manufacturer">
-                    </div>
-                    <div class="col-3">
-                        <input type="text" class="form-control" id="inverterModel" name="Inverter Model" value="" placeholder="Model" aria-label="inverter model">
+                        <select class="form-select" id="inverter" aria-label="inverter manufacturer and model">
+                            <option hidden selected disabled>--- Select Inverter ---</option>
+                            <optgroup label="SolarEdge">
+                                <option value="SE3000H-US">SE3000H-US</option>
+                                <option value="SE3800H-US">SE3800H-US</option>
+                                <option value="SE5000H-US">SE5000H-US</option>
+                                <option value="SE6000H-US">SE6000H-US</option>
+                                <option value="SE7600H-US">SE7600H-US</option>
+                                <option value="SE10000H-US">SE10000H-US</option>
+                                <option value="SE11400H-US">SE11400H-US</option>
+                            </optgroup>
+                            <optgroup label="Enphase Microinverters">
+                                <option value="M250">M250</option>
+                                <option value="IQ7+">IQ7+</option>
+                            </optgroup>
+                            <optgroup label="AP Systems">
+                                <option value="YC600">YC600</option>
+                                <option value="YC1000-3 (3 PH)">YC1000-3 (3 PH)</option>
+                            </optgroup>
+                            <option value="Other">Other</option>
+                        </select>
                     </div>
                 </div>
-                <div class="row mb-3">
-                    <label for="inverterSpec" class="col-form-label col-2">Specification Sheet</label>
-                    <div class="col-4">
-                        <input type="file" class="form-control" id="inverterSpec" name="Inverter Specification" placeholder="Specification Sheet" aria-label="inverter specification sheet">
+    
+                <div id="inverterOther" hidden>
+                    <div class="row mb-2">
+                        <div class="col-3">
+                            <input type="text" class="form-control" id="inverterManufacturer" name="Inverter Manufacturer" value="" placeholder="Manufacturer" aria-label="inverter manufacturer">
+                        </div>
+                        <div class="col-3">
+                            <input type="text" class="form-control" id="inverterModel" name="Inverter Model" value="" placeholder="Model" aria-label="inverter model">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="inverterSpec" class="col-form-label col-2">Specification Sheet</label>
+                        <div class="col-4">
+                            <input type="file" class="form-control" id="inverterSpec" name="Inverter Specification" placeholder="Specification Sheet" aria-label="inverter specification sheet">
+                        </div>
                     </div>
                 </div>
-            </div>
+            </fieldset>
 
             <!-- Script to show/hide manufacturer and model fields based on dropdown -->
             <script type="text/javascript">
@@ -512,7 +514,7 @@
 
             <fieldset>
                 <legend class="col-form-label pt-0 pb-0 mb-2">Nameplate Ratings</legend>
-                <div class="row mb-3">
+                <div class="row mb-2">
                     <div class="col-2">
                         <input type="text" class="form-control" id="nameplateRatingkW" name="Nameplate Rating (kW)" value="{{default['Nameplate Rating (kW)']}}" placeholder="kW-AC" aria-label="nameplate rating kilowatts AC">
                     </div>
@@ -653,6 +655,28 @@
             
         </div>
 
+        <!-- Signature block -->
+        <div id="signature" class="mb-5">
+            <h3 class="mb-3">Terms</h3>
+            <fieldset>
+                <legend class="col-form-label pt-0 pb-0 mb-3 col-8">
+                    By clicking the checkbox and typing their name below, the applicant agrees to provide the Cooperative with any additional information required to complete the interconnection. The applicant shall operate his equipment within the guidelines set forth by the cooperative.
+                </legend>
+                <div class="row mb-3">
+                    <div class="form-check col-4 ms-3">
+                        <input type="checkbox" class="form-check-input" id="agreement" name="Agreement">
+                        <label for="agreement" class="form-check-label">I accept the terms above</label>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-3">
+                        <input type="text" class="form-control" id="signed" name="Signed" placeholder="Your name here" aria-label="signature">
+                    </div>
+                </div>
+            </fieldset>
+            <button type="submit" class="btn btn-dark">Submit Application</button>
+        </div>
+
         <!-- Cleanup script on form submission -->
         <script type="text/javascript">
             async function submitForm() {
@@ -678,65 +702,6 @@
                 }
             }
         </script>
-        
-        <div class="card">
-            <div class="card-body">
-                <div class="form-group">
-                    <h3 class="card-title">
-                        <label for="applicationName">Application Name</label>
-                    </h3>
-                    <input 
-                        class="form-control" 
-                        type="text" 
-                        id="applicationName" 
-                        name="Application Name" 
-                        value="{{default['Application Name']}}"
-                    >
-                </div>
-                <!-- <div class="form-group">
-                    <h3 class="card-title">Tariff</h3>
-                    <div class="form-check">
-                        <input 
-                            class="form-check-input" 
-                            type="radio" 
-                            name="Tariff" 
-                            id="aprilRadio" 
-                            value="Net metering April kWh reset" 
-                            {% if (default['Tariff'] == 'Net metering April kWh reset') %} checked="True" {% endif %}
-                        >
-                        <label class="form-check-label" for="aprilRadio">
-                            Net metering April kWh reset
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <input 
-                            class="form-check-input" 
-                            type="radio" 
-                            name="Tariff" 
-                            id="novemberRadio" 
-                            value="Net metering November kWh reset" 
-                            {% if (default['Tariff'] == 'Net metering November kWh reset') %} checked="True" {% endif %}
-                        >
-                        <label class="form-check-label" for="novemberRadio">
-                            Net metering November kWh reset
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <input 
-                            class="form-check-input" 
-                            type="radio" 
-                            name="Tariff" 
-                            id="valueRadio" 
-                            value="Value of energy" 
-                            {% if (default['Tariff'] == 'Value of energy') %} checked="True" {% endif %}
-                        >
-                        <label class="form-check-label" for="valueRadio">
-                            Value of energy
-                        </label>
-                    </div>
-                </div> -->
-            </div>
-        </div>
 
         <div class="card">
             <div class="card-body">
@@ -787,161 +752,6 @@
                         </label>
                     </div>
                 </div>
-
-                <div class="form-group" id="contractor">
-                    <h3 class="card-title">Contractor Info</h3>
-
-                    <div class="form-group">
-                        <label for="contractorName">Contractor:</label>
-                        <input type="text" class="form-control" id="contractorName" name="Contractor" value="{{default['Contractor']}}" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="contactPersonContractor">Contact Person:</label>
-                        <input type="text" class="form-control" id="contactPersonContractor" name="Contact Person (Contractor)" value="{{default['Contact Person (Contractor)']}}" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="addressContractor">Address:</label>
-                        <input type="text" class="form-control" id="addressContractor" name="Address (Contractor)" value="{{default['Address (Contractor)']}}" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="cityContractor">City:</label>
-                        <input type="text" class="form-control" id="cityContractor" name="City (Contractor)" value="{{default['City (Contractor)']}}" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="stateContractor">State:</label>
-                        <input type="text" class="form-control" id="stateContractor" name="State (Contractor)" value="{{default['State (Contractor)']}}" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="zipContractor">Zip Code:</label>
-                        <input type="text" class="form-control" id="zipContractor" name="Zip (Contractor)" value="{{default['Zip (Contractor)']}}" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="primaryTelephoneContractor">Telephone (Primary):</label>
-                        <input type="text" class="form-control" id="primaryTelephoneContractor" name="Primary Telephone (Contractor)" value="{{default['Primary Telephone (Contractor)']}}" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="secondaryTelephoneContractor">Telephone (Secondary):</label>
-                        <input type="text" class="form-control" id="secondaryTelephoneContractor" name="Secondary Telephone (Contractor)" value="{{default['Secondary Telephone (Contractor)']}}">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="emailContractor">Email Address:</label>
-                        <input type="email" class="form-control" id="emailContractor" name="Email (Contractor)" value="{{default['Email (Contractor)']}}" onchange="ensureMemberIsNotContractor(this.id)" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="docketNum">Docket Number:</label>
-                        <input type="text" class="form-control" id="docketNum" name="Docket Num" value="{{default['Docket Num']}}" required>
-                    </div>
-                </div>
-
-                <div class="form-group" id="electrician">
-                    <h3 class="card-title">Electrician Info</h3>
-                    
-                    <div class="form-group">
-                        <label for="electricianName">Electrician:</label>
-                        <input type="text" class="form-control" id="electricianName" name="Electrician" value="{{default['Electrician']}}" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="contactPersonElectrician">Contact Person:</label>
-                        <input type="text" class="form-control" id="contactPersonElectrician" name="Contact Person (Electrician)" value="{{default['Contact Person (Electrician)']}}" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="addressElectrician">Address:</label>
-                        <input type="text" class="form-control" id="addressElectrician" name="Address (Electrician)" value="{{default['Address (Electrician)']}}" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="cityElectrician">City:</label>
-                        <input type="text" class="form-control" id="cityElectrician" name="City (Electrician)" value="{{default['City (Electrician)']}}" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="stateElectrician">State:</label>
-                        <input type="text" class="form-control" id="stateElectrician" name="State (Electrician)" value="{{default['State (Electrician)']}}" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="zipElectrician">Zip Code:</label>
-                        <input type="text" class="form-control" id="zipElectrician" name="Zip (Electrician)" value="{{default['Zip (Electrician)']}}" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="primaryTelephoneElectrician">Telephone (Primary):</label>
-                        <input type="text" class="form-control" id="primaryTelephoneElectrician" name="Primary Telephone (Electrician)" value="{{default['Primary Telephone (Electrician)']}}" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="secondaryTelephoneElectrician">Telephone (Secondary):</label>
-                        <input type="text" class="form-control" id="secondaryTelephoneElectrician" name="Secondary Telephone (Electrician)" value="{{default['Secondary Telephone (Electrician)']}}">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="emailElectrician">Email Address:</label>
-                        <input type="email" class="form-control" id="emailElectrician" name="Email (Electrician)" value="{{default['Email (Electrician)']}}" required>
-                    </div>
-                </div>
-
-                <div class="form-group" id="member">
-                    <h3 class="card-title">Member Info</h3>
-                
-                    <div class="form-group">
-                        <label for="memberName">Member:</label>
-                        <input type="text" class="form-control" id="memberName" name="Member" value="{{default['Member']}}" required>
-                    </div>
-
-                    <!--Is name vs. contact confusing? How to clarify? Maybe ask for Organization?-->
-                    
-                    <div class="form-group">
-                        <label for="contactPersonMember">Contact Person:</label>
-                        <input type="text" class="form-control" id="contactPersonMember" name="Contact Person (Member)" value="{{default['Contact Person (Member)']}}" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="addressBilling">Address:</label>
-                        <input type="text" class="form-control" id="addressBilling" name="Address (Billing)" value="{{default['Address (Billing)']}}" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="cityBilling">City:</label>
-                        <input type="text" class="form-control" id="cityBilling" name="City (Billing)" value="{{default['City (Billing)']}}" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="stateBilling">State:</label>
-                        <input type="text" class="form-control" id="stateBilling" name="State (Billing)" value="{{default['State (Billing)']}}" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="zipBilling">Zip Code:</label>
-                        <input type="text" class="form-control" id="zipBilling" name="Zip (Billing)" value="{{default['Zip (Billing)']}}" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="primaryTelephoneMember">Telephone (Primary):</label>
-                        <input type="text" class="form-control" id="primaryTelephoneMember" name="Telephone (Primary, Member)" value="{{default['Telephone (Primary, Member)']}}" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="secondaryTelephoneMember">Telephone (Secondary):</label>
-                        <input type="text" class="form-control" id="secondaryTelephoneMember" name="Telephone (Secondary, Member)" value="{{default['Telephone (Secondary, Member)']}}">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="emailMember">Email Address:</label>
-                        <input type="email" class="form-control" id="emailMember" name="Email (Member)" value="{{default['Email (Member)']}}" onchange="ensureMemberIsNotContractor(this.id)" required>
-                    </div>
-                </div>
-
             </div>
         </div>
 
@@ -1073,22 +883,6 @@
                 </div>
             </div>
         </div>
-        
-        <div class="card">
-            <div class="card-body">
-                <p>By clicking the checkbox and typing their name below, the applicant agrees to provide the Cooperative with any additional information required to complete the interconnection. The applicant shall operate his equipment within the guidelines set forth by the cooperative.</p>
-                <div class="form-check form-group">
-                    <input class="form-check-input" type="checkbox" name="Agreement" id="agreement" required>
-                    <label class="form-check-label" for="agreement">I accept the terms above</label>
-                </div>
-                <div class="form-group">
-                    <input type="text" class="form-control" id="signed" name="Signed" placeholder="Your name here" required>
-                    <label for="signed" class="sr-only">Signature</label>
-                </div>
-                <button type="submit" class="btn btn-dark">Submit Application</button>
-            </div>
-        </div>
-
     </form>
 {% endblock %}
 
