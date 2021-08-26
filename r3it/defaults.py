@@ -220,6 +220,7 @@ appFormDefaults = {
 
     "Account Number": "",
     "Meter ID": "",
+    "Owner": "",
     "Address (Service)": "",
     "Address 2 (Service)": "",
     "City (Service)": "",
@@ -230,22 +231,16 @@ appFormDefaults = {
     "Inverter Model": "",
     "Inverter Specification": "",
     "Nameplate Rating (kW)": "",
-    "Nameplate Rating (kVA)": "",
     "Nameplate Rating (V)": "",
 
+    "Phases": "Three",
     "UL1741 listed": "",
     "Estimated Install Date": "", #YYYY-MM-DD
     "Estimated In-Service Date": "", #YYYY-MM-DD
     "Tariff": "",
 
     # old values not updated yet
-    "Application Name": "",
     "Installation Type": "Contractor and Electrician",
-    "Utility": "",
-    "Phases": "Three",
-    "Prime Mover": "Photovoltaic",
-    "Energy Source": "Sunlight",
-    "Owner": "",
 }
 
 # preapproved inverter manufacturers and models
