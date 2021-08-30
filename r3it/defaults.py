@@ -194,6 +194,7 @@ appFormDefaults = {
     "Fax (Alt Contact)": "",
 
     "Name (Contractor)": "",
+    "Contact Person (Contractor)": "",
     "Address (Contractor)": "",
     "Address 2 (Contractor)": "",
     "City (Contractor)": "",
@@ -208,6 +209,7 @@ appFormDefaults = {
 
     "Name (Electrician)": "",
     "License (Electrician)": "",
+    "Contact Person (Electrician)": "",
     "Address (Electrician)": "",
     "Address 2 (Electrician)": "",
     "City (Electrician)": "",
