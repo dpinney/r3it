@@ -97,9 +97,9 @@
                     </div>
                     <div class="col-2">
                         <select class="form-select" id="stateMember" name="State (Member)" aria-label="member state">
-                            <option hidden selected disabled>--- State ---</option>
+                            <option value="" hidden selected disabled>--- State ---</option>
                             {% for state in states %}
-                                <option value="{{state}}" {% if (state == default['State (Member)']) %} selected="true" {% endif %}>{{state}}</option>
+                                <option value="{{state}}" {% if (state == default['State (Member)']) %} selected {% endif %}>{{state}}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -168,9 +168,9 @@
                     </div>
                     <div class="col-2">
                         <select class="form-select" id="stateAltContact" name="State (Alt Contact)" aria-label="alt contact state">
-                            <option hidden selected disabled>--- State ---</option>
+                            <option value="" hidden selected disabled>--- State ---</option>
                             {% for state in states %}
-                                <option value="{{state}}" {% if (state == default['State (Alt Contact)']) %} selected="true" {% endif %}>{{state}}</option>
+                                <option value="{{state}}" {% if (state == default['State (Alt Contact)']) %} selected {% endif %}>{{state}}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -259,9 +259,9 @@
                     </div>
                     <div class="col-2">
                         <select class="form-select" id="stateContractor" name="State (Contractor)" aria-label="contractor state">
-                            <option hidden selected disabled>--- State ---</option>
+                            <option value="" hidden selected disabled>--- State ---</option>
                             {% for state in states %}
-                                <option value="{{state}}" {% if (state == default['State (Contractor)']) %} selected="true" {% endif %}>{{state}}</option>
+                                <option value="{{state}}" {% if (state == default['State (Contractor)']) %} selected {% endif %}>{{state}}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -357,9 +357,9 @@
                     </div>
                     <div class="col-2">
                         <select class="form-select" id="stateElectrician" name="State (Electrician)" aria-label="electrician state">
-                            <option hidden selected disabled>--- State ---</option>
+                            <option value="" hidden selected disabled>--- State ---</option>
                             {% for state in states %}
-                                <option value="{{state}}" {% if (state == default['State (Electrician)']) %} selected="true" {% endif %}>{{state}}</option>
+                                <option value="{{state}}" {% if (state == default['State (Electrician)']) %} selected {% endif %}>{{state}}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -481,9 +481,9 @@
                     </div>
                     <div class="col-2">
                         <select class="form-select" id="stateService" name="State (Service)" aria-label="service location state">
-                            <option hidden selected disabled>--- State ---</option>
+                            <option value="" hidden selected disabled>--- State ---</option>
                             {% for state in states %}
-                                <option value="{{state}}" {% if (state == default['State (Service)']) %} selected="true" {% endif %}>{{state}}</option>
+                                <option value="{{state}}" {% if (state == default['State (Service)']) %} selected {% endif %}>{{state}}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -528,11 +528,11 @@
                 <div class="row mb-2">
                     <div class="col-3">
                         <select class="form-select" id="inverter" aria-label="inverter manufacturer and model">
-                            <option hidden selected disabled>--- Select Inverter ---</option>
+                            <option value="" hidden selected disabled>--- Select Inverter ---</option>
                             {% for manufacturer in inverters %}
                                 <optgroup label="{{manufacturer}}">
                                     {% for model in inverters[manufacturer] %}
-                                        <option value="{{model}}" {% if (default['Inverter Model'] == model) %} selected="true" {% endif %}>{{model}}</option>
+                                        <option value="{{model}}" {% if (default['Inverter Model'] == model) %} selected {% endif %}>{{model}}</option>
                                     {% endfor %}
                                 </optgroup>
                             {% endfor %}
@@ -774,10 +774,13 @@
                 Array.prototype.forEach.call(tels, function (tel) {
                     VMasker(tel).unMask()
                 })
-                // removes alt contact fields if not shown
+                // sets alt contact fields to empty if not checked
                 const useAltContact = document.getElementById("useAltContact")
+                const fields = ["name", "address", "address2", "city", "state", "zip", "primaryPhone", "secondaryPhone", "email", "fax"]
+                const altContactFields = fields.map(field => document.getElementById(`${field}AltContact`))
                 if (!useAltContact.checked) {
-                    document.getElementById("altContact").remove()
+                    altContactFields[4].childNodes[1].removeAttribute("disabled")   // required to actually save alt contact state empty string
+                    altContactFields.forEach(field => field.value = "")
                 }
                 // combines tariff and month radio buttons
                 const netMeteringRadio = document.getElementById("netMeteringRadio")
