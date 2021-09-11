@@ -170,57 +170,115 @@ appAttachments = [
 ]
 
 appFormDefaults = {
-    "Member": "",
-    "Contact Person (Member)": "",
-    "Application Name": "",
-    "Nameplate Rating (kW)": "",
-    "Nameplate Rating (kVA)": "",
-    "Tariff": "Net metering April kWh reset",
-    "Installation Type": "Contractor and Electrician",
-    "Contractor": "",
+    # new fields
+    "Name (Member)": "",
+    "Address (Member)": "",
+    "Address 2 (Member)": "",
+    "City (Member)": "",
+    "State (Member)": "",
+    "Zip (Member)": "",
+    "Phone (Primary, Member)": "",
+    "Phone (Secondary, Member)": "",
+    "Email (Member)": "",
+    "Fax (Member)": "",
+
+    "Name (Alt Contact)": "",
+    "Address (Alt Contact)": "",
+    "Address 2 (Alt Contact)": "",
+    "City (Alt Contact)": "",
+    "State (Alt Contact)": "",
+    "Zip (Alt Contact)": "",
+    "Phone (Primary, Alt Contact)": "",
+    "Phone (Secondary, Alt Contact)": "",
+    "Email (Alt Contact)": "",
+    "Fax (Alt Contact)": "",
+
+    "Name (Contractor)": "",
     "Contact Person (Contractor)": "",
     "Address (Contractor)": "",
+    "Address 2 (Contractor)": "",
     "City (Contractor)": "",
     "State (Contractor)": "",
     "Zip (Contractor)": "",
-    "Primary Telephone (Contractor)": "",
-    "Secondary Telephone (Contractor)": "",
+    "Phone (Primary, Contractor)": "",
+    "Phone (Secondary, Contractor)": "",
     "Email (Contractor)": "",
-    "Docket Num": "",
-    "Electrician": "",
+    "Fax (Contractor)": "",
+
+    "Docket Number": "",
+
+    "Name (Electrician)": "",
+    "License (Electrician)": "",
     "Contact Person (Electrician)": "",
     "Address (Electrician)": "",
+    "Address 2 (Electrician)": "",
     "City (Electrician)": "",
     "State (Electrician)": "",
     "Zip (Electrician)": "",
-    "Primary Telephone (Electrician)": "",
-    "Secondary Telephone (Electrician)": "",
+    "Phone (Primary, Electrician)": "",
+    "Phone (Secondary, Electrician)": "",
     "Email (Electrician)": "",
-    "Address (Billing)": "",
-    "City (Billing)": "",
-    "State (Billing)": "",
-    "Zip (Billing)": "",
-    "Telephone (Primary, Member)": "",
-    "Telephone (Secondary, Member)": "",
-    "Email (Member)": "",
-    "Utility": "",
+    "Fax (Electrician)": "",
+
     "Account Number": "",
     "Meter ID": "",
-    "Inverter Manufacturer": "",
-    "Inverter Model": "",
-    "Nameplate Rating (V)": "",
-    "Phases": "Three",
-    "Prime Mover": "Photovoltaic",
-    "Energy Source": "Sunlight",
-    "UL1741 listed": "Yes",
-    "Estimated Install Date": "", #YYYY-MM-DD
-    "Estimated In-Service Date": "", #YYYY-MM-DD
     "Owner": "",
     "Address (Service)": "",
+    "Address 2 (Service)": "",
     "City (Service)": "",
     "State (Service)": "",
-    "Zip (Service)": ""
+    "Zip (Service)": "",
+
+    "Inverter Manufacturer": "",
+    "Inverter Model": "",
+    "Inverter Specification": "",
+    "Nameplate Rating (kW)": "",
+    "Nameplate Rating (V)": "",
+
+    "Phases": "Three",
+    "UL1741 listed": "",
+    "Estimated Install Date": "", #YYYY-MM-DD
+    "Estimated In-Service Date": "", #YYYY-MM-DD
+    "Tariff": "",
+
+    # old values not updated yet
+    "Installation Type": "Contractor and Electrician",
 }
+
+# preapproved inverter manufacturers and models
+inverters = {
+    'SolarEdge' : [
+        'SE3000H-US',
+        'SE3800H-US',
+        'SE5000H-US',
+        'SE6000H-US',
+        'SE7600H-US',
+        'SE10000H-US',
+        'SE11400H-US'
+    ],
+    'Enphase Microinverters' : [
+        'M250',
+        'IQ7+'
+    ],
+    'AP Systems' : [
+        'YC600',
+        'YC1000-3 (3 PH)'
+    ]
+}
+
+# state abbreviations for form dropdowns
+states = [
+    "AL", "AK", "AZ", "AR", "CA", 
+    "CO", "CT", "DE", "FL", "GA", 
+    "HI", "ID", "IL", "IN", "IA", 
+    "KS", "KY", "LA", "ME", "MD", 
+    "MA", "MI", "MN", "MS", "MO", 
+    "MT", "NE", "NV", "NH", "NJ", 
+    "NM", "NY", "NC", "ND", "OH", 
+    "OK", "OR", "PA", "RI", "SC", 
+    "SD", "TN", "TX", "UT", "VT", 
+    "VA", "WA", "WV", "WI", "WY",
+]
 
 # gridlabd power flow sim params ----------------------------------------------
 
