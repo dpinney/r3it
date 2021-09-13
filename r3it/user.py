@@ -69,6 +69,7 @@ def getMockData(dataType):
     states = ['WI']
     zips = range(54601, 54650)
     suffixes = ['Ave.', 'Ln.', 'St.', 'Way', 'Blvd']
+    prefixes = ['PO Box ', 'Suite ', 'Apt ', '#', 'Room ']
     trees = ['Oak', 'Birch', 'Cypress', 'Maple', 'Pine', 'Hickory', 'Ash',
         'Aspen', 'Elder Berry']
     firstNames = ['James', 'John', 'Robert', 'Michael', 'William', 'David',
@@ -85,6 +86,9 @@ def getMockData(dataType):
     elif dataType == 'address':
         mockData = "{} {} {}".format(str(random.choice(range(9999))),
             random.choice(trees), random.choice(suffixes))
+    elif dataType == 'address2':
+        mockData = "{}{}".format(random.choice(prefixes), 
+            random.choice(range(10, 9999)))
     elif dataType == 'city':
         mockData = '{}'.format(random.choice(cities))
     elif dataType == 'state':
@@ -122,7 +126,7 @@ def getMockAppFormInputs():
     mockForm = {
         "Name (Member)": name,
         "Address (Member)": getMockData('address'),
-        "Address 2 (Member)": "",       ######
+        "Address 2 (Member)": getMockData('address2'),
         "City (Member)": getMockData('city'),
         "State (Member)": getMockData('state'),
         "Zip (Member)": getMockData('zip'),
@@ -133,7 +137,7 @@ def getMockAppFormInputs():
 
         "Name (Alt Contact)": getMockData('name'),
         "Address (Alt Contact)": getMockData('address'),
-        "Address 2 (Alt Contact)": "",      ######
+        "Address 2 (Alt Contact)": getMockData('address2'),
         "City (Alt Contact)": getMockData('city'),
         "State (Alt Contact)": getMockData('state'),
         "Zip (Alt Contact)": getMockData('zip'),
@@ -144,7 +148,7 @@ def getMockAppFormInputs():
 
         "Name (Contractor)": "Solar Install, Inc.",
         "Address (Contractor)": getMockData('address'),
-        "Address 2 (Contractor)": "",       ######
+        "Address 2 (Contractor)": getMockData('address2'),
         "City (Contractor)": getMockData('city'),
         "State (Contractor)": getMockData('state'),
         "Zip (Contractor)": getMockData('zip'),
@@ -158,7 +162,7 @@ def getMockAppFormInputs():
         "Name (Electrician)": "Solar Install, Inc.",
         "License (Electrician)": "",        ######
         "Address (Electrician)": getMockData('address'),
-        "Address 2 (Electrician)": "",      ######
+        "Address 2 (Electrician)": getMockData('address2'),
         "City (Electrician)": getMockData('city'),
         "State (Electrician)": getMockData('state'),
         "Zip (Electrician)": getMockData('zip'),
@@ -170,7 +174,7 @@ def getMockAppFormInputs():
         "Account Number": "23456789",
         "Meter ID": getMockData('meterID'),
         "Address (Service)": getMockData('address'),
-        "Address 2 (Service)": "",      ######
+        "Address 2 (Service)": getMockData('address2'),
         "City (Service)": getMockData('city'),
         "State (Service)": getMockData('state'),
         "Zip (Service)": getMockData('zip'),
