@@ -68,139 +68,134 @@
     <h1 class="mb-4">New Interconnection Application</h1>
     <form id="application" action="{{formAction}}" method='post' onsubmit="submitForm()">
 
+        <hr class="my-4">
+
         <!-- Member Block -->
         <div id="member" class="mb-5">
-            <h3 class="mb-3">Member Contact Information</h3>
+            <h3 class="mb-3">Member Information</h3>
+            <div class="row g-3 g-md-5">
 
-            <div class="row mb-3">
-                <div class="col-6">
-                    <label for="nameMember" class="form-label">Full Name</label>
-                    <input type="text" class="form-control" id="nameMember" name="Name (Member)" value="{{default['Name (Member)']}}" placeholder="">
+                <div class="col-md-6 col-lg-7">
+                    <div class="row g-3">
+                        <div>
+                            <label for="nameMember" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="nameMember" name="Name (Member)" value="{{default['Name (Member)']}}" placeholder="">
+                        </div>
+                        <fieldset>
+                            <legend class="col-form-label py-0">Mailing Address</legend>
+                            <div class="row g-2">
+                                <div>
+                                    <input type="text" class="form-control" id="addressMember" name="Address (Member)" value="{{default['Address (Member)']}}" placeholder="Street Address" aria-label="street address">
+                                </div>
+                                <div>
+                                    <input type="text" class="form-control" id="address2Member" name="Address 2 (Member)" value="{{default['Address 2 (Member)']}}" placeholder="Address Line 2" aria-label="address line 2">
+                                </div>
+                                <div class="col-sm-6 col-md-12 col-lg-6">
+                                    <input type="text" class="form-control" id="cityMember" name="City (Member)" value="{{default['City (Member)']}}" placeholder="City" aria-label="city">
+                                </div>
+                                <div class="col-6 col-sm-3 col-md-6 col-lg-3">
+                                    <select class="form-select" id="stateMember" name="State (Member)" aria-label="member state">
+                                        <option value="" hidden selected disabled>--State --</option>
+                                        {% for state in states %}
+                                            <option value="{{state}}" {% if (state == default['State (Member)']) %} selected {% endif %}>{{state}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-6 col-sm-3 col-md-6 col-lg-3">
+                                    <input type="text" class="form-control" id="zipMember" name="Zip (Member)" value="{{default['Zip (Member)']}}" placeholder="Postal / Zip Code" aria-label="postal or zip code">
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+
+                <!-- <div class="vr d-none d-md-inline-block px-0" style="margin-right: -1px; margin-left: -1px;"></div> -->
+
+                <div class="col-md-6 col-lg-5">
+                    <div class="row g-3">
+                        <div>
+                            <label for="emailMember" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="emailMember" name="Email (Member)" value="{{default['Email (Member)']}}" onchange="ensureMemberIsNotContractor(this.id)">
+                        </div>
+                        <div class="col-sm-4 col-md-12">
+                            <label for="primaryPhoneMember" class="form-label">Primary Phone</label>
+                            <input type="tel" class="form-control" id="primaryPhoneMember" name="Phone (Primary, Member)" value="{{default['Phone (Primary, Member)']}}">
+                        </div>
+                        <div class="col-sm-4 col-md-12 col-lg-6">
+                            <label for="secondaryPhoneMember" class="form-label">Secondary Phone</label>
+                            <input type="tel" class="form-control" id="secondaryPhoneMember" name="Phone (Secondary, Member)" value="{{default['Phone (Secondary, Member)']}}">
+                        </div>
+                        <div class="col-sm-4 col-md-12 col-lg-6">
+                            <label for="faxMember" class="form-label">Fax Number</label>
+                            <input type="tel" class="form-control" id="faxMember" name="Fax (Member)" value="{{default['Fax (Member)']}}">
+                        </div>
+                    </div>
                 </div>
             </div>
+        </div>
 
-            <fieldset>
-                <legend class="col-form-label pt-0 pb-0 mb-2">Mailing Address</legend>
-                <div class="row mb-2">
-                    <div class="col-6">
-                        <input type="text" class="form-control" id="addressMember" name="Address (Member)" value="{{default['Address (Member)']}}" placeholder="Street Address" aria-label="street address">
-                    </div>
-                </div>
-                <div class="row mb-2">
-                    <div class="col-6">
-                        <input type="text" class="form-control" id="address2Member" name="Address 2 (Member)" value="{{default['Address 2 (Member)']}}" placeholder="Address Line 2" aria-label="address line 2">
-                    </div>
-                </div>
-                <div class="row mb-2">
-                    <div class="col-3">
-                        <input type="text" class="form-control" id="cityMember" name="City (Member)" value="{{default['City (Member)']}}" placeholder="City" aria-label="city">
-                    </div>
-                    <div class="col-2">
-                        <select class="form-select" id="stateMember" name="State (Member)" aria-label="member state">
-                            <option value="" hidden selected disabled>--- State ---</option>
-                            {% for state in states %}
-                                <option value="{{state}}" {% if (state == default['State (Member)']) %} selected {% endif %}>{{state}}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-3">
-                        <input type="text" class="form-control" id="zipMember" name="Zip (Member)" value="{{default['Zip (Member)']}}" placeholder="Postal / Zip Code" aria-label="postal or zip code">
-                    </div>
-                </div>
-            </fieldset>
+        <hr class="my-4">
 
-            <div class="row mb-3">
-                <div class="col-4">
-                    <label for="primaryPhoneMember" class="form-label">Primary Phone</label>
-                    <input type="tel" class="form-control" id="primaryPhoneMember" name="Phone (Primary, Member)" value="{{default['Phone (Primary, Member)']}}">
-                </div>
-                <div class="col-4">
-                    <label for="secondaryPhoneMember" class="form-label">Secondary Phone</label>
-                    <input type="tel" class="form-control" id="secondaryPhoneMember" name="Phone (Secondary, Member)" value="{{default['Phone (Secondary, Member)']}}">
-                </div>
-            </div>
-
-            <div class="row mb-3">
-                <div class="col-4">
-                    <label for="emailMember" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="emailMember" name="Email (Member)" value="{{default['Email (Member)']}}" onchange="ensureMemberIsNotContractor(this.id)">
-                </div>
-                <div class="col-4">
-                    <label for="faxMember" class="form-label">Fax</label>
-                    <input type="tel" class="form-control" id="faxMember" name="Fax (Member)" value="{{default['Fax (Member)']}}">
-                </div>
-            </div>
-
-            <div class="form-check mb-3 ms-1 pt-2">
-                <input type="checkbox" class="form-check-input" id="useAltContact">
-                <label for="useAltContact" class="form-check-label">Use Alternate Contact</label>
-            </div>
+        <div class="form-check my-4">
+            <input type="checkbox" class="form-check-input" id="useAltContact">
+            <label for="useAltContact" class="form-check-label">Use Alternate Contact</label>
         </div>
 
         <!-- Alternate Contact Block -->
         <div id="altContact" class="mb-5" hidden>
             <h3 class="mb-3">Alternate Contact Information</h3>
+            <div class="row g-3 g-md-5">
 
-            <div class="row mb-3">
-                <div class="col-6">
-                    <label for="nameAltContact" class="form-label">Contact Name</label>
-                    <input type="text" class="form-control" id="nameAltContact" name="Name (Alt Contact)" value="{{default['Name (Alt Contact)']}}">
-                </div>
-            </div>
-
-            <fieldset>
-                <legend class="col-form-label pt-0 pb-0 mb-2">Contact Address</legend>
-                <div class="row mb-2">
-                    <div class="col-6">
-                        <input type="text" class="form-control" id="addressAltContact" name="Address (Alt Contact)" value="{{default['Address (Alt Contact)']}}" placeholder="Street Address" aria-label="street address">
+                <div class="col-md-6 col-lg-7">
+                    <div class="row g-3">
+                        <div>
+                            <label for="nameAltContact" class="form-label">Contact Name</label>
+                            <input type="text" class="form-control" id="nameAltContact" name="Name (Alt Contact)" value="{{default['Name (Alt Contact)']}}">
+                        </div>
+                        <fieldset>
+                            <legend class="col-form-label py-0">Contact Address</legend>
+                            <div class="row g-2">
+                                <div>
+                                    <input type="text" class="form-control" id="addressAltContact" name="Address (Alt Contact)" value="{{default['Address (Alt Contact)']}}" placeholder="Street Address" aria-label="street address">
+                                </div>
+                                <div>
+                                    <input type="text" class="form-control" id="address2AltContact" name="Address 2 (Alt Contact)" value="{{default['Address 2 (Alt Contact)']}}" placeholder="Address Line 2" aria-label="address line 2">
+                                </div>
+                                <div class="col-sm-6 col-md-12 col-lg-6">
+                                    <input type="text" class="form-control" id="cityAltContact" name="City (Alt Contact)" value="{{default['City (Alt Contact)']}}" placeholder="City" aria-label="city">
+                                </div>
+                                <div class="col-6 col-sm-3 col-md-6 col-lg-3">
+                                    <select class="form-select" id="stateAltContact" name="State (Alt Contact)" aria-label="alt contact state">
+                                        <option value="" hidden selected disabled>--- State ---</option>
+                                        {% for state in states %}
+                                            <option value="{{state}}" {% if (state == default['State (Alt Contact)']) %} selected {% endif %}>{{state}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-6 col-sm-3 col-md-6 col-lg-3">
+                                    <input type="text" class="form-control" id="zipAltContact" name="Zip (Alt Contact)" value="{{default['Zip (Alt Contact)']}}" placeholder="Postal / Zip Code" aria-label="postal or zip code">
+                                </div>
+                            </div>
+                        </fieldset>
                     </div>
                 </div>
-                <div class="row mb-2">
-                    <div class="col-6">
-                        <input type="text" class="form-control" id="address2AltContact" name="Address 2 (Alt Contact)" value="{{default['Address 2 (Alt Contact)']}}" placeholder="Address Line 2" aria-label="address line 2">
+                
+                <div class="col-md-6 col-lg-5">
+                    <div class="row g-3">
+                        <div class="">
+                            <label for="emailAltContact" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="emailAltContact" name="Email (Alt Contact)" value="{{default['Email (Alt Contact)']}}" onchange="ensureMemberIsNotContractor(this.id)">                                </div>
+                        <div class="col-sm-4 col-md-12">
+                            <label for="primaryPhoneAltContact" class="form-label">Primary Phone</label>
+                            <input type="tel" class="form-control" id="primaryPhoneAltContact" name="Phone (Primary, Alt Contact)" value="{{default['Phone (Primary, Alt Contact)']}}">
+                        </div>
+                        <div class="col-sm-4 col-md-12 col-lg-6">
+                            <label for="secondaryPhoneAltContact" class="form-label">Secondary Phone</label>
+                            <input type="tel" class="form-control" id="secondaryPhoneAltContact" name="Phone (Secondary, Alt Contact)" value="{{default['Phone (Secondary, Alt Contact)']}}">                                </div>
+                        <div class="col-sm-4 col-md-12 col-lg-6">
+                            <label for="faxAltContact" class="form-label">Fax</label>
+                            <input type="tel" class="form-control" id="faxAltContact" name="Fax (Alt Contact)" value="{{default['Fax (Alt Contact)']}}">                                </div>
                     </div>
-                </div>
-                <div class="row mb-2">
-                    <div class="col-3">
-                        <input type="text" class="form-control" id="cityAltContact" name="City (Alt Contact)" value="{{default['City (Alt Contact)']}}" placeholder="City" aria-label="city">
-                    </div>
-                    <div class="col-2">
-                        <select class="form-select" id="stateAltContact" name="State (Alt Contact)" aria-label="alt contact state">
-                            <option value="" hidden selected disabled>--- State ---</option>
-                            {% for state in states %}
-                                <option value="{{state}}" {% if (state == default['State (Alt Contact)']) %} selected {% endif %}>{{state}}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-3">
-                        <input type="text" class="form-control" id="zipAltContact" name="Zip (Alt Contact)" value="{{default['Zip (Alt Contact)']}}" placeholder="Postal / Zip Code" aria-label="postal or zip code">
-                    </div>
-                </div>
-            </fieldset>
-
-            <div class="row mb-3">
-                <div class="col-4">
-                    <label for="primaryPhoneAltContact" class="form-label">Primary Phone</label>
-                    <input type="tel" class="form-control" id="primaryPhoneAltContact" name="Phone (Primary, Alt Contact)" value="{{default['Phone (Primary, Alt Contact)']}}">
-                </div>
-                <div class="col-4">
-                    <label for="secondaryPhoneAltContact" class="form-label">Secondary Phone</label>
-                    <input type="tel" class="form-control" id="secondaryPhoneAltContact" name="Phone (Secondary, Alt Contact)" value="{{default['Phone (Secondary, Alt Contact)']}}">
-                </div>
-            </div>
-
-            <div class="row mb-3">
-                <div class="col-4">
-                    <label for="emailAltContact" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="emailAltContact" name="Email (Alt Contact)" value="{{default['Email (Alt Contact)']}}" onchange="ensureMemberIsNotContractor(this.id)">
-                </div>
-                <div class="col-4">
-                    <label for="faxAltContact" class="form-label">Fax</label>
-                    <input type="tel" class="form-control" id="faxAltContact" name="Fax (Alt Contact)" value="{{default['Fax (Alt Contact)']}}">
                 </div>
             </div>
         </div>
@@ -217,6 +212,8 @@
                 }
             })
         </script>
+
+        <hr class="my-4">
 
         <!-- Equipment Contractor Block -->
         <div id="contractor" class="mb-5">
