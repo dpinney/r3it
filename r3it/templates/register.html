@@ -1,45 +1,32 @@
 {% extends 'base.html' %}
 
-
 {% block anonymous %}
 <style type="text/css">#bg{background-image:url({{bg}})}</style>
 <style type="text/css">#bg{height: 100%;}</style>
-<div id="login" >
-    <!-- Bootstrap register block -->
-    <h1>Register</h1>
-    <form action="/login" method="post">
-        <div class="form-group">
-            <label for="email" class="sr-only">Email Address</label>
-            <input 
-                type="email" 
-                class="form-control" 
-                id="email" 
-                name="email" 
-                placeholder="Email Address" 
-                required>
+
+<div class="col-10 col-sm-7 col-md-5 col-lg-4 m-auto row g-5 card text-center" id="login">
+    <form action="/register" method="post">
+        <h1 class="mb-3">Register</h1>
+        <div class="form-floating mb-3">
+            <input type="email" class="form-control" id="email" name="email" placeholder="Email Address" required>
+            <label for="email">Email Address</label>
         </div>
-        <div class="form-group">
-            <label for="password" class="sr-only">Password</label>
-            <input 
-                type="password" 
-                class="form-control" 
-                id="password" 
-                name="password" 
-                placeholder="Password" 
-                required>
+        <div class="form-floating mb-3">
+            <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+            <label for="password">Password</label>
         </div>
-        {{ captcha() }} <!-- Renders an <img> tag with the captcha img. -->
-        <div class="form-group">
-            <label for="captcha" class="sr-only">Captcha</label>
-            <input 
-                type="text" 
-                class="form-control" 
-                id="captcha" 
-                name="captcha" 
-                placeholder="Captcha" 
-                required>
+        <div class="form-group mx-auto" style="width: 160px;">
+            {{captcha()}}
+            <input type="text" class="form-control mt-3" id="captcha" name="captcha" placeholder="Captcha" required>
+            <label for="captcha" class="visually-hidden">Captcha</label>
         </div>
-        <button type="submit" formaction="/register" method="post" class="btn btn-block btn-light">Register</button>
+        <button type="submit" class="btn btn-dark btn-lg col-12 my-4">Register</button>
     </form>
 </div>
+
+<script src="https://unpkg.com/vanilla-masker@1.1.1/lib/vanilla-masker.js"></script>
+<script type="text/javascript">
+    const captcha = document.querySelector("#captcha")
+    VMasker(captcha).maskPattern("99999")
+</script>
 {% endblock %}

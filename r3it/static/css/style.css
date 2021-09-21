@@ -4,9 +4,9 @@ html, body {
     margin: 0px;
     height: 100%;
     width: 100%;
-    font-family: sans-serif; 
-    background-color: #eee;
-    word-wrap: break-word;
+    /* font-family: sans-serif;  */
+    /* background-color: #eee; */
+    /* word-wrap: break-word; */
     position: absolute;
     z-index: 0;
 }
@@ -45,17 +45,17 @@ html, body {
 
 /*----------------------------------------------------------------------------*/
 
-.content {
-    /* width: 90%; */
+/* .content {
+    width: 90%;
     max-width: 80%;
     display: block;
     margin: 0 auto;
     height: 100%;
     background-color: #fff;
     padding: 2rem;
-}
+} */
 
-.tableContainer {
+/* .tableContainer {
     max-height: 80vh;
     overflow-y: scroll;
     margin: 0px;
@@ -67,9 +67,9 @@ html, body {
     font-size: 1.2em;
     page-break-before:always;
     margin: 0px;
-}
+} */
 
-.card {
+/* .card {
     margin: 0 auto 2em auto;
     background-color: #fff;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
@@ -78,18 +78,18 @@ html, body {
     align-items: flex-start;
     flex-wrap: wrap;
 } .card h1 {padding-bottom: 0px;
-} .card p {width: 100%;}
+} .card p {width: 100%;} */
 
-.leftForm {
+/* .leftForm {
     float: left;
     width: 50%;
 }
 .rightForm {
     float: right;
     width: 50%;
-}
+} */
 
-.tooltip {
+/* .tooltip {
     position: relative;
     display: inline-block;
 }.tooltipText {
@@ -107,7 +107,7 @@ html, body {
 } .tooltip:hover .tooltipText {
     visibility: visible;
 } .tooltipText::after { 
-    /*adds arrow*/
+    adds arrow
     content: " ";
     position: absolute;
     bottom: 100%;
@@ -115,7 +115,7 @@ html, body {
     border-width: 0.5em;
     border-style: solid;
     border-color: transparent transparent black transparent;
-}
+} */
 
 /*----------------------------------------------------------------------------*/
 
@@ -221,18 +221,18 @@ html, body {
 }
 
 #login {
-    background-color: #fff;
-    min-width: 200px;
-    max-width: 500px;
-    width: 50%;
-    margin: auto;
-    padding: 1em;
+    /* background-color: #fff; */
+    /* min-width: 300px; */
+    /* max-width: 500px; */
+    /* width: 50%; */
+    /* margin: auto; */
+    /* padding: 1em; */
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    box-shadow: 0px 5px 10px #aaa;
-    text-align: center;
+    /* box-shadow: 0px 5px 10px #aaa; */
+    /* text-align: center; */
 } 
 /* #login input, #login button {
     width: 100%;
@@ -254,7 +254,7 @@ html, body {
     background-color: #000;
 } */
 
-#progressBarBackground {
+/* #progressBarBackground {
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
     background-color: #fff;
     width: 100%;
@@ -262,9 +262,9 @@ html, body {
 } #progressBar {
     background-color: #000;
     height: 100%;
-}
+} */
 
-#application {
+/* #application {
     font-size: 1.1em;
 } #application select, #application input {
     font-size: 1.1em;
@@ -280,7 +280,7 @@ html, body {
     border: none;
     background-color: #fff;
     padding: 10px;
-} 
+}  */
 
 /* #pay, #withdraw, #editDetails, #acceptEdits, #rejectEdits, #sendDelegationEmail {
     width: 100%;
@@ -306,7 +306,7 @@ html, body {
 
 /*----------------------------------------------------------------------------*/
 
-@media screen and (max-width: 600px) {
+/* @media screen and (max-width: 600px) {
     #menu { 
         width: 100%; 
         text-align: center;
@@ -314,4 +314,4 @@ html, body {
         float: none;
         border-top: 1px solid #eee;
     }
-}
+} */

@@ -27,6 +27,8 @@ def inject_config():
         bg            = config.bg,
         sizeThreshold = config.sizeThreshold,
         utilityName   = config.utilityName,
+        states        = config.states,
+        inverters     = config.inverters,
         appAttachments= config.appAttachments
     )
 

@@ -69,6 +69,7 @@ def getMockData(dataType):
     states = ['WI']
     zips = range(54601, 54650)
     suffixes = ['Ave.', 'Ln.', 'St.', 'Way', 'Blvd']
+    prefixes = ['PO Box ', 'Suite ', 'Apt ', '#', 'Room ']
     trees = ['Oak', 'Birch', 'Cypress', 'Maple', 'Pine', 'Hickory', 'Ash',
         'Aspen', 'Elder Berry']
     firstNames = ['James', 'John', 'Robert', 'Michael', 'William', 'David',
@@ -85,6 +86,9 @@ def getMockData(dataType):
     elif dataType == 'address':
         mockData = "{} {} {}".format(str(random.choice(range(9999))),
             random.choice(trees), random.choice(suffixes))
+    elif dataType == 'address2':
+        mockData = "{}{}".format(random.choice(prefixes), 
+            random.choice(range(10, 9999)))
     elif dataType == 'city':
         mockData = '{}'.format(random.choice(cities))
     elif dataType == 'state':
@@ -92,7 +96,7 @@ def getMockData(dataType):
     elif dataType == 'zip':
         mockData = '{}'.format(random.choice(zips))
     elif dataType == 'phone':
-        mockData = '({}{}) {}{} - {}'.format(
+        mockData = '{}{}{}{}{}'.format(
             random.choice(range(2,9)),
             random.choice(range(10,99)),
             random.choice(range(2,9)),
@@ -120,50 +124,81 @@ def getMockAppFormInputs():
     size = getMockData('size')
 
     mockForm = {
-        "Owner": name,
-        "Member": name,
-        "Contact Person (Member)": name,
-        "Application Name": '{}\'s Solar Project'.format(name),
-        "Nameplate Rating (kW)": size,
-        "Nameplate Rating (kVA)": size,
-        "Contractor": "Solar Install, Inc.",
-        "Contact Person (Contractor)": getMockData('name'),
+        "Name (Member)": name,
+        "Address (Member)": getMockData('address'),
+        "Address 2 (Member)": getMockData('address2'),
+        "City (Member)": getMockData('city'),
+        "State (Member)": getMockData('state'),
+        "Zip (Member)": getMockData('zip'),
+        "Phone (Primary, Member)": getMockData('phone'),
+        "Phone (Secondary, Member)": getMockData('phone'),
+        "Email (Member)": "member@email.com",
+        "Fax (Member)": getMockData('phone'),
+
+        "Name (Alt Contact)": getMockData('name'),
+        "Address (Alt Contact)": getMockData('address'),
+        "Address 2 (Alt Contact)": getMockData('address2'),
+        "City (Alt Contact)": getMockData('city'),
+        "State (Alt Contact)": getMockData('state'),
+        "Zip (Alt Contact)": getMockData('zip'),
+        "Phone (Primary, Alt Contact)": getMockData('phone'),
+        "Phone (Secondary, Alt Contact)": getMockData('phone'),
+        "Email (Alt Contact)": "altcontact@email.com",
+        "Fax (Alt Contact)": getMockData('phone'),
+
+        "Name (Contractor)": "Solar Install, Inc.",
         "Address (Contractor)": getMockData('address'),
+        "Address 2 (Contractor)": getMockData('address2'),
         "City (Contractor)": getMockData('city'),
         "State (Contractor)": getMockData('state'),
         "Zip (Contractor)": getMockData('zip'),
-        "Primary Telephone (Contractor)": getMockData('phone'),
-        "Secondary Telephone (Contractor)": getMockData('phone'),
+        "Phone (Primary, Contractor)": getMockData('phone'),
+        "Phone (Secondary, Contractor)": getMockData('phone'),
         "Email (Contractor)": "installer@solarinstallerinc.tld",
-        "Docket Num": "145558",
-        "Electrician": "Solar Install, Inc.",
-        "Contact Person (Electrician)":  getMockData('name'),
+        "Fax (Contractor)": getMockData('phone'),
+
+        "Docket Number": "145558",
+
+        "Name (Electrician)": "Solar Install, Inc.",
+        "License (Electrician)": "",        ######
         "Address (Electrician)": getMockData('address'),
+        "Address 2 (Electrician)": getMockData('address2'),
         "City (Electrician)": getMockData('city'),
         "State (Electrician)": getMockData('state'),
         "Zip (Electrician)": getMockData('zip'),
-        "Primary Telephone (Electrician)": getMockData('phone'),
-        "Secondary Telephone (Electrician)": getMockData('phone'),
+        "Phone (Primary, Electrician)": getMockData('phone'),
+        "Phone (Secondary, Electrician)": getMockData('phone'),
         "Email (Electrician)": "installer@solarinstallerinc.tld",
-        "Address (Billing)": getMockData('address'),
-        "City (Billing)": getMockData('city'),
-        "State (Billing)": getMockData('state'),
-        "Zip (Billing)": getMockData('zip'),
-        "Telephone (Primary, Member)": getMockData('phone'),
-        "Telephone (Secondary, Member)": getMockData('phone'),
-        "Email (Member)": "member@email.com",
-        "Utility": "Dairyland Power",
+        "Fax (Electrician)": getMockData('phone'),
+
         "Account Number": "23456789",
         "Meter ID": getMockData('meterID'),
-        "Inverter Manufacturer": "Princeton Power",
-        "Inverter Model": "T",
-        "Nameplate Rating (V)": getMockData('voltage'),
-        "Estimated Install Date": "2021-11-11",
-        "Estimated In-Service Date": "2022-08-11",
         "Address (Service)": getMockData('address'),
+        "Address 2 (Service)": getMockData('address2'),
         "City (Service)": getMockData('city'),
         "State (Service)": getMockData('state'),
-        "Zip (Service)": getMockData('zip')
+        "Zip (Service)": getMockData('zip'),
+
+        "Inverter Manufacturer": "",    ######
+        "Inverter Model": "",           ######
+        "Inverter Specification": "",   ######
+        "Nameplate Rating (kW)": size,
+        "Nameplate Rating (kVA)": size,
+        "Nameplate Rating (V)": getMockData('voltage'),
+
+        # "UL1741 listed": "",
+        "Estimated Install Date": "2021-11-11", 
+        "Estimated In-Service Date": "2022-08-11", 
+        # "Tariff": "",
+
+        # old values not yet updated
+        "Owner": name,
+        "Application Name": '{}\'s Solar Project'.format(name),
+        "Contact Person (Contractor)": getMockData('name'),
+        "Contact Person (Electrician)":  getMockData('name'),
+        "Utility": "Dairyland Power",
+        "Inverter Manufacturer": "Princeton Power",
+        "Inverter Model": "T",
     }
 
     defaultForm = config.appFormDefaults.copy()
