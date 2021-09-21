@@ -2,10 +2,20 @@
 
 {% block banner %}
 <style type="text/css">#bg{background-image:url({{bg}})}</style>
-	<div id="titleContainer" class="content">
+	<!-- <div id="titleContainer" class="content">
 		<p id="title">Rapid, Rural, and Resilient Interconnection Toolkit</p>
 		<div id="bannerButtons">
 			<a href="/login">LOGIN</a> <a href="/register">REGISTER</a>
+		</div>
+	</div> -->
+	<div class="row"> 
+		<!-- note: margin top on above row shows background image inside -->
+		<div class="col-sm-10 col-lg-9 m-auto row text-center text-md-end g-5 p-3">
+			<h1 class="col-md-6 m-auto py-4 me-md-2">Rapid, Rural, and Resilient Interconnection Toolkit</h1>
+			<div class="col-6 col-sm-5 col-md-4 col-lg-3 m-auto ms-md-2 row gap-3 text-center">
+				<a href="/login" class="btn btn-dark btn-lg" role="button">Log In</a>
+				<a href="/register" class="btn btn-dark btn-lg" role="button">Register</a>
+			</div>
 		</div>
 	</div>
 <!-- <div class='bg-image' style='
@@ -46,31 +56,31 @@
 
 <!-- Bootstrap anonymous cards -->
 {% block anonymous %}
-	<div class='card'>
-		<div class='card-body'>
-			<h2 class='card-title'>Interconnecting Distributed Generation</h2>
-			<p class='card-text'>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+	<div class="card p-4 my-4">
+		<div class="card-body">
+			<h2 class="card-title mb-3 mt-2">Interconnecting Distributed Generation</h2>
+			<p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
 		</div>
 	</div>
 
-	<div class='card'>
-		<div class='card-body'>
-			<h2 class='card-title'>Case Study</h2>
-			<p class='card-text'>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+	<div class="card p-4 mb-4">
+		<div class="card-body">
+			<h2 class="card-title mb-3 mt-2">Case Study</h2>
+			<p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
 		</div>
 	</div>
 
-	<div class='card'>
-		<div class='card-body'>
-			<h2 class='card-title'>Getting Started</h2>
-			<p class='card-text'>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+	<div class="card p-4 mb-4">
+		<div class="card-body">
+			<h2 class="card-title mb-3 mt-2">Getting Started</h2>
+			<p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
 		</div>
 	</div>
 
-	<div class='card'>
-		<div class='card-body'>
-			<h2 class='card-title'>FAQ</h2>
-			<p class='card-text'>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+	<div class="card p-4 mb-5">
+		<div class="card-body">
+			<h2 class="card-title mb-3 mt-2">FAQ</h2>
+			<p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
 		</div>
 	</div>
 {% endblock %}
