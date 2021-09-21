@@ -779,7 +779,7 @@
                 // populates inverter field for saved inverter not in dropdown
                 if ((inverterManufacturer.value || inverterModel.value) && inverter.selectedIndex == 0) {
                     inverter.value = "Other"
-                    inverterOther.forEach(elem => elem.removeAttribute("hidden"))
+                    inverterOther.forEach((elem) => elem.removeAttribute("hidden"))
                 }
 
                 inverter.addEventListener("change", () => {
@@ -789,11 +789,11 @@
                     if (selected.value == "Other") {
                         inverterManufacturer.value = ""
                         inverterModel.value = ""
-                        inverterOther.forEach(elem => elem.removeAttribute("hidden"))
+                        inverterOther.forEach((elem) => elem.removeAttribute("hidden"))
                     } else {
                         inverterManufacturer.value = optgroup
                         inverterModel.value = selected.value
-                        inverterOther.forEach(elem => elem.setAttribute("hidden", "true"))
+                        inverterOther.forEach((elem) => elem.setAttribute("hidden", "true"))
                     }
                 })
             </script>
@@ -975,31 +975,33 @@
             })
         </script>
 
-        <!-- Script to mask tel fields -->
+        <!-- Script to mask tel fields and zip codes -->
         <script src="https://unpkg.com/vanilla-masker@1.1.1/lib/vanilla-masker.js"></script>
         <script type="text/javascript">
             const tels = document.querySelectorAll("input[type='tel']")
-            Array.prototype.forEach.call(tels, function (tel) {
+            const zips = document.querySelectorAll("[id^='zip']")
+            Array.prototype.forEach.call(tels, (tel) => {
                 tel.placeholder = "(xxx) xxx - xxxx"
                 VMasker(tel).maskPattern("(999) 999 - 9999")
             })
+            Array.prototype.forEach.call(zips, (zip) => VMasker(zip).maskPattern("99999"))
         </script>
 
         <!-- Cleanup script on form submission -->
         <script type="text/javascript">
             function submitForm() {
-                // unmasks tel inputs
+                // unmasks tel and zip inputs
                 const tels = document.querySelectorAll("input[type='tel']")
-                Array.prototype.forEach.call(tels, function (tel) {
-                    VMasker(tel).unMask()
-                })
+                const zips = document.querySelectorAll("[id^='zip']")
+                Array.prototype.forEach.call(tels, (tel) => VMasker(tel).unMask())
+                Array.prototype.forEach.call(zips, (zip) => VMasker(zip).unMask())
                 // sets alt contact fields to empty if not checked
                 const useAltContact = document.getElementById("useAltContact")
                 const fields = ["name", "address", "address2", "city", "state", "zip", "primaryPhone", "secondaryPhone", "email", "fax"]
                 const altContactFields = fields.map(field => document.getElementById(`${field}AltContact`))
                 if (!useAltContact.checked) {
                     altContactFields[4].childNodes[1].removeAttribute("disabled")   // required to actually save alt contact state empty string
-                    altContactFields.forEach(field => field.value = "")
+                    altContactFields.forEach((field) => field.value = "")
                 }
                 // combines tariff and month radio buttons
                 const netMeteringRadio = document.getElementById("netMeteringRadio")
