@@ -1,24 +1,18 @@
 {% extends 'base.html' %}
 
 {% block anonymous %}
-<style type="text/css">#bg{background-image:url({{bg}})</style>
+<style type="text/css">#bg{background-image:url({{bg}})}</style>
 <style type="text/css">#bg{height: 100%;}</style>
-<div id="login" >
-    <!-- Bootstrap forgot password block -->
-    <h1>Forgot Password</h1>
-    <p>Enter the email address associated with your account, and you will recieve an account recovery email with a link to reset your password.</p>
+
+<div class="col-10 col-sm-7 col-md-5 col-lg-4 m-auto row g-5 card text-center" id="login">
     <form action="/forgot" method="post">
-        <div class="form-group">
-            <label for="email" class="sr-only">Email Address</label>
-            <input 
-                type="email" 
-                class="form-control" 
-                id="email" 
-                name="email" 
-                placeholder="Email Address" 
-                required>
+        <h1 class="mb-3">Forgot Password?</h1>
+        <p>Enter the email address associated with your account, and you will recieve an account recovery email with a link to reset your password.</p>
+        <div class="form-floating">
+            <input type="email" class="form-control" id="email" name="email" placeholder="Email Address" required>
+            <label for="email">Email Address</label>
         </div>
-        <button type="submit" formaction="/forgot" method="post" class="btn btn-block btn-light">Send Email</button>
+        <button type="submit" class="btn btn-dark btn-lg col-12 my-4">Send Email</button>
     </form>
 </div>
 {% endblock %}

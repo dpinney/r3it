@@ -3,32 +3,20 @@
 {% block anonymous %}
 <style type="text/css">#bg{background-image:url({{bg}})}</style>
 <style type="text/css">#bg{height: 100%;}</style>
-<div id="login">
-    <!-- Bootstrap login block -->
-    <h1>Log In</h1>
+
+<div class="col-10 col-sm-7 col-md-5 col-lg-4 m-auto row g-5 card text-center" id="login">
     <form action="/login" method="post">
-        <div class="form-group">
-            <label for="email" class="sr-only">Email Address</label>
-            <input 
-                type="email" 
-                class="form-control" 
-                id="email" 
-                name="email" 
-                placeholder="Email Address" 
-                required>
+        <h1 class="mb-3">Log In</h1>
+        <div class="form-floating mb-3">
+            <input type="email" class="form-control" id="email" name="email" placeholder="Email Address" required>
+            <label for="email">Email Address</label>
         </div>
-        <div class="form-group">
-            <label for="password" class="sr-only">Password</label>
-            <input 
-                type="password" 
-                class="form-control" 
-                id="password" 
-                name="password" 
-                placeholder="Password" 
-                required>
+        <div class="form-floating mb-2">
+            <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+            <label for="password">Password</label>
         </div>
-        <button type="submit" class="btn btn-block btn-light">Log In</button>
-        <a href="/forgot" class="btn btn-block btn-light">Forgot password?</a>
+        <a href="/forgot" class="text-muted">Forgot password?</a>
+        <button type="submit" class="btn btn-dark btn-lg col-12 my-4">Log In</button>
     </form>
 </div>
 {% endblock %}
