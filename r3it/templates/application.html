@@ -366,16 +366,20 @@
                             <label for="faxElectrician" class="form-label">Fax Number</label>
                             <input type="tel" class="form-control" id="faxElectrician" name="Fax (Electrician)" value="{{default['Fax (Electrician)']}}">
                         </div>
-                        <div class="col-7">
-                            <label for="licenseElectrician" class="form-label">Electrician License Number</label>
-                            <input type="text" class="form-control" id="licenseElectrician" name="License (Electrician)" value="{{default['License (Electrician)']}}">
-                        </div>
-                        <div class="col-5 mt-auto">
-                            <div class="form-check mb-2">
-                                <input type="checkbox" class="form-check-input" id="activeLicense">
-                                <label for="activeLicense" class="form-check-label">Active License</label>
+                        <fieldset>
+                            <legend class="col-form-label py-0">Electrician License Number</legend>
+                            <div class="row g-2">
+                                <div class="col">
+                                    <input type="text" class="form-control" id="licenseElectrician" name="License (Electrician)" value="{{default['License (Electrician)']}}" aria-label="electrician license number">
+                                </div>
+                                <div class="col-auto mt-auto ms-2">
+                                    <div class="form-check mb-2">
+                                        <input type="checkbox" class="form-check-input" id="activeLicense">
+                                        <label for="activeLicense" class="form-check-label">Active License</label>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
+                        </fieldset>
                     </div>
                 </div>
             </div>
