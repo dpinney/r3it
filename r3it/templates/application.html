@@ -599,10 +599,16 @@
                             <legend class="col-form-label py-0">Nameplate Ratings</legend>
                             <div class="row g-2">
                                 <div class="col-6">
-                                    <input type="text" class="form-control" id="nameplateRatingkW" name="Nameplate Rating (kW)" value="{{default['Nameplate Rating (kW)']}}" placeholder="kW-AC" aria-label="nameplate rating kilowatts AC">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="nameplateRatingkW" name="Nameplate Rating (kW)" value="{{default['Nameplate Rating (kW)']}}" aria-label="nameplate rating kilowatts AC" aria-describedby="kW-AC">
+                                        <span class="input-group-text" id="kW-AC">kW-AC</span>
+                                    </div>
                                 </div>
                                 <div class="col-6">
-                                    <input type="text" class="form-control" id="nameplateRatingV" name="Nameplate Rating (V)" value="{{default['Nameplate Rating (V)']}}" placeholder="V-AC" aria-label="nameplate rating volts AC">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="nameplateRatingV" name="Nameplate Rating (V)" value="{{default['Nameplate Rating (V)']}}" aria-label="nameplate rating volts AC" aria-describedby="V-AC">
+                                        <span class="input-group-text" id="V-AC">V-AC</span>
+                                    </div>
                                 </div>
                             </div>
                         </fieldset>
@@ -641,52 +647,9 @@
                                 <label for="valueOfEnergyRadio" class="form-check-label">Value of energy</label>
                             </div>
                         </fieldset>
-
-                        <!-- <div>
-                            <label for="emailContractor" class="form-label">Email Address</label>
-                            <input type="email" class="form-control" id="emailContractor" name="Email (Contractor)" value="{{default['Email (Contractor)']}}" onchange="ensureMemberIsNotContractor(this.id)">
-                        </div>
-                        <div class="col-sm-4 col-md-12">
-                            <label for="primaryPhoneContractor" class="form-label">Primary Phone</label>
-                            <input type="tel" class="form-control" id="primaryPhoneContractor" name="Phone (Primary, Contractor)" value="{{default['Phone (Primary, Contractor)']}}">
-                        </div>
-                        <div class="col-sm-4 col-md-12 col-lg-6">
-                            <label for="secondaryPhoneContractor" class="form-label">Secondary Phone</label>
-                            <input type="tel" class="form-control" id="secondaryPhoneContractor" name="Phone (Secondary, Contractor)" value="{{default['Phone (Secondary, Contractor)']}}">
-                        </div>
-                        <div class="col-sm-4 col-md-12 col-lg-6">
-                            <label for="faxContractor" class="form-label">Fax Number</label>
-                            <input type="tel" class="form-control" id="faxContractor" name="Fax (Contractor)" value="{{default['Fax (Contractor)']}}">
-                        </div>
-                        <div class="">
-                            <label for="docketNumber" class="form-label">Installer Certificate Docket Number</label>
-                            <input type="text" class="form-control" id="docketNumber" name="Docket Number" value="{{default['Docket Number']}}">
-                        </div> -->
                     </div>
                 </div>
             </div>
-
-            <!-- <div class="row mb-3">
-                <div class="col-3">
-                    <label for="accountNumber" class="form-label">Member Account Number</label>
-                    <input type="text" class="form-control" id="accountNumber" name="Account Number" value="{{default['Account Number']}}">
-                </div>
-                <div class="col-5">
-                    <label for="meterID" class="form-label">Meter ID</label>
-                    <input type="text" class="form-control" id="meterID" name="Meter ID" value="{{default['Meter ID']}}">
-                </div>
-            </div>
-            
-            <div class="row mb-3">
-                <div class="col-3">
-                    <label for="owner" class="form-label">Property Owner</label>
-                    <input type="text" class="form-control" id="owner" name="Owner" value="{{default['Owner']}}">
-                </div>
-                <div class="form-check col-3 ms-3 mt-4 pt-3">
-                    <input type="checkbox" class="form-check-input" id="memberIsOwner">
-                    <label for="memberIsOwner" class="form-check-label">Same as Member</label>
-                </div>
-            </div> -->
 
             <!-- Owner same as member script -->
             <script type="text/javascript">
@@ -708,44 +671,6 @@
                     }
                 })
             </script>
-
-            <!-- <fieldset>
-                <legend class="col-form-label pt-0 pb-0 mb-2">Service Address</legend>
-                <div class="row mb-2">
-                    <div class="form-check col-3 ms-3">
-                        <input type="checkbox" class="form-check-input" id="serviceAddrIsMemberAddr">
-                        <label for="serviceAddrIsMemberAddr" class="form-check-label">Same as Member Address</label>
-                    </div>
-                </div>
-                <div class="row mb-2">
-                    <div class="col-6">
-                        <input type="text" class="form-control" id="addressService" name="Address (Service)" value="{{default['Address (Service)']}}" placeholder="Street Address" aria-label="street address">
-                    </div>
-                </div>
-                <div class="row mb-2">
-                    <div class="col-6">
-                        <input type="text" class="form-control" id="address2Service" name="Address 2 (Service)" value="{{default['Address 2 (Service)']}}" placeholder="Address Line 2" aria-label="address line 2">
-                    </div>
-                </div>
-                <div class="row mb-2">
-                    <div class="col-3">
-                        <input type="text" class="form-control" id="cityService" name="City (Service)" value="{{default['City (Service)']}}" placeholder="City" aria-label="city">
-                    </div>
-                    <div class="col-2">
-                        <select class="form-select" id="stateService" name="State (Service)" aria-label="service location state">
-                            <option value="" hidden selected disabled>--- State ---</option>
-                            {% for state in states %}
-                                <option value="{{state}}" {% if (state == default['State (Service)']) %} selected {% endif %}>{{state}}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-3">
-                        <input type="text" class="form-control" id="zipService" name="Zip (Service)" value="{{default['Zip (Service)']}}" placeholder="Postal / Zip Code" aria-label="postal or zip code">
-                    </div>
-                </div>
-            </fieldset> -->
 
             <!-- Service address same as member address script -->
             <script type="text/javascript">
@@ -777,42 +702,6 @@
                 }
             </script>
 
-            <!-- <fieldset class="mb-2">
-                <legend class="col-form-label pt-0 pb-0 mb-2">Inverter Manufacturer & Model</legend>
-                <div class="row mb-2">
-                    <div class="col-3">
-                        <select class="form-select" id="inverter" aria-label="inverter manufacturer and model">
-                            <option value="" hidden selected disabled>--- Select Inverter ---</option>
-                            {% for manufacturer in inverters %}
-                                <optgroup label="{{manufacturer}}">
-                                    {% for model in inverters[manufacturer] %}
-                                        <option value="{{model}}" {% if (default['Inverter Model'] == model) %} selected {% endif %}>{{model}}</option>
-                                    {% endfor %}
-                                </optgroup>
-                            {% endfor %}
-                            <option value="Other">Other</option>
-                        </select>
-                    </div>
-                </div>
-    
-                <div id="inverterOther" hidden>
-                    <div class="row mb-2">
-                        <div class="col-3">
-                            <input type="text" class="form-control" id="inverterManufacturer" name="Inverter Manufacturer" value="{{default['Inverter Manufacturer']}}" placeholder="Manufacturer" aria-label="inverter manufacturer">
-                        </div>
-                        <div class="col-3">
-                            <input type="text" class="form-control" id="inverterModel" name="Inverter Model" value="{{default['Inverter Model']}}" placeholder="Model" aria-label="inverter model">
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <label for="inverterSpec" class="col-form-label col-2">Specification Sheet</label>
-                        <div class="col-4">
-                            <input type="file" class="form-control" id="inverterSpec" name="Inverter Specification" placeholder="Specification Sheet" aria-label="inverter specification sheet">
-                        </div>
-                    </div>
-                </div>
-            </fieldset> -->
-
             <!-- Script to show/hide manufacturer and model fields based on dropdown -->
             <script type="text/javascript">
                 const inverter = document.getElementById("inverter")
@@ -842,73 +731,6 @@
                     }
                 })
             </script>
-
-            <!-- <fieldset>
-                <legend class="col-form-label pt-0 pb-0 mb-2">Nameplate Ratings</legend>
-                <div class="row mb-2">
-                    <div class="col-2">
-                        <input type="text" class="form-control" id="nameplateRatingkW" name="Nameplate Rating (kW)" value="{{default['Nameplate Rating (kW)']}}" placeholder="kW-AC" aria-label="nameplate rating kilowatts AC">
-                    </div>
-                    <div class="col-2">
-                        <input type="text" class="form-control" id="nameplateRatingV" name="Nameplate Rating (V)" value="{{default['Nameplate Rating (V)']}}" placeholder="V-AC" aria-label="nameplate rating volts AC">
-                    </div>
-                </div>
-            </fieldset> -->
-
-            <!-- <div class="row mb-3">
-                <fieldset class="col-3">
-                    <legend class="col-form-label pt-2">Inverter Phases</legend>
-                    <div class="form-check form-check-inline ms-1">
-                        <input type="radio" class="form-check-input" id="onePhaseRadio" name="Phases" value="One" {% if (default['Phases'] == 'One') %} checked="True" {% endif %}>
-                        <label for="onePhaseRadio" class="form-check-label">One</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input type="radio" class="form-check-input" id="threePhaseRadio" name="Phases" value="Three" {% if (default['Phases']) == 'Three' %} checked="True" {% endif %}>
-                        <label for="threePhaseRadio" class="form-check-label">Three</label>
-                    </div>
-                </fieldset>
-                <fieldset class="col-3">
-                    <legend class="col-form-label pt-2">Is the equipment UL1741 listed?</legend>
-                    <div class="form-check form-check-inline ms-1">
-                        <input type="radio" class="form-check-input" id="yesListedRadio" name="UL1741 listed" value="Yes" {% if (default['UL1741 listed'] == 'Yes') %} checked="True" {% endif %}>
-                        <label for="yesListedRadio" class="form-check-label">Yes</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input type="radio" class="form-check-input" id="noListedRadio" name="UL1741 listed" value="No" {% if (default['UL1741 listed'] == 'No') %} checked="True" {% endif %}>
-                        <label for="noListedRadio" class="form-check-label">No</label>
-                    </div>
-                </fieldset>
-            </div> -->
-
-            <!-- <div class="row mb-3">
-                <div class="col-3">
-                    <label for="installDateEstimated" class="form-label">Estimated Install Date</label>
-                    <input type="date" class="form-control" id="installDateEstimated" name="Estimated Install Date" value="{{default['Estimated Install Date']}}" min="">
-                </div>
-
-                <div class="col-3">
-                    <label for="inServiceDateEstimated" class="form-label">Estimated In-Service Date</label>
-                    <input type="date" class="form-control" id="inServiceDateEstimated" name="Estimated In-Service Date" value="{{default['Estimated In-Service Date']}}" min="">
-                </div>
-            </div> -->
-
-            <!-- <div class="row mb-3">
-                <fieldset class="col-3" id="tariffType">
-                    <legend class="col-form-label pt-2">Tariff Type</legend>
-                    <div class="form-check ms-1">
-                        <input type="radio" class="form-check-input" id="netMeteringRadio" name="Tariff" value="Net metering" 
-                            
-                        >
-                        <label for="netMeteringRadio" class="form-check-label">Net metering</label>
-                    </div>
-                    <div class="form-check ms-1">
-                        <input type="radio" class="form-check-input" id="valueOfEnergyRadio" name="Tariff" value="Value of energy" 
-                            
-                        >
-                        <label for="valueOfEnergyRadio" class="form-check-label">Value of energy</label>
-                    </div>
-                </fieldset>
-            </div> -->
 
             <!-- Script to remove or recreate April/Nov radio buttons on tariff button clicks -->
             <!-- Radio buttons could be hidden but not unchecked...bug? So remove them entirely to prevent submission of month with value of energy -->
