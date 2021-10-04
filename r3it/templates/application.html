@@ -65,7 +65,7 @@
     </script>
 
     <!-- Bootstrap application form -->
-    <h1 class="mb-4">New Interconnection Application</h1>
+    <h1 class="my-4">New Interconnection Application</h1>
     <form id="application" action="{{formAction}}" method='post' onsubmit="submitForm()">
 
         <hr class="my-4">
@@ -383,18 +383,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- <div class="row mb-3">
-                <div class="col-4">
-                    <label for="licenseElectrician" class="form-label">Electrical Contractor License</label>
-                    <input type="text" class="form-control" id="licenseElectrician" name="License (Electrician)" value="{{default['License (Electrician)']}}">
-                </div>
-
-                <div class="form-check col-4 ms-3 mt-4 pt-3">
-                    <input type="checkbox" class="form-check-input" id="activeLicense">
-                    <label for="activeLicense" class="form-check-label">Active License</label>
-                </div>
-            </div> -->
         </div>
 
         <!-- Script to autofill contractor based on memberIsSelfContractor checkbox -->
@@ -525,20 +513,24 @@
                             <input type="text" class="form-control" id="meterID" name="Meter ID" value="{{default['Meter ID']}}">
                         </div>
                         <div>
-                            <label for="owner" class="form-label col-6">Property Owner</label>
-                            <!-- <div class="form-check form-check-inline">
-                                <input type="checkbox" class="form-check-input" id="memberIsOwner">
-                                <label for="memberIsOwner" class="form-check-label">Same as Member</label>
-                            </div> -->
+                            <div class="row g-2 mb-2">
+                                <label class="form-label col text-nowrap me-1 mb-0" for="owner">Property Owner</label>
+                                <div class="form-check form-check-inline col-auto mt-auto mb-0 ms-1 me-0 pt-1">
+                                    <input type="checkbox" class="form-check-input" id="memberIsOwner">
+                                    <label for="memberIsOwner" class="form-check-label">Same as Member</label>
+                                </div>
+                            </div>
                             <input type="text" class="form-control" id="owner" name="Owner" value="{{default['Owner']}}">
                         </div>
                         <fieldset>
-                            <legend class="col-form-label py-0 col-5">Service Address</legend>
-                            <!-- <div class="col-6 form-check form-check-inline">
-                                <input type="checkbox" class="form-check-input" id="serviceAddrIsMemberAddr">
-                                <label for="serviceAddrIsMemberAddr" class="form-check-label">Same as Member Address</label>
-                            </div> -->
-                            <div class="col-12 row g-2">
+                            <div class="row g-2 mb-2">
+                                <legend class="col-form-label py-0 col text-nowrap me-1">Service Address</legend>
+                                <div class="form-check form-check-inline col-auto mt-auto mb-0 ms-1 me-0 pt-1">
+                                    <input type="checkbox" class="form-check-input" id="serviceAddrIsMemberAddr">
+                                    <label for="serviceAddrIsMemberAddr" class="form-check-label">Same as Member Address</label>
+                                </div>
+                            </div>
+                            <div class="row g-2">
                                 <div>
                                     <input type="text" class="form-control" id="addressService" name="Address (Service)" value="{{default['Address (Service)']}}" placeholder="Street Address" aria-label="street address">                                </div>
                                 <div>
