@@ -97,7 +97,7 @@
         <hr class="my-4">
 
         <div class="form-check my-4">
-            <input type="checkbox" class="form-check-input" id="useAltContact" {% if (default['Name (Alt Contact)'] != '') %} checked {% endif %}>
+            <input type="checkbox" class="form-check-input no-validation" id="useAltContact" {% if (default['Name (Alt Contact)'] != '') %} checked {% endif %}>
             <label for="useAltContact" class="form-check-label">Use Alternate Contact</label>
         </div>
 
@@ -186,7 +186,7 @@
         <hr class="my-4">
 
         <div class="form-check my-4">
-            <input type="checkbox" class="form-check-input" id="memberIsSelfContractor">
+            <input type="checkbox" class="form-check-input no-validation" id="memberIsSelfContractor">
             <label for="memberIsSelfContractor" class="form-check-label">Member is self-installing equipment</label>
         </div>
 
@@ -263,11 +263,11 @@
         <hr class="my-4">
         
         <div class="form-check my-3">
-            <input type="checkbox" class="form-check-input" id="memberIsSelfElectrician">
+            <input type="checkbox" class="form-check-input no-validation" id="memberIsSelfElectrician">
             <label for="memberIsSelfElectrician" class="form-check-label">Member is self-installing electrical</label>
         </div>
         <div class="form-check mb-4">
-            <input type="checkbox" class="form-check-input" id="contractorIsElectrician">
+            <input type="checkbox" class="form-check-input no-validation" id="contractorIsElectrician">
             <label for="contractorIsElectrician" class="form-check-label">Equipment contractor same as electrician</label>
         </div>
 
@@ -485,7 +485,7 @@
                             <div class="row g-2 mb-2">
                                 <label class="form-label col text-nowrap me-1 mb-0" for="owner">Property Owner</label>
                                 <div class="form-check form-check-inline col-auto mt-auto mb-0 ms-1 me-0 pt-1">
-                                    <input type="checkbox" class="form-check-input" id="memberIsOwner">
+                                    <input type="checkbox" class="form-check-input no-validation" id="memberIsOwner">
                                     <label for="memberIsOwner" class="form-check-label">Same as Member</label>
                                 </div>
                             </div>
@@ -495,7 +495,7 @@
                             <div class="row g-2 mb-2">
                                 <legend class="col-form-label py-0 col text-nowrap me-1">Service Address</legend>
                                 <div class="form-check form-check-inline col-auto mt-auto mb-0 ms-1 me-0 pt-1">
-                                    <input type="checkbox" class="form-check-input" id="serviceAddrIsMemberAddr">
+                                    <input type="checkbox" class="form-check-input no-validation" id="serviceAddrIsMemberAddr">
                                     <label for="serviceAddrIsMemberAddr" class="form-check-label">Same as Member Address</label>
                                 </div>
                             </div>
