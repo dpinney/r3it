@@ -4,23 +4,8 @@
 
     <script src="https://polyfill.io/v3/polyfill.min.js?version=3.52.1&features=fetch"></script>
     <script src="https://js.stripe.com/v3/"></script>
-    
-    <script type="text/javascript">
-        function ensureMemberIsNotContractor(lastChangedID) {
-            // console.log(lastChangedID)
-
-            // member = document.getElementById("emailMember").value;
-            // contractor = document.getElementById("emailContact").value;
-            // if (member == contractor) {
-                
-            //     alert("Member and contractor must be separate entities. If the member is performing the install, please selct 'Self-install' as the installation type")
-                
-            //     differentBlankVal = '';
-            //     if (member == '') {differentBlankVal = ' ';}
-            //     document.getElementById(lastChangedID).value = differentBlankVal;
-            // }
-        }
-    </script>
+    <script src="https://unpkg.com/vanilla-masker@1.1.1/lib/vanilla-masker.js"></script>
+    <script src="/static/js/application.js" defer></script>
 
     <meta id="dataTariff" data-tariff="{{default['Tariff']}}">
 
@@ -40,6 +25,7 @@
                         <div>
                             <label for="nameMember" class="form-label">Full Name</label>
                             <input type="text" class="form-control" id="nameMember" name="Name (Member)" value="{{default['Name (Member)']}}" placeholder="" required>
+                            <div class="invalid-feedback"></div>
                         </div>
                         <fieldset>
                             <legend class="col-form-label py-0">Mailing Address</legend>
@@ -64,45 +50,49 @@
                                 <div class="col-6 col-sm-3 col-md-6 col-lg-3">
                                     <input type="text" class="form-control" id="zipMember" name="Zip (Member)" value="{{default['Zip (Member)']}}" placeholder="Postal / Zip Code" aria-label="zip code" pattern="[0-9]{5}" maxlength="5" required>
                                 </div>
+                                <div class="invalid-feedback"></div>
                             </div>
                         </fieldset>
                     </div>
                 </div>
 
-                <!-- <div class="vr d-none d-md-inline-block px-0" style="margin-right: -1px; margin-left: -1px;"></div> -->
-
                 <div class="col-md-6 col-lg-5">
                     <div class="row g-3">
                         <div>
                             <label for="emailMember" class="form-label">Email Address</label>
-                            <input type="email" class="form-control" id="emailMember" name="Email (Member)" value="{{default['Email (Member)']}}" onchange="ensureMemberIsNotContractor(this.id)" required>
+                            <input type="email" class="form-control" id="emailMember" name="Email (Member)" value="{{default['Email (Member)']}}" required>
+                            <div class="invalid-feedback"></div>
                         </div>
                         <div class="col-sm-4 col-md-12">
                             <label for="primaryPhoneMember" class="form-label">Primary Phone</label>
                             <input type="tel" class="form-control" id="primaryPhoneMember" name="Phone (Primary, Member)" value="{{default['Phone (Primary, Member)']}}" pattern="\([0-9]{3}\) [0-9]{3} - [0-9]{4}|[0-9]{10}" maxlength="16" required>
+                            <div class="invalid-feedback"></div>
                         </div>
                         <div class="col-sm-4 col-md-12 col-lg-6">
                             <label for="secondaryPhoneMember" class="form-label">Secondary Phone</label>
                             <input type="tel" class="form-control" id="secondaryPhoneMember" name="Phone (Secondary, Member)" value="{{default['Phone (Secondary, Member)']}}" pattern="\([0-9]{3}\) [0-9]{3} - [0-9]{4}|[0-9]{10}" maxlength="16">
+                            <div class="invalid-feedback"></div>
                         </div>
                         <div class="col-sm-4 col-md-12 col-lg-6">
                             <label for="faxMember" class="form-label">Fax Number</label>
                             <input type="tel" class="form-control" id="faxMember" name="Fax (Member)" value="{{default['Fax (Member)']}}" pattern="\([0-9]{3}\) [0-9]{3} - [0-9]{4}|[0-9]{10}" maxlength="16">
+                            <div class="invalid-feedback"></div>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
 
         <hr class="my-4">
 
         <div class="form-check my-4">
-            <input type="checkbox" class="form-check-input no-validation" id="useAltContact" {% if (default['Name (Alt Contact)'] != '') %} checked {% endif %}>
+            <input type="checkbox" class="form-check-input no-validation" id="useAltContact">
             <label for="useAltContact" class="form-check-label">Use Alternate Contact</label>
         </div>
 
         <!-- Alternate Contact Block -->
-        <div id="altContact" class="mb-5" {% if (default['Name (Alt Contact)'] == '') %} hidden {% endif %}>
+        <div id="altContact" class="mb-5">
             <h3 class="mb-3">Alternate Contact Information</h3>
             <div class="row g-3 g-md-5">
 
@@ -111,6 +101,7 @@
                         <div>
                             <label for="nameAltContact" class="form-label">Contact Name</label>
                             <input type="text" class="form-control" id="nameAltContact" name="Name (Alt Contact)" value="{{default['Name (Alt Contact)']}}">
+                            <div class="invalid-feedback"></div>
                         </div>
                         <fieldset>
                             <legend class="col-form-label py-0">Contact Address</legend>
@@ -135,6 +126,7 @@
                                 <div class="col-6 col-sm-3 col-md-6 col-lg-3">
                                     <input type="text" class="form-control" id="zipAltContact" name="Zip (Alt Contact)" value="{{default['Zip (Alt Contact)']}}" placeholder="Postal / Zip Code" aria-label="postal or zip code" pattern="[0-9]{5}" maxlength="5">
                                 </div>
+                                <div class="invalid-feedback"></div>
                             </div>
                         </fieldset>
                     </div>
@@ -144,44 +136,29 @@
                     <div class="row g-3">
                         <div>
                             <label for="emailAltContact" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="emailAltContact" name="Email (Alt Contact)" value="{{default['Email (Alt Contact)']}}" onchange="ensureMemberIsNotContractor(this.id)">
+                            <input type="email" class="form-control" id="emailAltContact" name="Email (Alt Contact)" value="{{default['Email (Alt Contact)']}}">
+                            <div class="invalid-feedback"></div>
                         </div>
                         <div class="col-sm-4 col-md-12">
                             <label for="primaryPhoneAltContact" class="form-label">Primary Phone</label>
                             <input type="tel" class="form-control" id="primaryPhoneAltContact" name="Phone (Primary, Alt Contact)" value="{{default['Phone (Primary, Alt Contact)']}}" pattern="\([0-9]{3}\) [0-9]{3} - [0-9]{4}|[0-9]{10}" maxlength="16">
+                            <div class="invalid-feedback"></div>
                         </div>
                         <div class="col-sm-4 col-md-12 col-lg-6">
                             <label for="secondaryPhoneAltContact" class="form-label">Secondary Phone</label>
                             <input type="tel" class="form-control" id="secondaryPhoneAltContact" name="Phone (Secondary, Alt Contact)" value="{{default['Phone (Secondary, Alt Contact)']}}" pattern="\([0-9]{3}\) [0-9]{3} - [0-9]{4}|[0-9]{10}" maxlength="16">
+                            <div class="invalid-feedback"></div>
                         </div>
                         <div class="col-sm-4 col-md-12 col-lg-6">
                             <label for="faxAltContact" class="form-label">Fax Number</label>
                             <input type="tel" class="form-control" id="faxAltContact" name="Fax (Alt Contact)" value="{{default['Fax (Alt Contact)']}}" pattern="\([0-9]{3}\) [0-9]{3} - [0-9]{4}|[0-9]{10}" maxlength="16">
+                            <div class="invalid-feedback"></div>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
-
-        <!-- Script to show/hide alt contact based on checkbox -->
-        <script type="text/javascript">
-            const useAltContact = document.getElementById("useAltContact")
-            const altContact = document.getElementById("altContact")
-            const requiredFields = ["name", "address", "city", "state", "zip", "email", "primaryPhone"]
-            useAltContact.addEventListener("click", () => {
-                if (useAltContact.checked) {
-                    altContact.removeAttribute("hidden")
-                    requiredFields.forEach((field) => {
-                        document.getElementById(`${field}AltContact`).classList.add("required")
-                    })
-                } else {
-                    altContact.setAttribute("hidden", "true")
-                    requiredFields.forEach((field) => {
-                        document.getElementById(`${field}AltContact`).classList.remove("required")
-                    })
-                }
-            })
-        </script>
 
         <hr class="my-4">
 
@@ -200,10 +177,12 @@
                         <div>
                             <label for="nameContractor" class="form-label">Company Name</label>
                             <input type="text" class="form-control" id="nameContractor" name="Name (Contractor)" value="{{default['Name (Contractor)']}}" required>
+                            <div class="invalid-feedback"></div>
                         </div>
                         <div>
                             <label for="contactContractor" class="form-label">Contact Person</label>
-                            <input type="text" class="form-control" id="contactContractor" name="Contact Person (Contractor)" value="{{default['Contact Person (Contractor)']}}" required>        
+                            <input type="text" class="form-control" id="contactContractor" name="Contact Person (Contractor)" value="{{default['Contact Person (Contractor)']}}" required>
+                            <div class="invalid-feedback"></div>
                         </div>
                         <fieldset>
                             <legend class="col-form-label py-0">Mailing Address</legend>
@@ -228,6 +207,7 @@
                                 <div class="col-6 col-sm-3 col-md-6 col-lg-3">
                                     <input type="text" class="form-control" id="zipContractor" name="Zip (Contractor)" value="{{default['Zip (Contractor)']}}" placeholder="Postal / Zip Code" aria-label="postal or zip code" pattern="[0-9]{5}" maxlength="5" required>
                                 </div>
+                                <div class="invalid-feedback"></div>
                             </div>
                         </fieldset>
                     </div>
@@ -237,26 +217,32 @@
                     <div class="row g-3">
                         <div>
                             <label for="emailContractor" class="form-label">Email Address</label>
-                            <input type="email" class="form-control" id="emailContractor" name="Email (Contractor)" value="{{default['Email (Contractor)']}}" onchange="ensureMemberIsNotContractor(this.id)" required>
+                            <input type="email" class="form-control" id="emailContractor" name="Email (Contractor)" value="{{default['Email (Contractor)']}}" required>
+                            <div class="invalid-feedback"></div>
                         </div>
                         <div class="col-sm-4 col-md-12">
                             <label for="primaryPhoneContractor" class="form-label">Primary Phone</label>
                             <input type="tel" class="form-control" id="primaryPhoneContractor" name="Phone (Primary, Contractor)" value="{{default['Phone (Primary, Contractor)']}}" pattern="\([0-9]{3}\) [0-9]{3} - [0-9]{4}|[0-9]{10}" maxlength="16" required>
+                            <div class="invalid-feedback"></div>
                         </div>
                         <div class="col-sm-4 col-md-12 col-lg-6">
                             <label for="secondaryPhoneContractor" class="form-label">Secondary Phone</label>
                             <input type="tel" class="form-control" id="secondaryPhoneContractor" name="Phone (Secondary, Contractor)" value="{{default['Phone (Secondary, Contractor)']}}" pattern="\([0-9]{3}\) [0-9]{3} - [0-9]{4}|[0-9]{10}" maxlength="16">
+                            <div class="invalid-feedback"></div>
                         </div>
                         <div class="col-sm-4 col-md-12 col-lg-6">
                             <label for="faxContractor" class="form-label">Fax Number</label>
                             <input type="tel" class="form-control" id="faxContractor" name="Fax (Contractor)" value="{{default['Fax (Contractor)']}}" pattern="\([0-9]{3}\) [0-9]{3} - [0-9]{4}|[0-9]{10}" maxlength="16">
+                            <div class="invalid-feedback"></div>
                         </div>
                         <div class="">
                             <label for="docketNumber" class="form-label">Installer Certificate Docket Number</label>
                             <input type="text" class="form-control" id="docketNumber" name="Docket Number" value="{{default['Docket Number']}}" required>
+                            <div class="invalid-feedback"></div>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
 
@@ -274,7 +260,6 @@
         <!-- Electrical Contractor Block -->
         <div id="electrician" class="mb-5">
             <h3 class="mb-3">Electrical Contractor Information</h3>
-
             <div class="row g-3 g-md-5">
 
                 <div class="col-md-6 col-lg-7">
@@ -282,10 +267,12 @@
                         <div>
                             <label for="nameElectrician" class="form-label">Electrical Contractor Name</label>
                             <input type="text" class="form-control" id="nameElectrician" name="Name (Electrician)" value="{{default['Name (Electrician)']}}" required>
+                            <div class="invalid-feedback"></div>
                         </div>
                         <div>
                             <label for="contactElectrician" class="form-label">Contact Person</label>
                             <input type="text" class="form-control" id="contactElectrician" name="Contact Person (Electrician)" value="{{default['Contact Person (Electrician)']}}" required>
+                            <div class="invalid-feedback"></div>
                         </div>
                         <fieldset>
                             <legend class="col-form-label py-0">Mailing Address</legend>
@@ -310,6 +297,7 @@
                                 <div class="col-6 col-sm-3 col-md-6 col-lg-3">
                                     <input type="text" class="form-control" id="zipElectrician" name="Zip (Electrician)" value="{{default['Zip (Electrician)']}}" placeholder="Postal / Zip Code" aria-label="postal or zip code" pattern="[0-9]{5}" maxlength="5" required>
                                 </div>
+                                <div class="invalid-feedback"></div>
                             </div>
                         </fieldset>
                     </div>
@@ -319,19 +307,23 @@
                     <div class="row g-3">
                         <div>
                             <label for="emailElectrician" class="form-label">Email Address</label>
-                            <input type="email" class="form-control" id="emailElectrician" name="Email (Electrician)" value="{{default['Email (Electrician)']}}" onchange="ensureMemberIsNotContractor(this.id)" required>
+                            <input type="email" class="form-control" id="emailElectrician" name="Email (Electrician)" value="{{default['Email (Electrician)']}}" required>
+                            <div class="invalid-feedback"></div>
                         </div>
                         <div class="col-sm-4 col-md-12">
                             <label for="primaryPhoneElectrician" class="form-label">Primary Phone</label>
                             <input type="tel" class="form-control" id="primaryPhoneElectrician" name="Phone (Primary, Electrician)" value="{{default['Phone (Primary, Electrician)']}}" pattern="\([0-9]{3}\) [0-9]{3} - [0-9]{4}|[0-9]{10}" maxlength="16" required>
+                            <div class="invalid-feedback"></div>
                         </div>
                         <div class="col-sm-4 col-md-12 col-lg-6">
                             <label for="secondaryPhoneElectrician" class="form-label">Secondary Phone</label>
                             <input type="tel" class="form-control" id="secondaryPhoneElectrician" name="Phone (Secondary, Electrician)" value="{{default['Phone (Secondary, Electrician)']}}" pattern="\([0-9]{3}\) [0-9]{3} - [0-9]{4}|[0-9]{10}" maxlength="16">
+                            <div class="invalid-feedback"></div>
                         </div>
                         <div class="col-sm-4 col-md-12 col-lg-6">
                             <label for="faxElectrician" class="form-label">Fax Number</label>
                             <input type="tel" class="form-control" id="faxElectrician" name="Fax (Electrician)" value="{{default['Fax (Electrician)']}}" pattern="\([0-9]{3}\) [0-9]{3} - [0-9]{4}|[0-9]{10}" maxlength="16">
+                            <div class="invalid-feedback"></div>
                         </div>
                         <fieldset>
                             <legend class="col-form-label py-0">Electrician License Number</legend>
@@ -345,124 +337,14 @@
                                         <label for="activeLicense" class="form-check-label">Active License</label>
                                     </div>
                                 </div>
+                                <div class="invalid-feedback"></div>
                             </div>
                         </fieldset>
                     </div>
                 </div>
+
             </div>
         </div>
-
-        <!-- Script to autofill contractor based on memberIsSelfContractor checkbox -->
-        <script type="text/javascript">
-            const memberIsSelfContractor = document.getElementById("memberIsSelfContractor")
-            const memberIsSelfElectrician = document.getElementById("memberIsSelfElectrician")
-            const contractorIsElectrician = document.getElementById("contractorIsElectrician")
-            {
-                const fields = ["name", "address", "address2", "city", "state", "zip", "primaryPhone", "secondaryPhone", "email", "fax"]
-                const fieldPairs = fields.map((field) => [document.getElementById(`${field}Contractor`), document.getElementById(`${field}Member`)])
-                fieldPairs[0] = [document.getElementById('contactContractor'), fieldPairs[0][1]]
-                const nameContractor = document.getElementById('nameContractor')
-                const inputHandlers = fieldPairs.map((pair) => () => pair[0].value = pair[1].value)
-    
-                memberIsSelfContractor.addEventListener("click", () => {
-                    if (memberIsSelfContractor.checked) {
-                        // for each contractor field, set val to member val
-                        nameContractor.value = ""
-                        fieldPairs.forEach((pair, i) => inputHandlers[i]())
-                        // for each member field, add evt list to set contractor val to member val
-                        fieldPairs.forEach((pair, i) => pair[1].addEventListener("input", inputHandlers[i]))
-                        // for each contractor field, set disabled
-                        nameContractor.setAttribute("disabled", "true")
-                        fieldPairs.forEach((pair) => pair[0].setAttribute("disabled", "true"))
-                        // disable contractorIsElectrician checkbox
-                        contractorIsElectrician.setAttribute("disabled", "true")
-                    } else {
-                        // for each member field, remove evt list
-                        fieldPairs.forEach((pair, i) => pair[1].removeEventListener("input", inputHandlers[i]))
-                        // for each contractor field, set empty
-                        fieldPairs.forEach((pair) => pair[0].value = "")
-                        // for each contractor field, remove disabled
-                        nameContractor.removeAttribute("disabled")
-                        fieldPairs.forEach((pair) => pair[0].removeAttribute("disabled"))
-                        // enable contractorIsElectrician checkbox
-                        if (!memberIsSelfElectrician.checked) {
-                            contractorIsElectrician.removeAttribute("disabled")
-                        }
-                    }
-                })
-            }
-        </script>
-
-        <!-- Script to autofill electrician based on contractorIsElectrician checkbox -->
-        <script type="text/javascript">
-            {
-                const fields = ["name", "contact", "address", "address2", "city", "state", "zip", "primaryPhone", "secondaryPhone", "email", "fax"]
-                const fieldPairs = fields.map((field) => [document.getElementById(`${field}Electrician`), document.getElementById(`${field}Contractor`)])
-                const inputHandlers = fieldPairs.map((pair) => () => pair[0].value = pair[1].value)
-    
-                contractorIsElectrician.addEventListener("click", () => {
-                    if (contractorIsElectrician.checked) {
-                        // for each electrician field, set val to contractor val
-                        fieldPairs.forEach((pair, i) => inputHandlers[i]())
-                        // for each contractor field, add evt list to set electrician val to contractor val
-                        fieldPairs.forEach((pair, i) => pair[1].addEventListener("input", inputHandlers[i]))
-                        // for each electrician field, set disabled
-                        fieldPairs.forEach((pair) => pair[0].setAttribute("disabled", "true"))
-                        // disable memberIsSelfElectrician checkbox
-                        memberIsSelfContractor.setAttribute("disabled", "true")
-                        memberIsSelfElectrician.setAttribute("disabled", "true")
-                    } else {
-                        // for each contractor field, remove evt list
-                        fieldPairs.forEach((pair, i) => pair[1].removeEventListener("input", inputHandlers[i]))
-                        // for each electrician field, set empty
-                        fieldPairs.forEach((pair) => pair[0].value = "")
-                        // for each electrician field, remove disabled
-                        fieldPairs.forEach((pair) => pair[0].removeAttribute("disabled"))
-                        // enable memberIsSelfElectrician checkbox
-                        memberIsSelfContractor.removeAttribute("disabled")
-                        memberIsSelfElectrician.removeAttribute("disabled")
-                    }
-                })
-            }
-        </script>
-
-        <!-- Script to autofill electrician based on memberIsSelfElectrician checkbox -->
-        <script type="text/javascript">
-            {
-                const fields = ["name", "address", "address2", "city", "state", "zip", "primaryPhone", "secondaryPhone", "email", "fax"]
-                const fieldPairs = fields.map((field) => [document.getElementById(`${field}Electrician`), document.getElementById(`${field}Member`)])
-                fieldPairs[0] = [document.getElementById('contactElectrician'), fieldPairs[0][1]]
-                const nameElectrician = document.getElementById('nameElectrician')
-                const inputHandlers = fieldPairs.map((pair) => () => pair[0].value = pair[1].value)
-    
-                memberIsSelfElectrician.addEventListener("click", () => {
-                    if (memberIsSelfElectrician.checked) {
-                        // for each electrician field, set val to member val
-                        nameElectrician.value = ""
-                        fieldPairs.forEach((pair, i) => inputHandlers[i]())
-                        // for each member field, add evt list to set electrician val to member val
-                        fieldPairs.forEach((pair, i) => pair[1].addEventListener("input", inputHandlers[i]))
-                        // for each electrician field, set disabled
-                        nameElectrician.setAttribute("disabled", "true")
-                        fieldPairs.forEach((pair) => pair[0].setAttribute("disabled", "true"))
-                        // disable contractorIsElectrician checkbox
-                        contractorIsElectrician.setAttribute("disabled", "true")
-                    } else {
-                        // for each member field, remove evt list
-                        fieldPairs.forEach((pair, i) => pair[1].removeEventListener("input", inputHandlers[i]))
-                        // for each electrician field, set empty
-                        fieldPairs.forEach((pair) => pair[0].value = "")
-                        // for each electrician field, remove disabled
-                        nameElectrician.removeAttribute("disabled")
-                        fieldPairs.forEach((pair) => pair[0].removeAttribute("disabled"))
-                        // enable contractorIsElectrician checkbox
-                        if (!memberIsSelfContractor.checked) {
-                            contractorIsElectrician.removeAttribute("disabled")
-                        }
-                    }
-                })
-            }
-        </script>
 
         <hr class="my-4">
 
@@ -476,10 +358,12 @@
                         <div>
                             <label for="accountNumber" class="form-label">Member Account Number</label>
                             <input type="text" class="form-control" id="accountNumber" name="Account Number" value="{{default['Account Number']}}" required>
+                            <div class="invalid-feedback"></div>
                         </div>
                         <div>
                             <label for="meterID" class="form-label">Meter ID</label>
                             <input type="text" class="form-control" id="meterID" name="Meter ID" value="{{default['Meter ID']}}" required>
+                            <div class="invalid-feedback"></div>
                         </div>
                         <div>
                             <div class="row g-2 mb-2">
@@ -490,6 +374,7 @@
                                 </div>
                             </div>
                             <input type="text" class="form-control" id="owner" name="Owner" value="{{default['Owner']}}" required>
+                            <div class="invalid-feedback"></div>
                         </div>
                         <fieldset>
                             <div class="row g-2 mb-2">
@@ -519,16 +404,19 @@
                                 <div class="col-6 col-sm-3 col-md-6 col-lg-3">
                                     <input type="text" class="form-control" id="zipService" name="Zip (Service)" value="{{default['Zip (Service)']}}" placeholder="Postal / Zip Code" aria-label="postal or zip code" pattern="[0-9]{5}" maxlength="5" required>
                                 </div>
+                                <div class="invalid-feedback"></div>
                             </div>
                         </fieldset>
 
                         <div class="col-sm-6 col-md-12 col-lg-6">
                             <label for="installDateEstimated" class="form-label">Estimated Install Date</label>
                             <input type="date" class="form-control" id="installDateEstimated" name="Estimated Install Date" value="{{default['Estimated Install Date']}}" required>
+                            <div class="invalid-feedback"></div>
                         </div>
                         <div class="col-sm-6 col-md-12 col-lg-6">
                             <label for="inServiceDateEstimated" class="form-label">Estimated In-Service Date</label>
                             <input type="date" class="form-control" id="inServiceDateEstimated" name="Estimated In-Service Date" value="{{default['Estimated In-Service Date']}}" required>
+                            <div class="invalid-feedback"></div>
                         </div>
                     </div>
                 </div>
@@ -550,12 +438,15 @@
                                         {% endfor %}
                                         <option value="Other">Other</option>
                                     </select>
+                                    <div class="invalid-feedback"></div>
                                 </div>
                                 <div class="col-sm-6 col-md-12 col-lg-6 inverterOther" hidden>
-                                    <input type="text" class="form-control" id="inverterManufacturer" name="Inverter Manufacturer" value="{{default['Inverter Manufacturer']}}" placeholder="Manufacturer" aria-label="inverter manufacturer">
+                                    <input type="text" class="form-control" id="inverterManufacturer" name="Inverter Manufacturer" value="{{default['Inverter Manufacturer']}}" placeholder="Manufacturer" aria-label="inverter manufacturer" required>
+                                    <div class="invalid-feedback"></div>
                                 </div>
                                 <div class="col-sm-6 col-md-12 col-lg-6 inverterOther" hidden>
-                                    <input type="text" class="form-control" id="inverterModel" name="Inverter Model" value="{{default['Inverter Model']}}" placeholder="Model" aria-label="inverter model">
+                                    <input type="text" class="form-control" id="inverterModel" name="Inverter Model" value="{{default['Inverter Model']}}" placeholder="Model" aria-label="inverter model" required>
+                                    <div class="invalid-feedback"></div>
                                 </div>
                                 <div class="inverterOther" hidden>
                                     <label for="inverterSpec" class="col-form-label">Specification Sheet</label>
@@ -571,12 +462,14 @@
                                     <div class="input-group">
                                         <input type="text" class="form-control" id="nameplateRatingkW" name="Nameplate Rating (kW)" value="{{default['Nameplate Rating (kW)']}}" aria-label="nameplate rating kilowatts AC" aria-describedby="kW-AC" required>
                                         <span class="input-group-text" id="kW-AC">kW-AC</span>
+                                        <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="input-group">
                                         <input type="text" class="form-control" id="nameplateRatingV" name="Nameplate Rating (V)" value="{{default['Nameplate Rating (V)']}}" aria-label="nameplate rating volts AC" aria-describedby="V-AC" required>
                                         <span class="input-group-text" id="V-AC">V-AC</span>
+                                        <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
                             </div>
@@ -592,6 +485,7 @@
                                     <input type="radio" class="form-check-input" id="threePhaseRadio" name="Phases" value="Three" {% if (default['Phases']) == 'Three' %} checked="True" {% endif %} required>
                                     <label for="threePhaseRadio" class="form-check-label">Three</label>
                                 </div>
+                                <div class="invalid-feedback"></div>
                         </fieldset>
                         <fieldset class="col-6">
                             <legend class="col-form-label py-0">Is the equipment UL1741 listed?</legend>
@@ -603,6 +497,7 @@
                                     <input type="radio" class="form-check-input" id="noListedRadio" name="UL1741 listed" value="No" {% if (default['UL1741 listed'] == 'No') %} checked="True" {% endif %} required>
                                     <label for="noListedRadio" class="form-check-label">No</label>
                                 </div>
+                                <div class="invalid-feedback"></div>
                         </fieldset>
 
                         <fieldset class="col-6" id="tariffType">
@@ -615,195 +510,14 @@
                                 <input type="radio" class="form-check-input" id="valueOfEnergyRadio" name="Tariff" value="Value of energy" required>
                                 <label for="valueOfEnergyRadio" class="form-check-label">Value of energy</label>
                             </div>
+                            <div class="invalid-feedback"></div>
                         </fieldset>
 
                         <input type="hidden" class="form-control" id="installationType" name="Installation Type" value="{{default['Installation Type']}}" disabled>
                     </div>
                 </div>
+
             </div>
-
-            <!-- Owner same as member script -->
-            <script type="text/javascript">
-                const memberIsOwner = document.getElementById("memberIsOwner")
-                const nameMember = document.getElementById("nameMember")
-                const owner = document.getElementById("owner")
-                
-                const handleMemberInput = () => owner.value = nameMember.value
-
-                memberIsOwner.addEventListener("click", () => {
-                    if (memberIsOwner.checked) {
-                        handleMemberInput()
-                        nameMember.addEventListener("input", handleMemberInput)
-                        owner.setAttribute("disabled", "true")
-                    } else {
-                        nameMember.removeEventListener("input", handleMemberInput)
-                        owner.value = ""
-                        owner.removeAttribute("disabled")
-                    }
-                })
-            </script>
-
-            <!-- Service address same as member address script -->
-            <script type="text/javascript">
-                const serviceAddrIsMemberAddr = document.getElementById("serviceAddrIsMemberAddr")
-                const fields = ["address", "address2", "city", "state", "zip"]
-                // array of array pairs of corresponding service and member fields
-                // [[addressService, addressMember], [address2Service, addres2Member], [cityService, cityMember]...]
-                const fieldPairs = fields.map((field) => [document.getElementById(`${field}Service`), document.getElementById(`${field}Member`)])
-                const inputHandlers = fieldPairs.map((pair) => () => pair[0].value = pair[1].value)
-
-                window.onload = () => {
-                    if (fieldPairs.every((pair) => pair[0].value == pair[1].value)) {
-                        serviceAddrIsMemberAddr.setAttribute("checked", "true")
-                        fieldPairs.forEach((pair, i) => pair[1].addEventListener("input", inputHandlers[i]))
-                        fieldPairs.forEach((pair) => pair[0].setAttribute("disabled", "true"))
-                    }
-                    // NOTE: Placed here until scripts condensed
-                    if (nameMember.value == owner.value) {
-                        memberIsOwner.setAttribute("checked", "true")
-                        nameMember.addEventListener("input", handleMemberInput)
-                        owner.setAttribute("disabled", "true")
-                    }
-                    const tariff = document.getElementById('dataTariff').dataset.tariff
-                    if (tariff.startsWith("Net metering")) {
-                        createResetMonthRadio()
-                        netMeteringRadio.setAttribute("checked", "true")
-                        if (tariff.includes("April")) {
-                            document.querySelector("#aprilRadio").setAttribute("checked", "true")
-                        } else if (tariff.includes("November")) {
-                            document.querySelector("#novemberRadio").setAttribute("checked", "true")
-                        }
-                    } else {
-                        valueOfEnergyRadio.setAttribute("checked", "true")
-                    }
-                }
-                {
-                    serviceAddrIsMemberAddr.addEventListener("click", () => {
-                        if (serviceAddrIsMemberAddr.checked) {
-                            // for each service field, set val to member val
-                            fieldPairs.forEach((pair, i) => inputHandlers[i]())
-                            // for each member field, add evt list to set service val to member val
-                            fieldPairs.forEach((pair, i) => pair[1].addEventListener("input", inputHandlers[i]))
-                            // for each service field, set disabled
-                            fieldPairs.forEach((pair) => pair[0].setAttribute("disabled", "true"))
-                        } else {
-                            // for each member field, remove evt list
-                            fieldPairs.forEach((pair, i) => pair[1].removeEventListener("input", inputHandlers[i]))
-                            // for each service field, set empty
-                            fieldPairs.forEach((pair) => pair[0].value = "")
-                            // for each service field, remove disabled
-                            fieldPairs.forEach((pair) => pair[0].removeAttribute("disabled"))
-                        }
-                    })
-                }
-            </script>
-
-            <!-- Set constraints on date fields -->
-            <script type="text/javascript">
-                const today = new Date()
-                const [year, month, date] = [today.getFullYear(), today.getMonth() + 1, today.getDate()]
-                const todayString = `${year}-${String(month).padStart(2, '0')}-${String(date).padStart(2, '0')}`
-                const dates = document.querySelectorAll("input[type='date']")
-                Array.prototype.forEach.call(dates, (date) => date.setAttribute("min", todayString))
-            </script>
-
-            <!-- Script to show/hide manufacturer and model fields based on dropdown -->
-            <script type="text/javascript">
-                const inverter = document.getElementById("inverter")
-                const inverterManufacturer = document.getElementById("inverterManufacturer")
-                const inverterModel = document.getElementById("inverterModel")
-                const inverterOther = Array.from(document.getElementsByClassName("inverterOther"))
-                
-                // populates inverter field for saved inverter not in dropdown
-                if ((inverterManufacturer.value || inverterModel.value) && inverter.selectedIndex == 0) {
-                    inverter.value = "Other"
-                    inverterOther.forEach((elem) => elem.removeAttribute("hidden"))
-                }
-
-                inverter.addEventListener("change", () => {
-                    const selected = inverter[inverter.selectedIndex]
-                    const optgroup = selected.parentNode.label
-
-                    if (selected.value == "Other") {
-                        inverterManufacturer.value = ""
-                        inverterModel.value = ""
-                        inverterOther.forEach((elem) => elem.removeAttribute("hidden"))
-                    } else {
-                        inverterManufacturer.value = optgroup
-                        inverterModel.value = selected.value
-                        inverterOther.forEach((elem) => elem.setAttribute("hidden", "true"))
-                    }
-                })
-            </script>
-
-            <!-- Script to remove or recreate April/Nov radio buttons on tariff button clicks -->
-            <!-- Radio buttons could be hidden but not unchecked...bug? So remove them entirely to prevent submission of month with value of energy -->
-            <script type="text/javascript">
-                const tariffType = document.getElementById("tariffType")
-                const netMeteringRadio = document.getElementById("netMeteringRadio")
-                const valueOfEnergyRadio = document.getElementById("valueOfEnergyRadio")
-
-                function createResetMonthRadio() {
-                    netMeteringResetMonth = document.createElement("fieldset")
-                    netMeteringResetMonth.className = "col-6"
-                    netMeteringResetMonth.id = "netMeteringResetMonth"
-                    
-                    const legend = document.createElement("legend")
-                    legend.className = "col-form-label py-0"
-                    legend.textContent = "Net Metering kWh reset month"
-                    netMeteringResetMonth.appendChild(legend)
-                    
-                    const aprilGroup = document.createElement("div")
-                    aprilGroup.className = "form-check form-check-inline"
-                    const aprilInput = document.createElement("input")
-                    aprilInput.type = "radio"
-                    aprilInput.className = "form-check-input"
-                    aprilInput.id = "aprilRadio"
-                    aprilInput.name = "Reset month"
-                    aprilInput.value = "April kWh reset"
-                    aprilInput.setAttribute("required", "true")
-                    aprilGroup.appendChild(aprilInput)
-                    const aprilLabel = document.createElement("label")
-                    aprilLabel.htmlFor = "aprilRadio"
-                    aprilLabel.className = "form-check-label"
-                    aprilLabel.textContent = "April"
-                    aprilGroup.appendChild(aprilLabel)
-                    netMeteringResetMonth.appendChild(aprilGroup)
-                    
-                    const novemberGroup = document.createElement("div")
-                    novemberGroup.className = "form-check form-check-inline"
-                    const novemberInput = document.createElement("input")
-                    novemberInput.type = "radio"
-                    novemberInput.className = "form-check-input"
-                    novemberInput.id = "novemberRadio"
-                    novemberInput.name = "Reset month"
-                    novemberInput.value = "November kWh reset"
-                    novemberInput.setAttribute("required", "true")
-                    novemberGroup.appendChild(novemberInput)
-                    const novemberLabel = document.createElement("label")
-                    novemberLabel.htmlFor = "novemberRadio"
-                    novemberLabel.className = "form-check-label"
-                    novemberLabel.textContent = "November"
-                    novemberGroup.appendChild(novemberLabel)
-                    netMeteringResetMonth.appendChild(novemberGroup)
-
-                    tariffType.after(netMeteringResetMonth)
-                }
-
-                netMeteringRadio.addEventListener("click", () => {
-                    const netMeteringResetMonth = document.querySelector("#netMeteringResetMonth")
-                    if (!netMeteringResetMonth) {
-                        createResetMonthRadio()
-                    }
-                })
-                valueOfEnergyRadio.addEventListener("click", () => {
-                    const netMeteringResetMonth = document.querySelector("#netMeteringResetMonth")
-                    if (netMeteringResetMonth) {
-                        netMeteringResetMonth.remove()
-                    }
-                })
-            </script>
-            
         </div>
 
         <hr class="my-4">
@@ -842,100 +556,5 @@
             </div>
         </div>
 
-        <!-- Script to display submit button spinner -->
-        <!-- <script type="text/javascript">
-            const submitSpinner = document.getElementById("submitSpinner")
-            const submitButton = document.getElementById("submit")
-            submitButton.addEventListener("click", () => {
-                if (submitSpinner.hasAttribute("hidden")) {
-                    submitSpinner.removeAttribute("hidden")
-                }
-                submitButton.childNodes[2].textContent = "Submitting Application..."
-            })
-        </script> -->
-
-        <!-- Script to mask tel fields and zip codes -->
-        <script src="https://unpkg.com/vanilla-masker@1.1.1/lib/vanilla-masker.js"></script>
-        <script type="text/javascript">
-            const tels = document.querySelectorAll("input[type='tel']")
-            const zips = document.querySelectorAll("[id^='zip']")
-            Array.prototype.forEach.call(tels, (tel) => {
-                // NOTE: necessary here? why not place in elements?
-                tel.placeholder = "(xxx) xxx - xxxx"
-                VMasker(tel).maskPattern("(999) 999 - 9999")
-            })
-            Array.prototype.forEach.call(zips, (zip) => VMasker(zip).maskPattern("99999"))
-        </script>
-
-        <!-- Cleanup script on form submission -->
-        <script type="text/javascript">
-            function submitForm() {
-                // submit button spinner
-                const submitSpinner = document.getElementById("submitSpinner")
-                const submitButton = document.getElementById("submit")
-                submitSpinner.removeAttribute("hidden")
-                submitButton.childNodes[2].textContent = "Submitting Application..."
-                // unmasks tel and zip inputs
-                const tels = document.querySelectorAll("input[type='tel']")
-                const zips = document.querySelectorAll("[id^='zip']")
-                Array.prototype.forEach.call(tels, (tel) => VMasker(tel).unMask())
-                Array.prototype.forEach.call(zips, (zip) => VMasker(zip).unMask())
-                // sets alt contact fields to empty if not checked
-                const useAltContact = document.getElementById("useAltContact")
-                const fields = ["name", "address", "address2", "city", "state", "zip", "primaryPhone", "secondaryPhone", "email", "fax"]
-                const altContactFields = fields.map((field) => document.getElementById(`${field}AltContact`))
-                if (!useAltContact.checked) {
-                    altContactFields[4].childNodes[1].removeAttribute("disabled")   // required to actually save alt contact state empty string
-                    altContactFields.forEach((field) => field.value = "")
-                }
-                // combines tariff and month radio buttons
-                const netMeteringRadio = document.getElementById("netMeteringRadio")
-                if (netMeteringRadio.checked) {
-                    const aprilRadio = document.querySelector("#aprilRadio")
-                    const novemberRadio = document.querySelector("#novemberRadio")
-                    if (aprilRadio.checked) {
-                        netMeteringRadio.value += " " + aprilRadio.value
-                    } else if (novemberRadio.checked) {
-                        netMeteringRadio.value += " " + novemberRadio.value
-                    }
-                    const netMeteringResetMonth = document.querySelector("#netMeteringResetMonth")
-                    if (netMeteringResetMonth) {
-                        netMeteringResetMonth.remove()
-                    }
-                }
-                // combines checkboxes into installation type
-                const installationType = document.querySelector("#installationType")
-                const [selfCont, selfElec, contElec] = [memberIsSelfContractor.checked, memberIsSelfElectrician.checked, contractorIsElectrician.checked]
-                installationType.value = (() => {
-                    switch (true) {
-                        case !selfCont && !selfElec && !contElec:
-                            return "Contractor and Electrician"
-                        case !selfCont && !selfElec && contElec:
-                            return "Contractor only"
-                        case !selfCont && selfElec && !contElec:
-                            return "Contractor and Self-electric"
-                        case selfCont && !selfElec && !contElec:
-                            return "Self-install and Electrician"
-                        case selfCont && selfElec && !contElec:
-                            return "Self-install and Self-electric"
-                    }
-                })()
-                const disabled = document.querySelectorAll(".form-control[disabled],.form-select[disabled]")
-                Array.prototype.forEach.call(disabled, (field) => {
-                    field.removeAttribute("disabled")
-                })
-            }
-
-            const form = document.querySelector(".needs-validation")
-            form.addEventListener("submit", (evt) => {
-                if (!form.checkValidity()) {
-                    evt.preventDefault()
-                    evt.stopPropagation()
-                } else {
-                    submitForm()
-                }
-                form.classList.add("was-validated")
-            }, false)
-        </script>
     </form>
 {% endblock %}
