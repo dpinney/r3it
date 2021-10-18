@@ -1,37 +1,39 @@
 function setupForm() {
-    function setupAltContact() {
+    function setupUseAltContact() {
         const useAltContact = document.getElementById("useAltContact")
         const altContact = document.getElementById("altContact")
         const requiredNames = ["name", "address", "city", "state", "zip", "email", "primaryPhone"]
         const fieldNames = ["name", "address", "address2", "city", "state", "zip", "email", "primaryPhone", "secondaryPhone", "fax"]
         const fields = fieldNames.map((field) => document.getElementById(`${field}AltContact`))
     
-        function linkAltContact() {
+        function linkUseAltContact() {
             altContact.removeAttribute("hidden")
             requiredNames.forEach((field) => {
-                document.getElementById(`${field}AltContact`).classList.add("required")
+                document.getElementById(`${field}AltContact`).setAttribute("required", "true")
             })
         }
     
-        function unlinkAltContact() {
+        function unlinkUseAltContact() {
             altContact.setAttribute("hidden", "true")
             requiredNames.forEach((field) => {
-                document.getElementById(`${field}AltContact`).classList.remove("required")
+                // document.getElementById(`${field}AltContact`).removeAttribute("required")
             })
         }
     
         // initial link after check
         if (fields.some((field) => field.value != "")) {
             useAltContact.setAttribute("checked", "true")
-            linkAltContact()
+            linkUseAltContact()
+        } else {
+            altContact.setAttribute("hidden", "true")
         }
     
         // event listener on checkbox
         useAltContact.addEventListener("click", () => {
             if (useAltContact.checked) {
-                linkAltContact()
+                linkUseAltContact()
             } else {
-                unlinkAltContact()
+                unlinkUseAltContact()
             }
         })
     }
@@ -179,7 +181,7 @@ function setupForm() {
         
         if (!memberIsSelfContractor.checked && 
             !memberIsSelfElectrician.checked && 
-            fieldPairs.every((pair) => pair[0].value == pair[1].value)
+            fieldPairs.every((pair) => pair[0].value == pair[1].value && pair[0].value != "")
         ) {
             contractorIsElectrician.setAttribute("checked", "true")
             linkContractorIsElectrician()
@@ -197,7 +199,7 @@ function setupForm() {
     function setupMemberIsOwner() {
         const memberIsOwner = document.getElementById("memberIsOwner")
         const nameMember = document.getElementById("nameMember")
-        const owner = document.getElementById("owner")
+        const owner = document.getElementById("nameOwner")
         const handleMemberInput = () => owner.value = nameMember.value
     
         function linkMemberIsOwner() {
@@ -213,7 +215,7 @@ function setupForm() {
         }
     
         // initial link after check
-        if (nameMember.value == owner.value) {
+        if (nameMember.value == owner.value && nameMember.value != "") {
             memberIsOwner.setAttribute("checked", "true")
             linkMemberIsOwner()
         }
@@ -248,7 +250,7 @@ function setupForm() {
         }
     
         // initial link after check
-        if (fieldPairs.every((pair) => pair[0].value == pair[1].value)) {
+        if (fieldPairs.every((pair) => pair[0].value == pair[1].value && pair[0].value != "")) {
             serviceAddrIsMemberAddr.setAttribute("checked", "true")
             linkServiceAddrIsMemberAddr()
         }
@@ -268,7 +270,7 @@ function setupForm() {
         const [year, month, date] = [today.getFullYear(), today.getMonth() + 1, today.getDate()]
         const todayString = `${year}-${String(month).padStart(2, '0')}-${String(date).padStart(2, '0')}`
         const dates = document.querySelectorAll("input[type='date']")
-        Array.prototype.forEach.call(dates, (date) => date.setAttribute("min", todayString))
+        Array.prototype.forEach.call(dates, (date) => { date.setAttribute("min", todayString); date.setAttribute("max", "2022-11-09") })
     }
 
     function linkInverterManufacturerModel() {
@@ -347,9 +349,18 @@ function setupForm() {
             novemberLabel.textContent = "November"
             novemberGroup.appendChild(novemberLabel)
             netMeteringResetMonth.appendChild(novemberGroup)
+
+            const feedback = document.createElement("div")
+            feedback.className = "invalid-feedback"
+            netMeteringResetMonth.appendChild(feedback)
         
             const tariffType = document.getElementById("tariffType")
             tariffType.after(netMeteringResetMonth)
+
+            const form = document.querySelector(".needs-validation")
+            if (form.classList.contains("was-validated")) {
+                validateField("aprilRadio", { valueMissing: "Reset month is required" }, "fieldset#netMeteringResetMonth>.invalid-feedback")
+            }
         }
         
         // initialize checked net metering, month if exists
@@ -363,7 +374,7 @@ function setupForm() {
             } else {
                 console.error(`Bad tariff string: ${tariff}`)
             }
-        } else {
+        } else if (tariff.startsWith("Value")) {
             valueOfEnergyRadio.setAttribute("checked", "true")
         }
     
@@ -475,7 +486,7 @@ function setupForm() {
         enableCopiedFields() // remove disabled from copied fields so they submit
     }
 
-    setupAltContact()
+    setupUseAltContact()
     setupMemberIsSelfContractor()
     setupMemberIsSelfElectrician()
     setupContractorIsElectrician()
@@ -492,11 +503,159 @@ function setupForm() {
         if (!form.checkValidity()) {
             evt.preventDefault()
             evt.stopPropagation()
+            if (!form.classList.contains("was-validated")) {
+                activateValidationMessages()
+            }
         } else {
             submitForm()
         }
         form.classList.add("was-validated")
-    }, false)
+    })
 }
 
 setupForm()
+
+function activateValidationMessages() {
+    const emails = document.querySelectorAll("input[type='email']")
+    emails.forEach((email) => validateEmail(email))
+
+    const addresses = document.querySelectorAll("fieldset.addressBlock")
+    addresses.forEach((fieldset) => validateAddress(fieldset))
+
+    const tels = document.querySelectorAll("input[type='tel']")
+    tels.forEach((tel) => validatePhone(tel))
+
+    const names = document.querySelectorAll(":not(.input-group)>input[id^='name']")
+    names.forEach((field) => validateField(field, { valueMissing: "Name is required" }))
+
+    const contacts = document.querySelectorAll("input[id^='contact']")
+    contacts.forEach((field) => validateField(field, { valueMissing: "Contact person is required" }))
+
+    validateField("docketNumber", { valueMissing: "Docket number is required" })
+    validateField("licenseElectrician", { valueMissing: "License number is required" }, "fieldset#licenseBlock>div>.invalid-feedback")
+
+    validateField("accountNumber", { valueMissing: "Account number is required" })
+    validateField("meterID", { valueMissing: "Meter ID is required" })
+
+    validateDate("installDateEstimated", { valueMissing: "Install date is required" })
+    validateDate("inServiceDateEstimated", { valueMissing: "In-service date is required" })
+
+    // manufacturer model / dropdown
+
+    validateField("nameplateRatingkW", { valueMissing: "kW rating is required" })
+    validateField("nameplateRatingV", { valueMissing: "V rating is required" })
+
+    validateField("onePhaseRadio", { valueMissing: "Inverter phases is required" }, "fieldset#inverterPhases>.invalid-feedback")
+    validateField("yesListedRadio", { valueMissing: "UL1741 listed is required" }, "fieldset#UL1741Listed>.invalid-feedback")
+    validateField("netMeteringRadio", { valueMissing: "Tariff type is required" }, "fieldset#tariffType>.invalid-feedback")
+    if (document.getElementById("aprilRadio")) {
+        validateField("aprilRadio", { valueMissing: "Reset month is required" }, "fieldset#netMeteringResetMonth>.invalid-feedback")
+    }
+}
+
+function validateField(field, messages, invalidFeedback) {
+    field = typeof field == "string" ? document.getElementById(field) : field
+    const feedback = document.querySelector(invalidFeedback) || document.querySelector(`#${field.id}~.invalid-feedback`)
+    // invalidFeedback && console.log(feedback)
+
+    function setFeedback() {
+        field.setCustomValidity("")
+        const messageNeeded = (state) => messages[state] && field.validity[state]
+
+        if (messageNeeded("valueMissing")) {
+            field.setCustomValidity(messages.valueMissing)
+        } else if (messageNeeded("typeMismatch")) {
+            field.setCustomValidity(messages.typeMismatch)
+        } else if (messageNeeded("patternMismatch")) {
+            field.setCustomValidity(messages.patternMismatch)
+        } else if (messageNeeded("rangeUnderflow")) {
+            field.setCustomValidity(messages.rangeUnderflow)
+        } else if (messageNeeded("rangeOverflow")) {
+            field.setCustomValidity(messages.rangeOverflow)
+        } else if (messageNeeded("tooShort")) {
+            field.setCustomValidity(messages.tooShort)
+        } else if (messageNeeded("tooLong")) {
+            field.setCustomValidity(messages.tooLong)
+        } else if (messageNeeded("stepMismatch")) {
+            field.setCustomValidity(messages.stepMismatch)
+        } else if (messageNeeded("badInput")) {
+            field.setCustomValidity(messages.badInput)
+        }
+
+        feedback.textContent = field.validationMessage
+        if (invalidFeedback && field.validationMessage) {
+            feedback.classList.add("show-feedback")
+        } else {
+            feedback.classList.remove("show-feedback")
+        }
+    }
+
+    setFeedback()
+    field.addEventListener("input", (evt) => {
+        setFeedback()
+    })
+}
+
+const validatePhone = (tel, messages) => validateField(tel, {
+    valueMissing: "Phone number is required", 
+    patternMismatch: "Phone number must be 10 digits",
+    ...messages
+})
+
+const validateEmail = (email, messages) => validateField(email, {
+    valueMissing: "Email address is required",
+    typeMismatch: "Must be a valid email address",
+    ...messages
+})
+
+const validateDate = (date, messages) => {
+    date = typeof date == "string" ? document.getElementById(date) : date
+    const [min, max] = [date.min, date.max]
+    validateField(date, {
+        valueMissing: messages.valueMissing || "Date is required",
+        rangeUnderflow: messages.rangeUnderflow || `Date must be ${min.slice(5,7)}/${min.slice(8)}/${min.slice(0,4)} or later`,
+        rangeOverflow: messages.rangeOverflow || `Date must be ${max.slice(5,7)}/${max.slice(8)}/${max.slice(0,4)} or earlier`,
+        ...messages
+    })
+}
+
+function validateAddress(fieldset) {
+    const fields = fieldset.querySelectorAll("input[type='text'],select")
+    const message = fieldset.querySelector("div.invalid-feedback")
+    
+    function setMessage() {
+        let validationMessage = Array.prototype.map.call(fields, (field) => field.validationMessage).join("") // fallback for unexpected validation errors
+        const missingFields = Array.prototype.filter.call(fields, (field) => field.validity.valueMissing)
+
+        if (missingFields.length > 0) {
+            validationMessage = missingFields.reduce((prev, curr, i, array) => {
+                const label = curr.getAttribute("aria-label")
+                switch(i) {
+                    case 0:
+                        return label[0].toUpperCase() + label.slice(1) + 
+                            (array.length == 1 ? " is required" : "")
+                    case (array.length - 1):
+                        return prev + " and " + label + " are required"
+                    default:
+                        return prev + ", " + label
+                }
+            }, "")
+        } else if (fields[4].validity.patternMismatch) {
+            validationMessage = "Zip code must be 5 digits"
+        }
+
+        message.textContent = validationMessage
+        if (validationMessage) {
+            message.classList.add("show-feedback")
+        } else {
+            message.classList.remove("show-feedback")
+        }
+    }
+
+    setMessage()
+    fields.forEach((field) => {
+        field.addEventListener("input", (evt) => {
+            setMessage()
+        })
+    })
+}

@@ -30,3 +30,7 @@
 .was-validated .no-validation.form-check-input:invalid~.form-check-label {
     color: #212529;
 }
+
+.show-feedback {
+    display: block;
+}

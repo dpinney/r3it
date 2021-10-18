@@ -27,7 +27,7 @@
                             <input type="text" class="form-control" id="nameMember" name="Name (Member)" value="{{default['Name (Member)']}}" placeholder="" required>
                             <div class="invalid-feedback"></div>
                         </div>
-                        <fieldset>
+                        <fieldset class="addressBlock">
                             <legend class="col-form-label py-0">Mailing Address</legend>
                             <div class="row g-2">
                                 <div>
@@ -103,7 +103,7 @@
                             <input type="text" class="form-control" id="nameAltContact" name="Name (Alt Contact)" value="{{default['Name (Alt Contact)']}}">
                             <div class="invalid-feedback"></div>
                         </div>
-                        <fieldset>
+                        <fieldset class="addressBlock">
                             <legend class="col-form-label py-0">Contact Address</legend>
                             <div class="row g-2">
                                 <div>
@@ -116,7 +116,7 @@
                                     <input type="text" class="form-control" id="cityAltContact" name="City (Alt Contact)" value="{{default['City (Alt Contact)']}}" placeholder="City" aria-label="city">
                                 </div>
                                 <div class="col-6 col-sm-3 col-md-6 col-lg-3">
-                                    <select class="form-select" id="stateAltContact" name="State (Alt Contact)" aria-label="alt contact state">
+                                    <select class="form-select" id="stateAltContact" name="State (Alt Contact)" aria-label="state">
                                         <option value="" hidden selected disabled>--- State ---</option>
                                         {% for state in states %}
                                             <option value="{{state}}" {% if (state == default['State (Alt Contact)']) %} selected {% endif %}>{{state}}</option>
@@ -124,7 +124,7 @@
                                     </select>
                                 </div>
                                 <div class="col-6 col-sm-3 col-md-6 col-lg-3">
-                                    <input type="text" class="form-control" id="zipAltContact" name="Zip (Alt Contact)" value="{{default['Zip (Alt Contact)']}}" placeholder="Postal / Zip Code" aria-label="postal or zip code" pattern="[0-9]{5}" maxlength="5">
+                                    <input type="text" class="form-control" id="zipAltContact" name="Zip (Alt Contact)" value="{{default['Zip (Alt Contact)']}}" placeholder="Postal / Zip Code" aria-label="zip code" pattern="[0-9]{5}" maxlength="5">
                                 </div>
                                 <div class="invalid-feedback"></div>
                             </div>
@@ -184,7 +184,7 @@
                             <input type="text" class="form-control" id="contactContractor" name="Contact Person (Contractor)" value="{{default['Contact Person (Contractor)']}}" required>
                             <div class="invalid-feedback"></div>
                         </div>
-                        <fieldset>
+                        <fieldset class="addressBlock">
                             <legend class="col-form-label py-0">Mailing Address</legend>
                             <div class="row g-2">
                                 <div>
@@ -197,7 +197,7 @@
                                     <input type="text" class="form-control" id="cityContractor" name="City (Contractor)" value="{{default['City (Contractor)']}}" placeholder="City" aria-label="city" required>
                                 </div>
                                 <div class="col-6 col-sm-3 col-md-6 col-lg-3">
-                                    <select class="form-select" id="stateContractor" name="State (Contractor)" aria-label="contractor state" required>
+                                    <select class="form-select" id="stateContractor" name="State (Contractor)" aria-label="state" required>
                                         <option value="" hidden selected disabled>--- State ---</option>
                                         {% for state in states %}
                                             <option value="{{state}}" {% if (state == default['State (Contractor)']) %} selected {% endif %}>{{state}}</option>
@@ -205,7 +205,7 @@
                                     </select>
                                 </div>
                                 <div class="col-6 col-sm-3 col-md-6 col-lg-3">
-                                    <input type="text" class="form-control" id="zipContractor" name="Zip (Contractor)" value="{{default['Zip (Contractor)']}}" placeholder="Postal / Zip Code" aria-label="postal or zip code" pattern="[0-9]{5}" maxlength="5" required>
+                                    <input type="text" class="form-control" id="zipContractor" name="Zip (Contractor)" value="{{default['Zip (Contractor)']}}" placeholder="Postal / Zip Code" aria-label="zip code" pattern="[0-9]{5}" maxlength="5" required>
                                 </div>
                                 <div class="invalid-feedback"></div>
                             </div>
@@ -274,7 +274,7 @@
                             <input type="text" class="form-control" id="contactElectrician" name="Contact Person (Electrician)" value="{{default['Contact Person (Electrician)']}}" required>
                             <div class="invalid-feedback"></div>
                         </div>
-                        <fieldset>
+                        <fieldset class="addressBlock">
                             <legend class="col-form-label py-0">Mailing Address</legend>
                             <div class="row g-2">
                                 <div>
@@ -287,7 +287,7 @@
                                     <input type="text" class="form-control" id="cityElectrician" name="City (Electrician)" value="{{default['City (Electrician)']}}" placeholder="City" aria-label="city" required>
                                 </div>
                                 <div class="col-6 col-sm-3 col-md-6 col-lg-3">
-                                    <select class="form-select" id="stateElectrician" name="State (Electrician)" aria-label="electrician state" required>
+                                    <select class="form-select" id="stateElectrician" name="State (Electrician)" aria-label="state" required>
                                         <option value="" hidden selected disabled>--- State ---</option>
                                         {% for state in states %}
                                             <option value="{{state}}" {% if (state == default['State (Electrician)']) %} selected {% endif %}>{{state}}</option>
@@ -295,7 +295,7 @@
                                     </select>
                                 </div>
                                 <div class="col-6 col-sm-3 col-md-6 col-lg-3">
-                                    <input type="text" class="form-control" id="zipElectrician" name="Zip (Electrician)" value="{{default['Zip (Electrician)']}}" placeholder="Postal / Zip Code" aria-label="postal or zip code" pattern="[0-9]{5}" maxlength="5" required>
+                                    <input type="text" class="form-control" id="zipElectrician" name="Zip (Electrician)" value="{{default['Zip (Electrician)']}}" placeholder="Postal / Zip Code" aria-label="zip code" pattern="[0-9]{5}" maxlength="5" required>
                                 </div>
                                 <div class="invalid-feedback"></div>
                             </div>
@@ -325,7 +325,7 @@
                             <input type="tel" class="form-control" id="faxElectrician" name="Fax (Electrician)" value="{{default['Fax (Electrician)']}}" pattern="\([0-9]{3}\) [0-9]{3} - [0-9]{4}|[0-9]{10}" maxlength="16">
                             <div class="invalid-feedback"></div>
                         </div>
-                        <fieldset>
+                        <fieldset id="licenseBlock">
                             <legend class="col-form-label py-0">Electrician License Number</legend>
                             <div class="row g-2">
                                 <div class="col">
@@ -349,7 +349,7 @@
         <hr class="my-4">
 
         <!-- Interconnection Service Block -->
-        <div id="facility" class="mb-5">
+        <div id="service" class="mb-5">
             <h3 class="mb-3">Interconnection Service Information</h3>
             <div class="row g-3 g-md-5">
 
@@ -367,16 +367,16 @@
                         </div>
                         <div>
                             <div class="row g-2 mb-2">
-                                <label class="form-label col text-nowrap me-1 mb-0" for="owner">Property Owner</label>
+                                <label class="form-label col text-nowrap me-1 mb-0" for="nameOwner">Property Owner</label>
                                 <div class="form-check form-check-inline col-auto mt-auto mb-0 ms-1 me-0 pt-1">
                                     <input type="checkbox" class="form-check-input no-validation" id="memberIsOwner">
                                     <label for="memberIsOwner" class="form-check-label">Same as Member</label>
                                 </div>
                             </div>
-                            <input type="text" class="form-control" id="owner" name="Owner" value="{{default['Owner']}}" required>
+                            <input type="text" class="form-control" id="nameOwner" name="Owner" value="{{default['Owner']}}" required>
                             <div class="invalid-feedback"></div>
                         </div>
-                        <fieldset>
+                        <fieldset class="addressBlock">
                             <div class="row g-2 mb-2">
                                 <legend class="col-form-label py-0 col text-nowrap me-1">Service Address</legend>
                                 <div class="form-check form-check-inline col-auto mt-auto mb-0 ms-1 me-0 pt-1">
@@ -394,7 +394,7 @@
                                     <input type="text" class="form-control" id="cityService" name="City (Service)" value="{{default['City (Service)']}}" placeholder="City" aria-label="city" required>
                                 </div>
                                 <div class="col-6 col-sm-3 col-md-6 col-lg-3">
-                                    <select class="form-select" id="stateService" name="State (Service)" aria-label="service location state" required>
+                                    <select class="form-select" id="stateService" name="State (Service)" aria-label="state" required>
                                         <option value="" hidden selected disabled>--- State ---</option>
                                         {% for state in states %}
                                             <option value="{{state}}" {% if (state == default['State (Service)']) %} selected {% endif %}>{{state}}</option>
@@ -402,7 +402,7 @@
                                     </select>
                                 </div>
                                 <div class="col-6 col-sm-3 col-md-6 col-lg-3">
-                                    <input type="text" class="form-control" id="zipService" name="Zip (Service)" value="{{default['Zip (Service)']}}" placeholder="Postal / Zip Code" aria-label="postal or zip code" pattern="[0-9]{5}" maxlength="5" required>
+                                    <input type="text" class="form-control" id="zipService" name="Zip (Service)" value="{{default['Zip (Service)']}}" placeholder="Postal / Zip Code" aria-label="zip code" pattern="[0-9]{5}" maxlength="5" required>
                                 </div>
                                 <div class="invalid-feedback"></div>
                             </div>
@@ -438,15 +438,15 @@
                                         {% endfor %}
                                         <option value="Other">Other</option>
                                     </select>
-                                    <div class="invalid-feedback"></div>
+                                    <div class="invalid-feedback">Manufacturer & Model are required</div>
                                 </div>
                                 <div class="col-sm-6 col-md-12 col-lg-6 inverterOther" hidden>
                                     <input type="text" class="form-control" id="inverterManufacturer" name="Inverter Manufacturer" value="{{default['Inverter Manufacturer']}}" placeholder="Manufacturer" aria-label="inverter manufacturer" required>
-                                    <div class="invalid-feedback"></div>
+                                    <div class="invalid-feedback">Manufacturer is required</div>
                                 </div>
                                 <div class="col-sm-6 col-md-12 col-lg-6 inverterOther" hidden>
                                     <input type="text" class="form-control" id="inverterModel" name="Inverter Model" value="{{default['Inverter Model']}}" placeholder="Model" aria-label="inverter model" required>
-                                    <div class="invalid-feedback"></div>
+                                    <div class="invalid-feedback">Model is required</div>
                                 </div>
                                 <div class="inverterOther" hidden>
                                     <label for="inverterSpec" class="col-form-label">Specification Sheet</label>
@@ -460,14 +460,14 @@
                             <div class="row g-2">
                                 <div class="col-6">
                                     <div class="input-group">
-                                        <input type="text" class="form-control" id="nameplateRatingkW" name="Nameplate Rating (kW)" value="{{default['Nameplate Rating (kW)']}}" aria-label="nameplate rating kilowatts AC" aria-describedby="kW-AC" required>
+                                        <input type="number" class="form-control" id="nameplateRatingkW" name="Nameplate Rating (kW)" value="{{default['Nameplate Rating (kW)']}}" aria-label="nameplate rating kilowatts AC" aria-describedby="kW-AC" required min="1" max="1000">
                                         <span class="input-group-text" id="kW-AC">kW-AC</span>
                                         <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="input-group">
-                                        <input type="text" class="form-control" id="nameplateRatingV" name="Nameplate Rating (V)" value="{{default['Nameplate Rating (V)']}}" aria-label="nameplate rating volts AC" aria-describedby="V-AC" required>
+                                        <input type="number" class="form-control" id="nameplateRatingV" name="Nameplate Rating (V)" value="{{default['Nameplate Rating (V)']}}" aria-label="nameplate rating volts AC" aria-describedby="V-AC" required min="1" max="1000">
                                         <span class="input-group-text" id="V-AC">V-AC</span>
                                         <div class="invalid-feedback"></div>
                                     </div>
@@ -475,7 +475,7 @@
                             </div>
                         </fieldset>
 
-                        <fieldset class="col-6">
+                        <fieldset class="col-6" id="inverterPhases">
                             <legend class="col-form-label py-0">Inverter Phases</legend>
                                 <div class="form-check form-check-inline">
                                     <input type="radio" class="form-check-input" id="onePhaseRadio" name="Phases" value="One" {% if (default['Phases'] == 'One') %} checked="True" {% endif %} required>
@@ -487,7 +487,7 @@
                                 </div>
                                 <div class="invalid-feedback"></div>
                         </fieldset>
-                        <fieldset class="col-6">
+                        <fieldset class="col-6" id="UL1741Listed">
                             <legend class="col-form-label py-0">Is the equipment UL1741 listed?</legend>
                                 <div class="form-check form-check-inline">
                                     <input type="radio" class="form-check-input" id="yesListedRadio" name="UL1741 listed" value="Yes" {% if (default['UL1741 listed'] == 'Yes') %} checked="True" {% endif %} required>
