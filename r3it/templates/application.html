@@ -100,23 +100,23 @@
                     <div class="row g-3">
                         <div>
                             <label for="nameAltContact" class="form-label">Contact Name</label>
-                            <input type="text" class="form-control" id="nameAltContact" name="Name (Alt Contact)" value="{{default['Name (Alt Contact)']}}">
+                            <input type="text" class="form-control" id="nameAltContact" name="Name (Alt Contact)" value="{{default['Name (Alt Contact)']}}" required>
                             <div class="invalid-feedback"></div>
                         </div>
                         <fieldset class="addressBlock">
                             <legend class="col-form-label py-0">Contact Address</legend>
                             <div class="row g-2">
                                 <div>
-                                    <input type="text" class="form-control" id="addressAltContact" name="Address (Alt Contact)" value="{{default['Address (Alt Contact)']}}" placeholder="Street Address" aria-label="street address">
+                                    <input type="text" class="form-control" id="addressAltContact" name="Address (Alt Contact)" value="{{default['Address (Alt Contact)']}}" placeholder="Street Address" aria-label="street address" required>
                                 </div>
                                 <div>
                                     <input type="text" class="form-control" id="address2AltContact" name="Address 2 (Alt Contact)" value="{{default['Address 2 (Alt Contact)']}}" placeholder="Address Line 2" aria-label="address line 2">
                                 </div>
                                 <div class="col-sm-6 col-md-12 col-lg-6">
-                                    <input type="text" class="form-control" id="cityAltContact" name="City (Alt Contact)" value="{{default['City (Alt Contact)']}}" placeholder="City" aria-label="city">
+                                    <input type="text" class="form-control" id="cityAltContact" name="City (Alt Contact)" value="{{default['City (Alt Contact)']}}" placeholder="City" aria-label="city" required>
                                 </div>
                                 <div class="col-6 col-sm-3 col-md-6 col-lg-3">
-                                    <select class="form-select" id="stateAltContact" name="State (Alt Contact)" aria-label="state">
+                                    <select class="form-select" id="stateAltContact" name="State (Alt Contact)" aria-label="state" required>
                                         <option value="" hidden selected disabled>--- State ---</option>
                                         {% for state in states %}
                                             <option value="{{state}}" {% if (state == default['State (Alt Contact)']) %} selected {% endif %}>{{state}}</option>
@@ -124,7 +124,7 @@
                                     </select>
                                 </div>
                                 <div class="col-6 col-sm-3 col-md-6 col-lg-3">
-                                    <input type="text" class="form-control" id="zipAltContact" name="Zip (Alt Contact)" value="{{default['Zip (Alt Contact)']}}" placeholder="Postal / Zip Code" aria-label="zip code" pattern="[0-9]{5}" maxlength="5">
+                                    <input type="text" class="form-control" id="zipAltContact" name="Zip (Alt Contact)" value="{{default['Zip (Alt Contact)']}}" placeholder="Postal / Zip Code" aria-label="zip code" pattern="[0-9]{5}" maxlength="5" required>
                                 </div>
                                 <div class="invalid-feedback"></div>
                             </div>
@@ -136,12 +136,12 @@
                     <div class="row g-3">
                         <div>
                             <label for="emailAltContact" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="emailAltContact" name="Email (Alt Contact)" value="{{default['Email (Alt Contact)']}}">
+                            <input type="email" class="form-control" id="emailAltContact" name="Email (Alt Contact)" value="{{default['Email (Alt Contact)']}}" required>
                             <div class="invalid-feedback"></div>
                         </div>
                         <div class="col-sm-4 col-md-12">
                             <label for="primaryPhoneAltContact" class="form-label">Primary Phone</label>
-                            <input type="tel" class="form-control" id="primaryPhoneAltContact" name="Phone (Primary, Alt Contact)" value="{{default['Phone (Primary, Alt Contact)']}}" pattern="\([0-9]{3}\) [0-9]{3} - [0-9]{4}|[0-9]{10}" maxlength="16">
+                            <input type="tel" class="form-control" id="primaryPhoneAltContact" name="Phone (Primary, Alt Contact)" value="{{default['Phone (Primary, Alt Contact)']}}" pattern="\([0-9]{3}\) [0-9]{3} - [0-9]{4}|[0-9]{10}" maxlength="16" required>
                             <div class="invalid-feedback"></div>
                         </div>
                         <div class="col-sm-4 col-md-12 col-lg-6">
@@ -438,15 +438,15 @@
                                         {% endfor %}
                                         <option value="Other">Other</option>
                                     </select>
-                                    <div class="invalid-feedback">Manufacturer & Model are required</div>
+                                    <div class="invalid-feedback"></div>
                                 </div>
                                 <div class="col-sm-6 col-md-12 col-lg-6 inverterOther" hidden>
                                     <input type="text" class="form-control" id="inverterManufacturer" name="Inverter Manufacturer" value="{{default['Inverter Manufacturer']}}" placeholder="Manufacturer" aria-label="inverter manufacturer" required>
-                                    <div class="invalid-feedback">Manufacturer is required</div>
+                                    <div class="invalid-feedback"></div>
                                 </div>
                                 <div class="col-sm-6 col-md-12 col-lg-6 inverterOther" hidden>
                                     <input type="text" class="form-control" id="inverterModel" name="Inverter Model" value="{{default['Inverter Model']}}" placeholder="Model" aria-label="inverter model" required>
-                                    <div class="invalid-feedback">Model is required</div>
+                                    <div class="invalid-feedback"></div>
                                 </div>
                                 <div class="inverterOther" hidden>
                                     <label for="inverterSpec" class="col-form-label">Specification Sheet</label>
@@ -460,14 +460,14 @@
                             <div class="row g-2">
                                 <div class="col-6">
                                     <div class="input-group">
-                                        <input type="number" class="form-control" id="nameplateRatingkW" name="Nameplate Rating (kW)" value="{{default['Nameplate Rating (kW)']}}" aria-label="nameplate rating kilowatts AC" aria-describedby="kW-AC" required min="1" max="1000">
+                                        <input type="number" class="form-control" id="nameplateRatingkW" name="Nameplate Rating (kW)" value="{{default['Nameplate Rating (kW)']}}" aria-label="nameplate rating kilowatts AC" aria-describedby="kW-AC" required>
                                         <span class="input-group-text" id="kW-AC">kW-AC</span>
                                         <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="input-group">
-                                        <input type="number" class="form-control" id="nameplateRatingV" name="Nameplate Rating (V)" value="{{default['Nameplate Rating (V)']}}" aria-label="nameplate rating volts AC" aria-describedby="V-AC" required min="1" max="1000">
+                                        <input type="number" class="form-control" id="nameplateRatingV" name="Nameplate Rating (V)" value="{{default['Nameplate Rating (V)']}}" aria-label="nameplate rating volts AC" aria-describedby="V-AC" required>
                                         <span class="input-group-text" id="V-AC">V-AC</span>
                                         <div class="invalid-feedback"></div>
                                     </div>
@@ -534,12 +534,12 @@
                         <div class="form-check">
                             <input type="checkbox" class="form-check-input" id="agreement" name="Agreement" required>
                             <label for="agreement" class="form-check-label">I accept the terms above</label>
-                            <div class="invalid-feedback">You must accept before submitting.</div>
+                            <div class="invalid-feedback"></div>
                         </div>
                     </div>
                     <div>
                         <input type="text" class="form-control" id="signed" name="Signed" placeholder="Your name here" aria-label="signature" required>
-                        <div class="invalid-feedback">Signature is required</div>
+                        <div class="invalid-feedback"></div>
                     </div>
                 </div>
             </fieldset>

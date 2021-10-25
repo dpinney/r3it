@@ -1,23 +1,15 @@
 function setupForm() {
     function setupUseAltContact() {
         const useAltContact = document.getElementById("useAltContact")
-        const altContact = document.getElementById("altContact")
-        const requiredNames = ["name", "address", "city", "state", "zip", "email", "primaryPhone"]
         const fieldNames = ["name", "address", "address2", "city", "state", "zip", "email", "primaryPhone", "secondaryPhone", "fax"]
         const fields = fieldNames.map((field) => document.getElementById(`${field}AltContact`))
     
         function linkUseAltContact() {
-            altContact.removeAttribute("hidden")
-            requiredNames.forEach((field) => {
-                document.getElementById(`${field}AltContact`).setAttribute("required", "true")
-            })
+            fields.forEach((field) => field.removeAttribute("disabled"))
         }
     
         function unlinkUseAltContact() {
-            altContact.setAttribute("hidden", "true")
-            requiredNames.forEach((field) => {
-                // document.getElementById(`${field}AltContact`).removeAttribute("required")
-            })
+            fields.forEach((field) => field.setAttribute("disabled", "true"))
         }
     
         // initial link after check
@@ -25,7 +17,7 @@ function setupForm() {
             useAltContact.setAttribute("checked", "true")
             linkUseAltContact()
         } else {
-            altContact.setAttribute("hidden", "true")
+            unlinkUseAltContact()
         }
     
         // event listener on checkbox
@@ -265,12 +257,22 @@ function setupForm() {
         })
     }
 
-    function setDatesMinToday() {
-        const today = new Date()
-        const [year, month, date] = [today.getFullYear(), today.getMonth() + 1, today.getDate()]
-        const todayString = `${year}-${String(month).padStart(2, '0')}-${String(date).padStart(2, '0')}`
+    function setDatesMinMax(minMonthsPastToday, maxMonthsPastToday) {
+        const [min, max] = [new Date(), new Date()]
+        min.setMonth(min.getMonth() + minMonthsPastToday)
+        max.setMonth(max.getMonth() + maxMonthsPastToday)
+
+        const [minYear, minMonth, minDate] = [min.getFullYear(), min.getMonth() + 1, min.getDate()]
+        const [maxYear, maxMonth, maxDate] = [max.getFullYear(), max.getMonth() + 1, max.getDate()]
+
+        const minString = `${minYear}-${String(minMonth).padStart(2, '0')}-${String(minDate).padStart(2, '0')}`
+        const maxString = `${maxYear}-${String(maxMonth).padStart(2, '0')}-${String(maxDate).padStart(2, '0')}`
+
         const dates = document.querySelectorAll("input[type='date']")
-        Array.prototype.forEach.call(dates, (date) => { date.setAttribute("min", todayString); date.setAttribute("max", "2022-11-09") })
+        Array.prototype.forEach.call(dates, (date) => {
+            date.setAttribute("min", minString)
+            date.setAttribute("max", maxString)
+        })
     }
 
     function linkInverterManufacturerModel() {
@@ -407,6 +409,157 @@ function setupForm() {
         Array.prototype.forEach.call(zips, (zip) => VMasker(zip).maskPattern("99999"))
     }
 
+    function activateValidationMessages() {
+        const emails = document.querySelectorAll("input[type='email']")
+        emails.forEach((email) => validateEmail(email))
+    
+        const addresses = document.querySelectorAll("fieldset.addressBlock")
+        addresses.forEach((fieldset) => validateAddress(fieldset))
+    
+        const tels = document.querySelectorAll("input[type='tel']")
+        tels.forEach((tel) => validatePhone(tel))
+    
+        const names = document.querySelectorAll(":not(.input-group)>input[id^='name']")
+        names.forEach((field) => validateField(field, { valueMissing: "Name is required" }))
+    
+        const contacts = document.querySelectorAll("input[id^='contact']")
+        contacts.forEach((field) => validateField(field, { valueMissing: "Contact person is required" }))
+    
+        validateField("docketNumber", { valueMissing: "Docket number is required" })
+        validateField("licenseElectrician", { valueMissing: "License number is required" }, "fieldset#licenseBlock>div>.invalid-feedback")
+    
+        validateField("accountNumber", { valueMissing: "Account number is required" })
+        validateField("meterID", { valueMissing: "Meter ID is required" })
+    
+        validateDate("installDateEstimated", { valueMissing: "Install date is required" })
+        validateDate("inServiceDateEstimated", { valueMissing: "In-service date is required" })
+    
+        validateField("inverter", { valueMissing: "Manufacturer & Model are required" })
+        validateField("inverterManufacturer", { valueMissing: "Manufacturer is required" })
+        validateField("inverterModel", { valueMissing: "Model is required" })
+        // inverter spec?
+    
+        validateField("nameplateRatingkW", { valueMissing: "kW rating is required" })
+        validateField("nameplateRatingV", { valueMissing: "V rating is required" })
+    
+        validateField("onePhaseRadio", { valueMissing: "Inverter phases is required" }, "fieldset#inverterPhases>.invalid-feedback")
+        validateField("yesListedRadio", { valueMissing: "UL1741 listed is required" }, "fieldset#UL1741Listed>.invalid-feedback")
+        validateField("netMeteringRadio", { valueMissing: "Tariff type is required" }, "fieldset#tariffType>.invalid-feedback")
+        if (document.getElementById("aprilRadio")) {
+            validateField("aprilRadio", { valueMissing: "Reset month is required" }, "fieldset#netMeteringResetMonth>.invalid-feedback")
+        }
+    
+        validateField("agreement", { valueMissing: "You must accept before submitting" })
+        validateField("signed", { valueMissing: "Signature is required" })
+    }
+    
+    function validateField(field, messages, invalidFeedback) {
+        field = typeof field == "string" ? document.getElementById(field) : field
+        const feedback = document.querySelector(invalidFeedback) || document.querySelector(`#${field.id}~.invalid-feedback`)
+    
+        function setFeedback() {
+            field.setCustomValidity("")
+            const messageNeeded = (state) => messages[state] && field.validity[state]
+    
+            if (messageNeeded("valueMissing")) {
+                field.setCustomValidity(messages.valueMissing)
+            } else if (messageNeeded("typeMismatch")) {
+                field.setCustomValidity(messages.typeMismatch)
+            } else if (messageNeeded("patternMismatch")) {
+                field.setCustomValidity(messages.patternMismatch)
+            } else if (messageNeeded("rangeUnderflow")) {
+                field.setCustomValidity(messages.rangeUnderflow)
+            } else if (messageNeeded("rangeOverflow")) {
+                field.setCustomValidity(messages.rangeOverflow)
+            } else if (messageNeeded("tooShort")) {
+                field.setCustomValidity(messages.tooShort)
+            } else if (messageNeeded("tooLong")) {
+                field.setCustomValidity(messages.tooLong)
+            } else if (messageNeeded("stepMismatch")) {
+                field.setCustomValidity(messages.stepMismatch)
+            } else if (messageNeeded("badInput")) {
+                field.setCustomValidity(messages.badInput)
+            }
+    
+            feedback.textContent = field.validationMessage
+            if (invalidFeedback && field.validationMessage) {
+                feedback.classList.add("show-feedback")
+            } else {
+                feedback.classList.remove("show-feedback")
+            }
+        }
+    
+        setFeedback()
+        field.addEventListener("input", (evt) => {
+            setFeedback()
+        })
+    }
+    
+    const validatePhone = (tel, messages) => validateField(tel, {
+        valueMissing: "Phone number is required", 
+        patternMismatch: "Phone number must be 10 digits",
+        ...messages
+    })
+    
+    const validateEmail = (email, messages) => validateField(email, {
+        valueMissing: "Email address is required",
+        typeMismatch: "Must be a valid email address",
+        ...messages
+    })
+    
+    const validateDate = (date, messages) => {
+        date = typeof date == "string" ? document.getElementById(date) : date
+        const [min, max] = [date.min, date.max]
+        validateField(date, {
+            valueMissing: messages.valueMissing || "Date is required",
+            rangeUnderflow: messages.rangeUnderflow || `Date must be ${min.slice(5,7)}/${min.slice(8)}/${min.slice(0,4)} or later`,
+            rangeOverflow: messages.rangeOverflow || `Date must be ${max.slice(5,7)}/${max.slice(8)}/${max.slice(0,4)} or earlier`,
+            ...messages
+        })
+    }
+    
+    function validateAddress(fieldset) {
+        const fields = fieldset.querySelectorAll("input[type='text'],select")
+        const message = fieldset.querySelector("div.invalid-feedback")
+        
+        function setMessage() {
+            let validationMessage = Array.prototype.map.call(fields, (field) => field.validationMessage).join("") // fallback for unexpected validation errors
+            const missingFields = Array.prototype.filter.call(fields, (field) => field.validity.valueMissing)
+            const disabled = Array.prototype.some.call(fields, (field) => field.disabled)
+    
+            if (missingFields.length > 0) {
+                validationMessage = missingFields.reduce((prev, curr, i, array) => {
+                    const label = curr.getAttribute("aria-label")
+                    switch(i) {
+                        case 0:
+                            return label[0].toUpperCase() + label.slice(1) + 
+                                (array.length == 1 ? " is required" : "")
+                        case (array.length - 1):
+                            return prev + " and " + label + " are required"
+                        default:
+                            return prev + ", " + label
+                    }
+                }, "")
+            } else if (fields[4].validity.patternMismatch) {
+                validationMessage = "Zip code must be 5 digits"
+            }
+    
+            message.textContent = validationMessage
+            if (validationMessage && !disabled) {
+                message.classList.add("show-feedback")
+            } else {
+                message.classList.remove("show-feedback")
+            }
+        }
+    
+        setMessage()
+        fields.forEach((field) => {
+            field.addEventListener("input", (evt) => {
+                setMessage()
+            })
+        })
+    }    
+
     function submitForm() {
         function showSpinner() {
             const submitSpinner = document.getElementById("submitSpinner")
@@ -492,7 +645,7 @@ function setupForm() {
     setupContractorIsElectrician()
     setupMemberIsOwner()
     setupServiceAddrIsMemberAddr()
-    setDatesMinToday()
+    setDatesMinMax(0, 6) // min will be 0 months past today, max will be 6 months past
     linkInverterManufacturerModel()
     setupNetMeteringResetMonth()
     maskTels()
@@ -514,148 +667,3 @@ function setupForm() {
 }
 
 setupForm()
-
-function activateValidationMessages() {
-    const emails = document.querySelectorAll("input[type='email']")
-    emails.forEach((email) => validateEmail(email))
-
-    const addresses = document.querySelectorAll("fieldset.addressBlock")
-    addresses.forEach((fieldset) => validateAddress(fieldset))
-
-    const tels = document.querySelectorAll("input[type='tel']")
-    tels.forEach((tel) => validatePhone(tel))
-
-    const names = document.querySelectorAll(":not(.input-group)>input[id^='name']")
-    names.forEach((field) => validateField(field, { valueMissing: "Name is required" }))
-
-    const contacts = document.querySelectorAll("input[id^='contact']")
-    contacts.forEach((field) => validateField(field, { valueMissing: "Contact person is required" }))
-
-    validateField("docketNumber", { valueMissing: "Docket number is required" })
-    validateField("licenseElectrician", { valueMissing: "License number is required" }, "fieldset#licenseBlock>div>.invalid-feedback")
-
-    validateField("accountNumber", { valueMissing: "Account number is required" })
-    validateField("meterID", { valueMissing: "Meter ID is required" })
-
-    validateDate("installDateEstimated", { valueMissing: "Install date is required" })
-    validateDate("inServiceDateEstimated", { valueMissing: "In-service date is required" })
-
-    // manufacturer model / dropdown
-
-    validateField("nameplateRatingkW", { valueMissing: "kW rating is required" })
-    validateField("nameplateRatingV", { valueMissing: "V rating is required" })
-
-    validateField("onePhaseRadio", { valueMissing: "Inverter phases is required" }, "fieldset#inverterPhases>.invalid-feedback")
-    validateField("yesListedRadio", { valueMissing: "UL1741 listed is required" }, "fieldset#UL1741Listed>.invalid-feedback")
-    validateField("netMeteringRadio", { valueMissing: "Tariff type is required" }, "fieldset#tariffType>.invalid-feedback")
-    if (document.getElementById("aprilRadio")) {
-        validateField("aprilRadio", { valueMissing: "Reset month is required" }, "fieldset#netMeteringResetMonth>.invalid-feedback")
-    }
-}
-
-function validateField(field, messages, invalidFeedback) {
-    field = typeof field == "string" ? document.getElementById(field) : field
-    const feedback = document.querySelector(invalidFeedback) || document.querySelector(`#${field.id}~.invalid-feedback`)
-    // invalidFeedback && console.log(feedback)
-
-    function setFeedback() {
-        field.setCustomValidity("")
-        const messageNeeded = (state) => messages[state] && field.validity[state]
-
-        if (messageNeeded("valueMissing")) {
-            field.setCustomValidity(messages.valueMissing)
-        } else if (messageNeeded("typeMismatch")) {
-            field.setCustomValidity(messages.typeMismatch)
-        } else if (messageNeeded("patternMismatch")) {
-            field.setCustomValidity(messages.patternMismatch)
-        } else if (messageNeeded("rangeUnderflow")) {
-            field.setCustomValidity(messages.rangeUnderflow)
-        } else if (messageNeeded("rangeOverflow")) {
-            field.setCustomValidity(messages.rangeOverflow)
-        } else if (messageNeeded("tooShort")) {
-            field.setCustomValidity(messages.tooShort)
-        } else if (messageNeeded("tooLong")) {
-            field.setCustomValidity(messages.tooLong)
-        } else if (messageNeeded("stepMismatch")) {
-            field.setCustomValidity(messages.stepMismatch)
-        } else if (messageNeeded("badInput")) {
-            field.setCustomValidity(messages.badInput)
-        }
-
-        feedback.textContent = field.validationMessage
-        if (invalidFeedback && field.validationMessage) {
-            feedback.classList.add("show-feedback")
-        } else {
-            feedback.classList.remove("show-feedback")
-        }
-    }
-
-    setFeedback()
-    field.addEventListener("input", (evt) => {
-        setFeedback()
-    })
-}
-
-const validatePhone = (tel, messages) => validateField(tel, {
-    valueMissing: "Phone number is required", 
-    patternMismatch: "Phone number must be 10 digits",
-    ...messages
-})
-
-const validateEmail = (email, messages) => validateField(email, {
-    valueMissing: "Email address is required",
-    typeMismatch: "Must be a valid email address",
-    ...messages
-})
-
-const validateDate = (date, messages) => {
-    date = typeof date == "string" ? document.getElementById(date) : date
-    const [min, max] = [date.min, date.max]
-    validateField(date, {
-        valueMissing: messages.valueMissing || "Date is required",
-        rangeUnderflow: messages.rangeUnderflow || `Date must be ${min.slice(5,7)}/${min.slice(8)}/${min.slice(0,4)} or later`,
-        rangeOverflow: messages.rangeOverflow || `Date must be ${max.slice(5,7)}/${max.slice(8)}/${max.slice(0,4)} or earlier`,
-        ...messages
-    })
-}
-
-function validateAddress(fieldset) {
-    const fields = fieldset.querySelectorAll("input[type='text'],select")
-    const message = fieldset.querySelector("div.invalid-feedback")
-    
-    function setMessage() {
-        let validationMessage = Array.prototype.map.call(fields, (field) => field.validationMessage).join("") // fallback for unexpected validation errors
-        const missingFields = Array.prototype.filter.call(fields, (field) => field.validity.valueMissing)
-
-        if (missingFields.length > 0) {
-            validationMessage = missingFields.reduce((prev, curr, i, array) => {
-                const label = curr.getAttribute("aria-label")
-                switch(i) {
-                    case 0:
-                        return label[0].toUpperCase() + label.slice(1) + 
-                            (array.length == 1 ? " is required" : "")
-                    case (array.length - 1):
-                        return prev + " and " + label + " are required"
-                    default:
-                        return prev + ", " + label
-                }
-            }, "")
-        } else if (fields[4].validity.patternMismatch) {
-            validationMessage = "Zip code must be 5 digits"
-        }
-
-        message.textContent = validationMessage
-        if (validationMessage) {
-            message.classList.add("show-feedback")
-        } else {
-            message.classList.remove("show-feedback")
-        }
-    }
-
-    setMessage()
-    fields.forEach((field) => {
-        field.addEventListener("input", (evt) => {
-            setMessage()
-        })
-    })
-}
