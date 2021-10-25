@@ -235,10 +235,10 @@ appFormDefaults = {
     "Inverter Specification": "",  # Needs to be made a file
     "Nameplate Rating (kW)": "",
     "Nameplate Rating (V)": "",
-    "Phases": "Three",
-    "UL1741 listed": "Yes",
-    "Tariff": "Net metering April kWh reset",
-    "Installation Type": "Contractor and Electrician",
+    "Phases": "",
+    "UL1741 listed": "",
+    "Tariff": "",
+    "Installation Type": "",
 }
 
 # preapproved inverter manufacturers and models
