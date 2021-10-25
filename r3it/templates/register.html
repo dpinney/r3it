@@ -5,28 +5,52 @@
 <style type="text/css">#bg{height: 100%;}</style>
 
 <div class="col-10 col-sm-7 col-md-5 col-lg-4 m-auto row g-5 card text-center" id="login">
-    <form action="/register" method="post">
+    <form action="/register" method="post" class="needs-validation" novalidate>
         <h1 class="mb-3">Register</h1>
         <div class="form-floating mb-3">
             <input type="email" class="form-control" id="email" name="email" placeholder="Email Address" required>
             <label for="email">Email Address</label>
+            <div class="invalid-feedback text-start"></div>
         </div>
         <div class="form-floating mb-3">
             <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
             <label for="password">Password</label>
+            <div class="invalid-feedback text-start"></div>
         </div>
         <div class="form-group mx-auto" style="width: 160px;">
             {{captcha()}}
-            <input type="text" class="form-control mt-3" id="captcha" name="captcha" placeholder="Captcha" required>
+            <input type="text" class="form-control mt-3" id="captcha" name="captcha" placeholder="Captcha" pattern="[0-9]{5}" maxlength="5" required>
             <label for="captcha" class="visually-hidden">Captcha</label>
+            <div class="invalid-feedback text-start"></div>
         </div>
-        <button type="submit" class="btn btn-dark btn-lg col-12 my-4">Register</button>
+        <button type="submit" class="btn btn-dark btn-lg w-100 my-4">
+            <span class="spinner-border spinner-border-sm me-2" id="spinner" role="status" aria-hidden="true" hidden></span>
+            Register
+        </button>
     </form>
 </div>
 
 <script src="https://unpkg.com/vanilla-masker@1.1.1/lib/vanilla-masker.js"></script>
+<script src="/static/js/validate.js"></script>
 <script type="text/javascript">
     const captcha = document.querySelector("#captcha")
     VMasker(captcha).maskPattern("99999")
+
+    const form = document.querySelector(".needs-validation")
+    form.addEventListener("submit", (evt) => {
+        if (!form.checkValidity()) {
+            evt.preventDefault()
+            evt.stopPropagation()
+            if (!form.classList.contains("was-validated")) {
+                validateEmail("email")
+                validateField("password", { valueMissing: "Password is required" })
+                validateField("captcha", { valueMissing: "Captcha is required", patternMismatch: "Must be 5 digits" })
+            }
+        } else {
+            const spinner = document.getElementById("spinner")
+            spinner.removeAttribute("hidden")
+        }
+        form.classList.add("was-validated")
+    })
 </script>
 {% endblock %}

@@ -4,21 +4,37 @@
     <script src="https://polyfill.io/v3/polyfill.min.js?version=3.52.1&features=fetch"></script>
     <script src="https://js.stripe.com/v3/"></script>
 
-    <H1>Interconnection Application Payment</H1>
-    <div class="product">
-        <div class="description">
-            <h3>Interconnection Application Fee</h3>
-            <h5>$50.00</h5>
-        </div>
-        <button class="btn btn-dark" id="checkout-button">Checkout</button>
-    </div>
+    <h1 class="my-4">Interconnection Application Payment</h1>
+    <hr class="my-4">
 
+    <ul class="list-group">
+        <li class="list-group-item d-flex justify-content-between align-items-center py-4">
+            <div class="me-4">
+                <div class="h5 my-0">Interconnection Application Fee</div>
+                <small class="text-muted">New application processing fee</small>
+            </div>
+            <span class="h5 my-0 text-muted">$50.00</span>
+        </li>
+    </ul>
+
+    <div class="row my-4 justify-content-sm-center">
+        <div class="col-sm-6">
+            <button type="submit" class="btn btn-dark w-100" id="checkoutButton">
+                <span class="spinner-border spinner-border-sm me-2" id="checkoutSpinner" role="status" aria-hidden="true" hidden></span>
+                Checkout
+            </button>
+        </div>
+    </div>
+    
     <script type="text/javascript">
         // Create an instance of the Stripe object with your publishable API key
-        var stripe = Stripe("pk_test_LAZ0aEKWMLHbPSFIms7YzLkK00EHoWgCGB");
-        var checkoutButton = document.getElementById("checkout-button");
+        const stripe = Stripe("pk_test_LAZ0aEKWMLHbPSFIms7YzLkK00EHoWgCGB");
+        const checkoutButton = document.getElementById("checkoutButton");
+        const checkoutSpinner = document.getElementById("checkoutSpinner")
     
         checkoutButton.addEventListener("click", function () {
+            checkoutSpinner.removeAttribute("hidden")
+
             fetch("/create-checkout-session/{{ id }}", {
                 method: "POST",
             })
@@ -33,6 +49,7 @@
                 // error, you should display the localized error message to your
                 // member using error.message.
                 if (result.error) {
+                    checkoutSpinner.setAttribute("hidden", "true")
                     alert(result.error.message);
                 }
             })

@@ -170,7 +170,6 @@ appAttachments = [
 ]
 
 appFormDefaults = {
-    # new fields
     "Name (Member)": "",
     "Address (Member)": "",
     "Address 2 (Member)": "",
@@ -204,11 +203,9 @@ appFormDefaults = {
     "Phone (Secondary, Contractor)": "",
     "Email (Contractor)": "",
     "Fax (Contractor)": "",
-
     "Docket Number": "",
 
     "Name (Electrician)": "",
-    "License (Electrician)": "",
     "Contact Person (Electrician)": "",
     "Address (Electrician)": "",
     "Address 2 (Electrician)": "",
@@ -219,6 +216,8 @@ appFormDefaults = {
     "Phone (Secondary, Electrician)": "",
     "Email (Electrician)": "",
     "Fax (Electrician)": "",
+    "License (Electrician)": "",
+    "Active License": "",
 
     "Account Number": "",
     "Meter ID": "",
@@ -228,21 +227,18 @@ appFormDefaults = {
     "City (Service)": "",
     "State (Service)": "",
     "Zip (Service)": "",
+    "Estimated Install Date": "", #YYYY-MM-DD
+    "Estimated In-Service Date": "", #YYYY-MM-DD
 
     "Inverter Manufacturer": "",
     "Inverter Model": "",
-    "Inverter Specification": "",
+    "Inverter Specification": "",  # Needs to be made a file
     "Nameplate Rating (kW)": "",
     "Nameplate Rating (V)": "",
-
-    "Phases": "Three",
+    "Phases": "",
     "UL1741 listed": "",
-    "Estimated Install Date": "", #YYYY-MM-DD
-    "Estimated In-Service Date": "", #YYYY-MM-DD
     "Tariff": "",
-
-    # old values not updated yet
-    "Installation Type": "Contractor and Electrician",
+    "Installation Type": "",
 }
 
 # preapproved inverter manufacturers and models

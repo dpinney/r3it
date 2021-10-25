@@ -147,6 +147,7 @@ def getMockAppFormInputs():
         "Fax (Alt Contact)": getMockData('phone'),
 
         "Name (Contractor)": "Solar Install, Inc.",
+        "Contact Person (Contractor)": getMockData('name'),
         "Address (Contractor)": getMockData('address'),
         "Address 2 (Contractor)": getMockData('address2'),
         "City (Contractor)": getMockData('city'),
@@ -156,11 +157,10 @@ def getMockAppFormInputs():
         "Phone (Secondary, Contractor)": getMockData('phone'),
         "Email (Contractor)": "installer@solarinstallerinc.tld",
         "Fax (Contractor)": getMockData('phone'),
-
         "Docket Number": "145558",
 
         "Name (Electrician)": "Solar Install, Inc.",
-        "License (Electrician)": "",        ######
+        "Contact Person (Electrician)":  getMockData('name'),
         "Address (Electrician)": getMockData('address'),
         "Address 2 (Electrician)": getMockData('address2'),
         "City (Electrician)": getMockData('city'),
@@ -170,35 +170,29 @@ def getMockAppFormInputs():
         "Phone (Secondary, Electrician)": getMockData('phone'),
         "Email (Electrician)": "installer@solarinstallerinc.tld",
         "Fax (Electrician)": getMockData('phone'),
+        "License (Electrician)": getMockData('phone'),
+        "Active License": "",
 
         "Account Number": "23456789",
         "Meter ID": getMockData('meterID'),
+        "Owner": name,
         "Address (Service)": getMockData('address'),
         "Address 2 (Service)": getMockData('address2'),
         "City (Service)": getMockData('city'),
         "State (Service)": getMockData('state'),
         "Zip (Service)": getMockData('zip'),
-
-        "Inverter Manufacturer": "",    ######
-        "Inverter Model": "",           ######
-        "Inverter Specification": "",   ######
-        "Nameplate Rating (kW)": size,
-        "Nameplate Rating (kVA)": size,
-        "Nameplate Rating (V)": getMockData('voltage'),
-
-        # "UL1741 listed": "",
         "Estimated Install Date": "2021-11-11", 
         "Estimated In-Service Date": "2022-08-11", 
-        # "Tariff": "",
 
-        # old values not yet updated
-        "Owner": name,
-        "Application Name": '{}\'s Solar Project'.format(name),
-        "Contact Person (Contractor)": getMockData('name'),
-        "Contact Person (Electrician)":  getMockData('name'),
-        "Utility": "Dairyland Power",
         "Inverter Manufacturer": "Princeton Power",
         "Inverter Model": "T",
+        "Inverter Specification": "",   # should be file
+        "Nameplate Rating (kW)": size,
+        "Nameplate Rating (V)": getMockData('voltage'),
+        "Phases": "Three",
+        "UL1741 listed": "Yes",
+        "Tariff": "Net metering April kWh reset",
+        "Installation Type": "Contractor and Electrician",
     }
 
     defaultForm = config.appFormDefaults.copy()
