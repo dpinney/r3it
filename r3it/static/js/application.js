@@ -9,7 +9,10 @@ function setupForm() {
         }
     
         function unlinkUseAltContact() {
-            fields.forEach((field) => field.setAttribute("disabled", "true"))
+            fields.forEach((field) => {
+                field.value = ""
+                field.setAttribute("disabled", "true")
+            })
         }
     
         // initial link after check
