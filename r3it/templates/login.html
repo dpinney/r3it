@@ -5,18 +5,42 @@
 <style type="text/css">#bg{height: 100%;}</style>
 
 <div class="col-10 col-sm-7 col-md-5 col-lg-4 m-auto row g-5 card text-center" id="login">
-    <form action="/login" method="post">
+    <form action="/login" method="post" class="needs-validation" novalidate>
         <h1 class="mb-3">Log In</h1>
         <div class="form-floating mb-3">
             <input type="email" class="form-control" id="email" name="email" placeholder="Email Address" required>
             <label for="email">Email Address</label>
+            <div class="invalid-feedback text-start"></div>
         </div>
         <div class="form-floating mb-2">
             <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
             <label for="password">Password</label>
+            <div class="invalid-feedback text-start"></div>
         </div>
         <a href="/forgot" class="text-muted">Forgot password?</a>
-        <button type="submit" class="btn btn-dark btn-lg col-12 my-4">Log In</button>
+        <button type="submit" class="btn btn-dark btn-lg w-100 my-4">
+            <span class="spinner-border spinner-border-sm me-2" id="spinner" role="status" aria-hidden="true" hidden></span>
+            Log In
+        </button>
     </form>
 </div>
+
+<script src="/static/js/validate.js"></script>
+<script type="text/javascript">
+    const form = document.querySelector(".needs-validation")
+    form.addEventListener("submit", (evt) => {
+        if (!form.checkValidity()) {
+            evt.preventDefault()
+            evt.stopPropagation()
+            if (!form.classList.contains("was-validated")) {
+                validateEmail("email")
+                validateField("password", { valueMissing: "Password is required" })
+            }
+        } else {
+            const spinner = document.getElementById("spinner")
+            spinner.removeAttribute("hidden")
+        }
+        form.classList.add("was-validated")
+    })
+</script>
 {% endblock %}

@@ -5,14 +5,36 @@
 <style type="text/css">#bg{height: 100%;}</style>
 
 <div class="col-10 col-sm-7 col-md-5 col-lg-4 m-auto row g-5 card text-center" id="login">
-    <form action="/forgot" method="post">
+    <form action="/forgot" method="post" class="needs-validation" novalidate>
         <h1 class="mb-3">Forgot Password?</h1>
         <p>Enter the email address associated with your account, and you will recieve an account recovery email with a link to reset your password.</p>
         <div class="form-floating">
             <input type="email" class="form-control" id="email" name="email" placeholder="Email Address" required>
             <label for="email">Email Address</label>
+            <div class="invalid-feedback text-start"></div>
         </div>
-        <button type="submit" class="btn btn-dark btn-lg col-12 my-4">Send Email</button>
+        <button type="submit" class="btn btn-dark btn-lg w-100 my-4">
+            <span class="spinner-border spinner-border-sm me-2" id="spinner" role="status" aria-hidden="true" hidden></span>
+            Send Email
+        </button>
     </form>
 </div>
+
+<script src="/static/js/validate.js"></script>
+<script type="text/javascript">
+    const form = document.querySelector(".needs-validation")
+    form.addEventListener("submit", (evt) => {
+        if (!form.checkValidity()) {
+            evt.preventDefault()
+            evt.stopPropagation()
+            if (!form.classList.contains("was-validated")) {
+                validateEmail("email")
+            }
+        } else {
+            const spinner = document.getElementById("spinner")
+            spinner.removeAttribute("hidden")
+        }
+        form.classList.add("was-validated")
+    })
+</script>
 {% endblock %}
