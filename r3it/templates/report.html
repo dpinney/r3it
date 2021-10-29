@@ -7,8 +7,8 @@
 
 {% block content %}
     
-    <h1>Interconnection report for request {{data['ID']}}</h1>
-    <hr>
+    <h1 class="my-4">Interconnection report for request {{data['ID']}}</h1>
+    <hr class="my-4">
 
     {% if (
         ('engineer' in current_user.roles) or 
@@ -23,20 +23,782 @@
         (data['Status'] == 'Delegation Required')
     ) %}
 
-       <h3>Delegation Required</h3>
-        <div class="card">
-        The contractor is not curently authorized to communicate about this application on the member's behalf. An email was sent to the member email associated with this account containing a link to provide the approval. If the member did not receive the email, or would like us to resend it, please ensure the member email in the 'Application Details' below is correct, and then click the "Send Delegation Email' button below.
+        <div class="alert alert-warning">
+            <h3 class="mb-3 alert-heading">Delegation Required</h3>
+            <p>The contractor is not curently authorized to communicate about this application on the member's behalf. An email was sent to the member email associated with this account containing a link to provide the approval. If the member did not receive the email, or would like us to resend it, please ensure the member email in the 'Application Details' below is correct, and then click the "Send Delegation Email' button below.</p>
+            <a class="btn btn-warning" href="{{'/sendDelegationEmail/' + data['ID'] }}" role="button">
+                Send Delegation Email
+            </a>
         </div>
-        <a href="{{'/sendDelegationEmail/' + data['ID'] }}">
-            <button id="sendDelegationEmail">Send Delegation Email</button>
-        </a>
-        <h1><hr></h1>
+        <hr class="my-4">
        
     {% endif %}
 
-    <h3>Application details</h3>
+    <div class="my-4">
+        <script src="https://unpkg.com/vanilla-masker@1.1.1/lib/vanilla-masker.js"></script>
+        <script type="text/javascript">
+            window.onload = () => {
+                const phones = document.querySelectorAll(".phone")
+                phones.forEach((elem) => elem.textContent = VMasker.toPattern(elem.textContent, "(999) 999 - 9999"))
+            }
+        </script>
 
-    <table>
+        <h2 class="my-4">Application Details</h2>
+        <!-- <hr class="my-4"> -->
+
+        <div class="row g-4">
+            <div class="col-lg-6">
+                <div class="card text-center h-100">
+                    <div class="card-header py-3">
+                        <h3 class="card-title mb-0">Member</h3>
+                    </div>
+
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item p-0">
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3">
+                                <div class="fw-bold">Name</div>
+                                <div class="text-end">{{data['Name (Member)']}}</div>
+                            </div>
+                            {% if 'Name (Member)' in edits %}
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
+                                <div class="fw-bold">Update</div>
+                                <div class="text-end">{{edits['Name (Member)']}}</div>
+                            </div>
+                            {% endif %}
+                        </li>
+
+                        <li class="list-group-item p-0">
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3">
+                                <div class="fw-bold">Mailing Address</div>
+                                <div class="text-end">
+                                    {{data['Address (Member)']}}<br>
+                                    {% if data['Address 2 (Member)'] %}
+                                        {{data['Address 2 (Member)']}}<br>
+                                    {% endif %}
+                                    {{data['City (Member)']}}, {{data['State (Member)']}}<br>
+                                    {{data['Zip (Member)']}}
+                                </div>
+                            </div>
+                            {% if 'City (Member)' in edits %}
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
+                                <div class="fw-bold">Update</div>
+                                <div class="text-end">
+                                    {{edits['Address (Member)'] or data['Address (Member)']}}<br>
+                                    {% if edits['Address 2 (Member)'] or data['Address 2 (Member)'] %}
+                                        {{edits['Address 2 (Member)'] or data['Address 2 (Member)']}}<br>
+                                    {% endif %}
+                                    {{edits['City (Member)'] or data['City (Member)']}}, {{edits['State (Member)'] or data['State (Member)']}}<br>
+                                    {{edits['Zip (Member)'] or data['Zip (Member)']}}
+                                </div>
+                            </div>
+                            {% endif %}
+                        </li>
+
+                        <li class="list-group-item p-0">
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3">
+                                <div class="fw-bold">Email Address</div>
+                                <div class="text-end">{{data['Email (Member)']}}</div>
+                            </div>
+                            {% if 'Email (Member)' in edits %}
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
+                                <div class="fw-bold">Update</div>
+                                <div class="text-end">{{edits['Email (Member)']}}</div>
+                            </div>
+                            {% endif %}
+                        </li>
+
+                        <li class="list-group-item p-0">
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3">
+                                <div class="fw-bold">Primary Phone</div>
+                                <div class="text-end phone">{{data['Phone (Primary, Member)']}}</div>
+                            </div>
+                            {% if 'Phone (Primary, Member)' in edits %}
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
+                                <div class="fw-bold">Update</div>
+                                <div class="text-end phone">{{edits['Phone (Primary, Member)']}}</div>
+                            </div>
+                            {% endif %}
+                        </li>
+
+                        <li class="list-group-item p-0">
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3">
+                                <div class="fw-bold">Secondary Phone</div>
+                                <div class="text-end phone">{{data['Phone (Secondary, Member)']}}</div>
+                            </div>
+                            {% if 'Phone (Secondary, Member)' in edits %}
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
+                                <div class="fw-bold">Update</div>
+                                <div class="text-end phone">{{edits['Phone (Secondary, Member)']}}</div>
+                            </div>
+                            {% endif %}
+                        </li>
+
+                        <li class="list-group-item p-0">
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3">
+                                <div class="fw-bold">Fax Number</div>
+                                <div class="text-end phone">{{data['Fax (Member)']}}</div>
+                            </div>
+                            {% if 'Fax (Member)' in edits %}
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
+                                <div class="fw-bold">Update</div>
+                                <div class="text-end phone">{{edits['Fax (Member)']}}</div>
+                            </div>
+                            {% endif %}
+                        </li>
+
+                        <li class="list-group-item p-0"></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="card text-center h-100">
+                    <div class="card-header py-3">
+                        <h3 class="card-title mb-0">Alternate Contact</h3>
+                    </div>
+
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item p-0">
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3">
+                                <div class="fw-bold">Name</div>
+                                <div class="text-end">{{data['Name (Alt Contact)']}}</div>
+                            </div>
+                            {% if 'Name (Alt Contact)' in edits %}
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
+                                <div class="fw-bold">Update</div>
+                                <div class="text-end">{{edits['Name (Alt Contact)']}}</div>
+                            </div>
+                            {% endif %}
+                        </li>
+
+                        <li class="list-group-item p-0">
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3">
+                                <div class="fw-bold">Mailing Address</div>
+                                <div class="text-end">
+                                    {{data['Address (Alt Contact)']}}<br>
+                                    {% if data['Address 2 (Alt Contact)'] %}
+                                        {{data['Address 2 (Alt Contact)']}}<br>
+                                    {% endif %}
+                                    {{data['City (Alt Contact)']}}, {{data['State (Alt Contact)']}}<br>
+                                    {{data['Zip (Alt Contact)']}}
+                                </div>
+                            </div>
+                            {% if 'City (Alt Contact)' in edits %}
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
+                                <div class="fw-bold">Update</div>
+                                <div class="text-end">
+                                    {{edits['Address (Alt Contact)'] or data['Address (Alt Contact)']}}<br>
+                                    {% if edits['Address 2 (Alt Contact)'] or data['Address 2 (Alt Contact)'] %}
+                                        {{edits['Address 2 (Alt Contact)'] or data['Address 2 (Alt Contact)']}}<br>
+                                    {% endif %}
+                                    {{edits['City (Alt Contact)'] or data['City (Alt Contact)']}}, {{edits['State (Alt Contact)'] or data['State (Alt Contact)']}}<br>
+                                    {{edits['Zip (Alt Contact)'] or data['Zip (Alt Contact)']}}
+                                </div>
+                            </div>
+                            {% endif %}
+                        </li>
+
+                        <li class="list-group-item p-0">
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3">
+                                <div class="fw-bold">Email Address</div>
+                                <div class="text-end">{{data['Email (Alt Contact)']}}</div>
+                            </div>
+                            {% if 'Email (Alt Contact)' in edits %}
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
+                                <div class="fw-bold">Update</div>
+                                <div class="text-end">{{edits['Email (Alt Contact)']}}</div>
+                            </div>
+                            {% endif %}
+                        </li>
+                        
+                        <li class="list-group-item p-0">
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3">
+                                <div class="fw-bold">Primary Phone</div>
+                                <div class="text-end phone">{{data['Phone (Primary, Alt Contact)']}}</div>
+                            </div>
+                            {% if 'Phone (Primary, Alt Contact)' in edits %}
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
+                                <div class="fw-bold">Update</div>
+                                <div class="text-end phone">{{edits['Phone (Primary, Alt Contact)']}}</div>
+                            </div>
+                            {% endif %}
+                        </li>
+
+                        <li class="list-group-item p-0">
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3">
+                                <div class="fw-bold">Secondary Phone</div>
+                                <div class="text-end phone">{{data['Phone (Secondary, Alt Contact)']}}</div>
+                            </div>
+                            {% if 'Phone (Secondary, Alt Contact)' in edits %}
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
+                                <div class="fw-bold">Update</div>
+                                <div class="text-end phone">{{edits['Phone (Secondary, Alt Contact)']}}</div>
+                            </div>
+                            {% endif %}
+                        </li>
+
+                        <li class="list-group-item p-0">
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3">
+                                <div class="fw-bold">Fax Number</div>
+                                <div class="text-end phone">{{data['Fax (Alt Contact)']}}</div>
+                            </div>
+                            {% if 'Fax (Alt Contact)' in edits %}
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
+                                <div class="fw-bold">Update</div>
+                                <div class="text-end phone">{{edits['Fax (Alt Contact)']}}</div>
+                            </div>
+                            {% endif %}
+                        </li>
+
+                        <li class="list-group-item p-0"></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="card text-center h-100">
+                    <div class="card-header py-3">
+                        <h3 class="card-title mb-0">Equipment Contractor</h3>
+                    </div>
+
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item p-0">
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3">
+                                <div class="fw-bold">Company Name</div>
+                                <div class="text-end">{{data['Name (Contractor)']}}</div>
+                            </div>
+                            {% if 'Name (Contractor)' in edits %}
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
+                                <div class="fw-bold">Update</div>
+                                <div class="text-end">{{edits['Name (Contractor)']}}</div>
+                            </div>
+                            {% endif %}
+                        </li>
+
+                        <li class="list-group-item p-0">
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3">
+                                <div class="fw-bold">Contact Person</div>
+                                <div class="text-end">{{data['Contact Person (Contractor)']}}</div>
+                            </div>
+                            {% if 'Contact Person (Contractor)' in edits %}
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
+                                <div class="fw-bold">Update</div>
+                                <div class="text-end">{{edits['Contact Person (Contractor)']}}</div>
+                            </div>
+                            {% endif %}
+                        </li>
+
+                        <li class="list-group-item p-0">
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3">
+                                <div class="fw-bold">Mailing Address</div>
+                                <div class="text-end">
+                                    {{data['Address (Contractor)']}}<br>
+                                    {% if data['Address 2 (Contractor)'] %}
+                                        {{data['Address 2 (Contractor)']}}<br>
+                                    {% endif %}
+                                    {{data['City (Contractor)']}}, {{data['State (Contractor)']}}<br>
+                                    {{data['Zip (Contractor)']}}
+                                </div>
+                            </div>
+                            {% if 'City (Contractor)' in edits %}
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
+                                <div class="fw-bold">Update</div>
+                                <div class="text-end">
+                                    {{edits['Address (Contractor)'] or data['Address (Contractor)']}}<br>
+                                    {% if edits['Address 2 (Contractor)'] or data['Address 2 (Contractor)'] %}
+                                        {{edits['Address 2 (Contractor)'] or data['Address 2 (Contractor)']}}<br>
+                                    {% endif %}
+                                    {{edits['City (Contractor)'] or data['City (Contractor)']}}, {{edits['State (Contractor)'] or data['State (Contractor)']}}<br>
+                                    {{edits['Zip (Contractor)'] or data['Zip (Contractor)']}}
+                                </div>
+                            </div>
+                            {% endif %}
+                        </li>
+
+                        <li class="list-group-item p-0">
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3">
+                                <div class="fw-bold">Email Address</div>
+                                <div class="text-end">{{data['Email (Contractor)']}}</div>
+                            </div>
+                            {% if 'Email (Contractor)' in edits %}
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
+                                <div class="fw-bold">Update</div>
+                                <div class="text-end">{{edits['Email (Contractor)']}}</div>
+                            </div>
+                            {% endif %}
+                        </li>
+
+                        <li class="list-group-item p-0">
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3">
+                                <div class="fw-bold">Primary Phone</div>
+                                <div class="text-end phone">{{data['Phone (Primary, Contractor)']}}</div>
+                            </div>
+                            {% if 'Phone (Primary, Contractor)' in edits %}
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
+                                <div class="fw-bold">Update</div>
+                                <div class="text-end phone">{{edits['Phone (Primary, Contractor)']}}</div>
+                            </div>
+                            {% endif %}
+                        </li>
+
+                        <li class="list-group-item p-0">
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3">
+                                <div class="fw-bold">Secondary Phone</div>
+                                <div class="text-end phone">{{data['Phone (Secondary, Contractor)']}}</div>
+                            </div>
+                            {% if 'Phone (Secondary, Contractor)' in edits %}
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
+                                <div class="fw-bold">Update</div>
+                                <div class="text-end phone">{{edits['Phone (Secondary, Contractor)']}}</div>
+                            </div>
+                            {% endif %}
+                        </li>
+
+                        <li class="list-group-item p-0">
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3">
+                                <div class="fw-bold">Fax Number</div>
+                                <div class="text-end phone">{{data['Fax (Contractor)']}}</div>
+                            </div>
+                            {% if 'Fax (Contractor)' in edits %}
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
+                                <div class="fw-bold">Update</div>
+                                <div class="text-end phone">{{edits['Fax (Contractor)']}}</div>
+                            </div>
+                            {% endif %}
+                        </li>
+
+                        <li class="list-group-item p-0">
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3">
+                                <div class="fw-bold">Installer Certificate Docket Number</div>
+                                <div class="text-end">{{data['Docket Number']}}</div>
+                            </div>
+                            {% if 'Docket Number' in edits %}
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
+                                <div class="fw-bold">Update</div>
+                                <div class="text-end">{{edits['Docket Number']}}</div>
+                            </div>
+                            {% endif %}
+                        </li>
+
+                        <li class="list-group-item p-0"></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="card text-center h-100">
+                    <div class="card-header py-3">
+                        <h3 class="card-title mb-0">Electrical Contractor</h3>
+                    </div>
+
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item p-0">
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3">
+                                <div class="fw-bold">Company Name</div>
+                                <div class="text-end">{{data['Name (Electrician)']}}</div>
+                            </div>
+                            {% if 'Name (Electrician)' in edits %}
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
+                                <div class="fw-bold">Update</div>
+                                <div class="text-end">{{edits['Name (Electrician)']}}</div>
+                            </div>
+                            {% endif %}
+                        </li>
+
+                        <li class="list-group-item p-0">
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3">
+                                <div class="fw-bold">Contact Person</div>
+                                <div class="text-end">{{data['Contact Person (Electrician)']}}</div>
+                            </div>
+                            {% if 'Contact Person (Electrician)' in edits %}
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
+                                <div class="fw-bold">Update</div>
+                                <div class="text-end">{{edits['Contact Person (Electrician)']}}</div>
+                            </div>
+                            {% endif %}
+                        </li>
+
+                        <li class="list-group-item p-0">
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3">
+                                <div class="fw-bold">Mailing Address</div>
+                                <div class="text-end">
+                                    {{data['Address (Electrician)']}}<br>
+                                    {% if data['Address 2 (Electrician)'] %}
+                                        {{data['Address 2 (Electrician)']}}<br>
+                                    {% endif %}
+                                    {{data['City (Electrician)']}}, {{data['State (Electrician)']}}<br>
+                                    {{data['Zip (Electrician)']}}
+                                </div>
+                            </div>
+                            {% if 'City (Electrician)' in edits %}
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
+                                <div class="fw-bold">Update</div>
+                                <div class="text-end">
+                                    {{edits['Address (Electrician)'] or data['Address (Electrician)']}}<br>
+                                    {% if edits['Address 2 (Electrician)'] or data['Address 2 (Electrician)'] %}
+                                        {{edits['Address 2 (Electrician)'] or data['Address 2 (Electrician)']}}<br>
+                                    {% endif %}
+                                    {{edits['City (Electrician)'] or data['City (Electrician)']}}, {{edits['State (Electrician)'] or data['State (Electrician)']}}<br>
+                                    {{edits['Zip (Electrician)'] or data['Zip (Electrician)']}}
+                                </div>
+                            </div>
+                            {% endif %}
+                        </li>
+
+                        <li class="list-group-item p-0">
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3">
+                                <div class="fw-bold">Email Address</div>
+                                <div class="text-end">{{data['Email (Electrician)']}}</div>
+                            </div>
+                            {% if 'Email (Electrician)' in edits %}
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
+                                <div class="fw-bold">Update</div>
+                                <div class="text-end">{{edits['Email (Electrician)']}}</div>
+                            </div>
+                            {% endif %}
+                        </li>
+
+                        <li class="list-group-item p-0">
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3">
+                                <div class="fw-bold">Primary Phone</div>
+                                <div class="text-end phone">{{data['Phone (Primary, Electrician)']}}</div>
+                            </div>
+                            {% if 'Phone (Primary, Electrician)' in edits %}
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
+                                <div class="fw-bold">Update</div>
+                                <div class="text-end phone">{{edits['Phone (Primary, Electrician)']}}</div>
+                            </div>
+                            {% endif %}
+                        </li>
+
+                        <li class="list-group-item p-0">
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3">
+                                <div class="fw-bold">Secondary Phone</div>
+                                <div class="text-end phone">{{data['Phone (Secondary, Electrician)']}}</div>
+                            </div>
+                            {% if 'Phone (Secondary, Electrician)' in edits %}
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
+                                <div class="fw-bold">Update</div>
+                                <div class="text-end phone">{{edits['Phone (Secondary, Electrician)']}}</div>
+                            </div>
+                            {% endif %}
+                        </li>
+
+                        <li class="list-group-item p-0">
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3">
+                                <div class="fw-bold">Fax Number</div>
+                                <div class="text-end phone">{{data['Fax (Electrician)']}}</div>
+                            </div>
+                            {% if 'Fax (Electrician)' in edits %}
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
+                                <div class="fw-bold">Update</div>
+                                <div class="text-end phone">{{edits['Fax (Electrician)']}}</div>
+                            </div>
+                            {% endif %}
+                        </li>
+
+                        <li class="list-group-item p-0">
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3">
+                                <div class="fw-bold">License Number</div>
+                                <div class="text-end">{{data['License (Electrician)']}}</div>
+                            </div>
+                            {% if 'License (Electrician)' in edits %}
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
+                                <div class="fw-bold">Update</div>
+                                <div class="text-end">{{edits['License (Electrician)']}}</div>
+                            </div>
+                            {% endif %}
+                        </li>
+
+                        <li class="list-group-item p-0"></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="col-lg-6">
+                <div class="card text-center h-100">
+                    <div class="card-header py-3">
+                        <h3 class="card-title mb-0">Interconnection Service</h3>
+                    </div>
+
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item p-0">
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3">
+                                <div class="fw-bold">Account Number</div>
+                                <div class="text-end">{{data['Account Number']}}</div>
+                            </div>
+                            {% if 'Account Number' in edits %}
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
+                                <div class="fw-bold">Update</div>
+                                <div class="text-end">{{edits['Account Number']}}</div>
+                            </div>
+                            {% endif %}
+                        </li>
+
+                        <li class="list-group-item p-0">
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3">
+                                <div class="fw-bold">Meter ID</div>
+                                <div class="text-end">{{data['Meter ID']}}</div>
+                            </div>
+                            {% if 'Meter ID' in edits %}
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
+                                <div class="fw-bold">Update</div>
+                                <div class="text-end">{{edits['Meter ID']}}</div>
+                            </div>
+                            {% endif %}
+                        </li>
+
+                        <li class="list-group-item p-0">
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3">
+                                <div class="fw-bold">Property Owner</div>
+                                <div class="text-end">{{data['Owner']}}</div>
+                            </div>
+                            {% if 'Owner' in edits %}
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
+                                <div class="fw-bold">Update</div>
+                                <div class="text-end">{{edits['Owner']}}</div>
+                            </div>
+                            {% endif %}
+                        </li>
+
+                        <li class="list-group-item p-0">
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3">
+                                <div class="fw-bold">Service Address</div>
+                                <div class="text-end">
+                                    {{data['Address (Service)']}}<br>
+                                    {% if data['Address 2 (Service)'] %}
+                                        {{data['Address 2 (Service)']}}<br>
+                                    {% endif %}
+                                    {{data['City (Service)']}}, {{data['State (Service)']}}<br>
+                                    {{data['Zip (Service)']}}
+                                </div>
+                            </div>
+                            {% if 'City (Service)' in edits %}
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
+                                <div class="fw-bold">Update</div>
+                                <div class="text-end">
+                                    {{edits['Address (Service)'] or data['Address (Service)']}}<br>
+                                    {% if edits['Address 2 (Service)'] or data['Address 2 (Service)'] %}
+                                        {{edits['Address 2 (Service)'] or data['Address 2 (Service)']}}<br>
+                                    {% endif %}
+                                    {{edits['City (Service)'] or data['City (Service)']}}, {{edits['State (Service)'] or data['State (Service)']}}<br>
+                                    {{edits['Zip (Service)'] or data['Zip (Service)']}}
+                                </div>
+                            </div>
+                            {% endif %}
+                        </li>
+
+                        <li class="list-group-item p-0">
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3">
+                                <div class="fw-bold">Estimated Install Date</div>
+                                <div class="text-end">{{data['Estimated Install Date']}}</div>
+                            </div>
+                            {% if 'Estimated Install Date' in edits %}
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
+                                <div class="fw-bold">Update</div>
+                                <div class="text-end">{{edits['Estimated Install Date']}}</div>
+                            </div>
+                            {% endif %}
+                        </li>
+
+                        <li class="list-group-item p-0">
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3">
+                                <div class="fw-bold">Estimated In-Service Date</div>
+                                <div class="text-end">{{data['Estimated In-Service Date']}}</div>
+                            </div>
+                            {% if 'Estimated In-Service Date' in edits %}
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
+                                <div class="fw-bold">Update</div>
+                                <div class="text-end">{{edits['Estimated In-Service Date']}}</div>
+                            </div>
+                            {% endif %}
+                        </li>
+
+                        <li class="list-group-item p-0">
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3">
+                                <div class="fw-bold">Inverter Manufacturer</div>
+                                <div class="text-end">{{data['Inverter Manufacturer']}}</div>
+                            </div>
+                            {% if 'Inverter Manufacturer' in edits %}
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
+                                <div class="fw-bold">Update</div>
+                                <div class="text-end">{{edits['Inverter Manufacturer']}}</div>
+                            </div>
+                            {% endif %}
+                        </li>
+
+                        <li class="list-group-item p-0">
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3">
+                                <div class="fw-bold">Inverter Model</div>
+                                <div class="text-end">{{data['Inverter Model']}}</div>
+                            </div>
+                            {% if 'Inverter Model' in edits %}
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
+                                <div class="fw-bold">Update</div>
+                                <div class="text-end">{{edits['Inverter Model']}}</div>
+                            </div>
+                            {% endif %}
+                        </li>
+
+                        <li class="list-group-item p-0">
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3">
+                                <div class="fw-bold">Nameplate Ratings</div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="text-end">{{data['Nameplate Rating (kW)']}}<br>{{data['Nameplate Rating (V)']}}</div>
+                                    <div class="fw-bold ps-2">kW-AC<br>V-AC</div>
+                                </div>
+                            </div>
+                            {% if 'Nameplate Rating (kW)' in edits or 'Nameplate Rating (V)' in edits %}
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
+                                <div class="fw-bold">Update</div>
+                                <div class="text-end">
+                                    {{edits['Nameplate Rating (kW)']}} <span class="fw-bold">kW-AC</span><br>{{edits['Nameplate Rating (V)']}} <span class="fw-bold">V-AC</span></div>
+                            </div>
+                            {% endif %}
+                        </li>
+
+                        <li class="list-group-item p-0">
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3">
+                                <div class="fw-bold">Inverter Phases</div>
+                                <div class="text-end">{{data['Phases']}}</div>
+                            </div>
+                            {% if 'Phases' in edits %}
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
+                                <div class="fw-bold">Update</div>
+                                <div class="text-end">{{edits['Phases']}}</div>
+                            </div>
+                            {% endif %}
+                        </li>
+
+                        <li class="list-group-item p-0">
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3">
+                                <div class="fw-bold">UL1741 Listed</div>
+                                <div class="text-end">{{data['UL1741 listed']}}</div>
+                            </div>
+                            {% if 'UL1741 listed' in edits %}
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
+                                <div class="fw-bold">Update</div>
+                                <div class="text-end">{{edits['UL1741 listed']}}</div>
+                            </div>
+                            {% endif %}
+                        </li>
+
+                        <li class="list-group-item p-0">
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3">
+                                <div class="fw-bold">Tariff Type</div>
+                                <div class="text-end">{{data['Tariff']}}</div>
+                            </div>
+                            {% if 'Tariff' in edits %}
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
+                                <div class="fw-bold">Update</div>
+                                <div class="text-end">{{edits['Tariff']}}</div>
+                            </div>
+                            {% endif %}
+                        </li>
+
+                        <li class="list-group-item p-0"></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card text-center h-100">
+                    <div class="card-header py-3">
+                        <h3 class="card-title mb-0">Application Status</h3>
+                    </div>
+
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item p-0">
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3">
+                                <div class="fw-bold">Installation Type</div>
+                                <div class="text-end">{{data['Installation Type']}}</div>
+                            </div>
+                            {% if 'Installation Type' in edits %}
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
+                                <div class="fw-bold">Update</div>
+                                <div class="text-end">{{edits['Installation Type']}}</div>
+                            </div>
+                            {% endif %}
+                        </li>
+
+                        <li class="list-group-item p-0">
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3">
+                                <div class="fw-bold">Signed</div>
+                                <div class="text-end">{{data['Signed']}}</div>
+                            </div>
+                            {% if 'Signed' in edits %}
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
+                                <div class="fw-bold">Update</div>
+                                <div class="text-end">{{edits['Signed']}}</div>
+                            </div>
+                            {% endif %}
+                        </li>
+
+                        <li class="list-group-item p-0">
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3">
+                                <div class="fw-bold">Time of Request</div>
+                                <div class="text-end">{{data['Time of Request']}}</div>
+                            </div>
+                            {% if 'Time of Request' in edits %}
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
+                                <div class="fw-bold">Update</div>
+                                <div class="text-end">{{edits['Time of Request']}}</div>
+                            </div>
+                            {% endif %}
+                        </li>
+
+                        <li class="list-group-item p-0">
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3">
+                                <div class="fw-bold">Status</div>
+                                <div class="text-end">{{data['Status']}}</div>
+                            </div>
+                            {% if 'Status' in edits %}
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
+                                <div class="fw-bold">Update</div>
+                                <div class="text-end">{{edits['Status']}}</div>
+                            </div>
+                            {% endif %}
+                        </li>
+                        
+                        <li class="list-group-item p-0">
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3">
+                                <div class="fw-bold">ID</div>
+                                <div class="text-end">{{data['ID']}}</div>
+                            </div>
+                            {% if 'ID' in edits %}
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
+                                <div class="fw-bold">Update</div>
+                                <div class="text-end">{{edits['ID']}}</div>
+                            </div>
+                            {% endif %}
+                        </li>
+
+                        <li class="list-group-item p-0">
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3">
+                                <div class="fw-bold">Previous Status</div>
+                                <div class="text-end">{{data['Previous Status']}}</div>
+                            </div>
+                            {% if 'Previous Status' in edits %}
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
+                                <div class="fw-bold">Update</div>
+                                <div class="text-end">{{edits['Previous Status']}}</div>
+                            </div>
+                            {% endif %}
+                        </li>
+
+                        <li class="list-group-item p-0"></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        
+
+
+    </div>
+
+
+    <!-- <table>
     
         {% if(edits != {}) %}
             <tr>
@@ -72,27 +834,108 @@
             {% endif %}
         
         {% endfor %}
-    </table>
+    </table> -->
 
     {% if (data['Status'] in ['Payment Required', 'Delegation Required', 'Application Submitted', 'Engineering Review']) %}
 
         {% if (current_user.roles == []) and current_user.is_authenticated %}
-            <a href="{{'/edit/' + data['ID'] }}"><button id="editDetails">Edit Application Details</button></a>
+            <div class="row my-4 justify-content-md-center">
+                <div class="col-md-6">
+                    <a class="btn btn-dark w-100" id="editDetails" href="{{'/edit/' + data['ID'] }}" role="button">
+                        <!-- <span class="spinner-border spinner-border-sm me-2" id="editSpinner" role="status" aria-hidden="true" hidden></span> -->
+                        Edit Application Details
+                    </a>
+                </div>
+            </div>
         {% endif %}
         
         {% if(edits != {}) %}
         {% if('engineer' in current_user.roles) %}
-            <a href="{{'/reviewEdits/' + data['ID'] + '/accept' }}"><button id="acceptEdits">Accept Application Changes</button></a>
-            <a href="{{'/reviewEdits/' + data['ID'] + '/reject' }}"><button id="rejectEdits">Reject Application Changes</button></a>
+            <!-- Accept changes modal -->
+            <div class="modal fade" id="acceptEditsModal" tabindex="-1" aria-labelledby="acceptEditsModalTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="acceptEditsModalTitle" >Accept Application Changes</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">Are you sure you want to approve the changes?</div>
+                        <div class="modal-footer">
+                            <form action="{{'/reviewEdits/' + data['ID'] + '/accept' }}">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancel">Cancel</button>
+                                <button type="submit" class="btn btn-success" id="acceptEdits">
+                                    <span class="spinner-border spinner-border-sm me-2" id="acceptEditsSpinner" role="status" aria-hidden="true" hidden></span>
+                                    Approve
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reject changes modal -->
+            <div class="modal fade" id="rejectEditsModal" tabindex="-1" aria-labelledby="rejectEditsModalTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="rejectEditsModalTitle" >Reject Application Changes</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">Are you sure you want to reject the changes?</div>
+                        <div class="modal-footer">
+                            <form action="{{'/reviewEdits/' + data['ID'] + '/reject' }}">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancel">Cancel</button>
+                                <button type="submit" class="btn btn-danger" id="rejectEdits">
+                                    <span class="spinner-border spinner-border-sm me-2" id="rejectEditsSpinner" role="status" aria-hidden="true" hidden></span>
+                                    Reject
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Script to display accept/reject spinners -->
+            <script type="text/javascript">
+                const acceptSpinner = document.getElementById("acceptEditsSpinner")
+                const acceptButton = document.getElementById("acceptEdits")
+                acceptButton.addEventListener("click", (evt) => {
+                    // evt.preventDefault()
+                    // evt.stopPropagation()
+                    if (acceptSpinner.hasAttribute("hidden")) {
+                        acceptSpinner.removeAttribute("hidden")
+                    }
+                })
+                const rejectSpinner = document.getElementById("rejectEditsSpinner")
+                const rejectButton = document.getElementById("rejectEdits")
+                rejectButton.addEventListener("click", (evt) => {
+                    // evt.preventDefault()
+                    // evt.stopPropagation()
+                    if (rejectSpinner.hasAttribute("hidden")) {
+                        rejectSpinner.removeAttribute("hidden")
+                    }
+                })
+            </script>
+
+            <!-- Accept/reject buttons -->
+            <div class="row my-5 justify-content-md-center">
+                <div class="col-md-8 row g-3">
+                    <div class="col-6">
+                        <button type="button" class="btn btn-danger w-100" data-bs-toggle="modal" data-bs-target="#rejectEditsModal">Reject Application Changes</button>
+                    </div>
+                    <div class="col-6">
+                        <button type="button" class="btn btn-success w-100" data-bs-toggle="modal" data-bs-target="#acceptEditsModal">Accept Application Changes</button>
+                    </div>
+                </div>
+            </div>
         {% endif %}
         {% endif %}
 
     {% endif %}
 
-    <h3><hr></h3>
+    <hr class="my-4">
 
-
-    <h3>Attachments</h3>
+    <h2 class="my-4">Attachments</h2>
     
     <!-- <div id='attachments'>
 
@@ -125,12 +968,93 @@
     </div> -->
 
     <!-- Bootstrap attachments -->
-    <div>
+    <div class="row g-4">
     {% for doc in appAttachments %}
-        <h5>{{doc}}</h5>
+        <div class="col-12">
+            <div class="card text-center">
+                <div class="card-header py-3">
+                    <h3 class="card-title mb-0">{{doc}}</h3>
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% if files.get(doc, None)|length < 1 %}
+                    <li class="list-group-item">
+                        <h5 class="my-4">No files to display</h5>
+                    </li>
+                    {% endif %}
+                    {% for file in files.get(doc, None)%}
+                    <li class="list-group-item py-1">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="">{{file}}</div>
+                            <!-- <div class=""> -->
+                                <div class="btn-group btn-group-sm" role="group" aria-label="view or download file">
+                                    <a class="btn btn-outline-dark" role="button" href="{{'/download/' + data['ID']+'/'+doc+'/'+file}}">View</a>
+                                    <a class="btn btn-outline-dark" role="button" href="{{'/download/' + data['ID']+'/'+doc+'/'+file}}" download>Download</a>
+                                </div>
+                            <!-- </div> -->
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <div class="card-footer py-3">
+                    <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#{{doc.replace(' ', '')}}Modal">Upload {{doc}}</button>
+                </div>    
+            </div>
+        </div>
+
+        <div class="modal fade" id="{{doc.replace(' ', '')}}Modal" tabindex="-1" aria-labelledby="{{doc.replace(' ', '')}}ModalTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <form action="{{'/upload/' + data['ID'] + '/' + doc}}" method="post" enctype="multipart/form-data">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="{{doc.replace(' ', '')}}ModalTitle">Upload New {{doc}}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" arial-label="Close"></button>
+                        </div>
+                        <div class="modal-body py-5 text-center">
+                            <!-- <label for="{{doc.replace(' ', '')}}File" class="form-label"></label>
+                            <input class="form-control" type="file" id="{{doc.replace(' ', '')}}File"> -->
+                            <div class="mb-2">
+                                <label class="btn btn-dark" for="{{doc.replace(' ', '')}}FileUpload">
+                                    <input type="file" class="form-control-file d-none" id="{{doc.replace(' ', '')}}FileUpload" name="file">
+                                    Choose File
+                                </label>
+                            </div>
+                            <div class="" id="{{doc.replace(' ', '')}}FileInfo">No file chosen</div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal" id="cancel{{doc.replace(' ', '')}}">Cancel</button>
+                            <button type="submit" class="btn btn-dark" id="{{doc.replace(' ', '')}}FileSubmit">
+                                <span class="spinner-border spinner-border-sm me-2" id="{{doc.replace(' ', '')}}FileSpinner" role="status" aria-hidden="true" hidden></span>
+                                Upload
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+            {
+                const docFileSubmit = document.getElementById("{{doc}}".replace(/\s+/g, "") + "FileSubmit")
+                const docFileSpinner = document.getElementById("{{doc}}".replace(/\s+/g, "") + "FileSpinner")
+                docFileSubmit.addEventListener("click", (evt) => {
+                    // evt.preventDefault()
+                    // evt.stopPropagation()
+                    if (docFileSpinner.hasAttribute("hidden")) {
+                        docFileSpinner.removeAttribute("hidden")
+                    }
+                })
+                const docFileUpload = document.getElementById("{{doc}}".replace(/\s+/g, "") + "FileUpload")
+                const docFileInfo = document.getElementById("{{doc}}".replace(/\s+/g, "") + "FileInfo")
+                docFileUpload.addEventListener("change", () => {
+                    docFileInfo.innerHTML = docFileUpload.files.length ? docFileUpload.files[0].name : "No file chosen"
+                })
+            }
+        </script>
+
+        <!-- <h5>{{doc}}</h5> -->
 
         <!-- TODO: Bootstrap table -->
-        <table>
+        <!-- <table>
             {% for file in files.get(doc, None) %}
                 <tr>
                 <th>{{file}}</th>
@@ -139,9 +1063,9 @@
                 </th>
                 </tr>
             {% endfor %}
-        </table>
+        </table> -->
 
-        <form action="{{'/upload/' + data['ID'] + '/' + doc}}" method="post" enctype="multipart/form-data">
+        <!-- <form action="{{'/upload/' + data['ID'] + '/' + doc}}" method="post" enctype="multipart/form-data">
             <div class="form-group">
                 <label class="btn btn-dark mb-0" for="{{doc.replace(' ', '')}}FileUpload">
                     <input type="file" class="form-control-file d-none" id="{{doc.replace(' ', '')}}FileUpload" name="file">
@@ -151,9 +1075,9 @@
                 <label for="{{doc.replace(' ', '')}}FileSubmit" class="sr-only">Upload {{doc}}</label>
                 <input type="submit" class="btn btn-dark" id="{{doc.replace(' ', '')}}FileSubmit" value="{{'Upload ' + doc}}">
             </div>
-        </form>
+        </form> -->
         
-        <script type="text/javascript">
+        <!-- <script type="text/javascript">
             {
                 let docFileUpload = document.getElementById("{{doc}}".replace(/\s+/g, "") + "FileUpload")
                 let docFileInfo = document.getElementById("{{doc}}".replace(/\s+/g, "") + "FileInfo")
@@ -161,13 +1085,13 @@
                     docFileInfo.innerHTML = docFileUpload.files.length ? docFileUpload.files[0].name : "No file chosen"
                 })
             }
-        </script>
+        </script> -->
     {% endfor %}
     </div>
 
-    <hr>
+    <hr class='my-4'>
     
-
+    <!-- TODO: Bootstrap -->
     {% if (data.get('Screen Results','') != '') %}
     <h3><hr><h3>
     <H3>Automated Screening Results</H3>
@@ -182,6 +1106,7 @@
         {% endfor %}
     </table>
     {% endif %}
+
 
     <h3>Status</h3>
 
