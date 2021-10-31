@@ -536,6 +536,22 @@ def calcCapacityUsed():
 
     return approvedGeneration
 
+def calcCapacityByUser(email):
+
+    log('Calculating capacity used by one user\'s passing applications')
+
+    approvedGeneration = 0
+
+    apps = userAppIDs(email)
+
+    for app in apps:
+        application = appDict(app)
+        if application.get('Status') == 'Interconnection Agreement Proffered':
+            approvedGeneration += float( application.get( \
+                'Nameplate Rating (kW)',0) )
+
+    return approvedGeneration
+
 def updateStatus(id, status):
 
     log('Updating application ' + id + ' status to ' + status)
