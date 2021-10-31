@@ -34,17 +34,15 @@
        
     {% endif %}
 
-    <div class="my-4">
-        <script src="https://unpkg.com/vanilla-masker@1.1.1/lib/vanilla-masker.js"></script>
-        <script type="text/javascript">
-            window.onload = () => {
-                const phones = document.querySelectorAll(".phone")
-                phones.forEach((elem) => elem.textContent = VMasker.toPattern(elem.textContent, "(999) 999 - 9999"))
-            }
-        </script>
+    <script type="text/javascript">
+        window.onload = () => {
+            const phones = document.querySelectorAll(".phone")
+            phones.forEach((elem) => elem.textContent = VMasker.toPattern(elem.textContent, "(999) 999 - 9999"))
+        }
+    </script>
 
+    <div class="my-4">
         <h2 class="my-4">Application Details</h2>
-        <!-- <hr class="my-4"> -->
 
         <div class="row g-4">
             <div class="col-lg-6">
@@ -79,16 +77,19 @@
                                     {{data['Zip (Member)']}}
                                 </div>
                             </div>
-                            {% if 'City (Member)' in edits %}
+                            {% if 'Address (Member)' in edits 
+                                or 'Address 2 (Member)' in edits
+                                or 'City (Member)' in edits
+                                or 'State (Member)' in edits
+                                or 'Zip (Member)' in edits %}
                             <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
                                 <div class="fw-bold">Update</div>
                                 <div class="text-end">
-                                    {{edits['Address (Member)'] or data['Address (Member)']}}<br>
-                                    {% if edits['Address 2 (Member)'] or data['Address 2 (Member)'] %}
-                                        {{edits['Address 2 (Member)'] or data['Address 2 (Member)']}}<br>
-                                    {% endif %}
-                                    {{edits['City (Member)'] or data['City (Member)']}}, {{edits['State (Member)'] or data['State (Member)']}}<br>
-                                    {{edits['Zip (Member)'] or data['Zip (Member)']}}
+                                    {% if 'Address (Member)' in edits %}{{edits['Address (Member)']}}<br>{% else %}{{data['Address (Member)']}}<br>{% endif %}
+                                    {% if 'Address 2 (Member)' in edits %}{{edits['Address 2 (Member)']}}<br>{% elif 'Address 2 (Member)' in data %}{{data['Address 2 (Member)']}}<br>{% endif %}
+                                    {% if 'City (Member)' in edits %}{{edits['City (Member)']}}, {% else %}{{data['City (Member)']}}, {% endif %}
+                                    {% if 'State (Member)' in edits %}{{edits['State (Member)']}}{% else %}{{data['State (Member)']}}{% endif %}<br>
+                                    {% if 'Zip (Member)' in edits%}{{edits['Zip (Member)']}}{% else %}{{data['Zip (Member)']}}{% endif %}
                                 </div>
                             </div>
                             {% endif %}
@@ -151,6 +152,16 @@
                 </div>
             </div>
 
+            {% if data['Name (Alt Contact)'] or edits['Name (Alt Contact)']
+                or data['Address (Alt Contact)'] or edits['Address (Alt Contact)']
+                or data['Address 2 (Alt Contact)'] or edits['Address 2 (Alt Contact)']
+                or data['City (Alt Contact)'] or edits['City (Alt Contact)']
+                or data['State (Alt Contact)'] or edits['State (Alt Contact)']
+                or data['Zip (Alt Contact)'] or edits['Zip (Alt Contact)']
+                or data['Email (Alt Contact)'] or edits['Email (Alt Contact)']
+                or data['Phone (Primary, Alt Contact)'] or edits['Phone (Primary, Alt Contact)']
+                or data['Phone (Secondary, Alt Contact)'] or edits['Phone (Secondary, Alt Contact)']
+                or data['Fax (Alt Contact)'] or edits['Fax (Alt Contact)'] %}
             <div class="col-lg-6">
                 <div class="card text-center h-100">
                     <div class="card-header py-3">
@@ -183,16 +194,19 @@
                                     {{data['Zip (Alt Contact)']}}
                                 </div>
                             </div>
-                            {% if 'City (Alt Contact)' in edits %}
+                            {% if 'Address (Alt Contact)' in edits 
+                                or 'Address 2 (Alt Contact)' in edits
+                                or 'City (Alt Contact)' in edits
+                                or 'State (Alt Contact)' in edits
+                                or 'Zip (Alt Contact)' in edits %}
                             <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
                                 <div class="fw-bold">Update</div>
                                 <div class="text-end">
-                                    {{edits['Address (Alt Contact)'] or data['Address (Alt Contact)']}}<br>
-                                    {% if edits['Address 2 (Alt Contact)'] or data['Address 2 (Alt Contact)'] %}
-                                        {{edits['Address 2 (Alt Contact)'] or data['Address 2 (Alt Contact)']}}<br>
-                                    {% endif %}
-                                    {{edits['City (Alt Contact)'] or data['City (Alt Contact)']}}, {{edits['State (Alt Contact)'] or data['State (Alt Contact)']}}<br>
-                                    {{edits['Zip (Alt Contact)'] or data['Zip (Alt Contact)']}}
+                                    {% if 'Address (Alt Contact)' in edits %}{{edits['Address (Alt Contact)']}}<br>{% else %}{{data['Address (Alt Contact)']}}<br>{% endif %}
+                                    {% if 'Address 2 (Alt Contact)' in edits %}{{edits['Address 2 (Alt Contact)']}}<br>{% elif 'Address 2 (Alt Contact)' in data %}{{data['Address 2 (Alt Contact)']}}<br>{% endif %}
+                                    {% if 'City (Alt Contact)' in edits %}{{edits['City (Alt Contact)']}}, {% else %}{{data['City (Alt Contact)']}}, {% endif %}
+                                    {% if 'State (Alt Contact)' in edits %}{{edits['State (Alt Contact)']}}{% else %}{{data['State (Alt Contact)']}}{% endif %}<br>
+                                    {% if 'Zip (Alt Contact)' in edits%}{{edits['Zip (Alt Contact)']}}{% else %}{{data['Zip (Alt Contact)']}}{% endif %}
                                 </div>
                             </div>
                             {% endif %}
@@ -254,6 +268,7 @@
                     </ul>
                 </div>
             </div>
+            {% endif %}
 
             <div class="col-lg-6">
                 <div class="card text-center h-100">
@@ -300,16 +315,19 @@
                                     {{data['Zip (Contractor)']}}
                                 </div>
                             </div>
-                            {% if 'City (Contractor)' in edits %}
+                            {% if 'Address (Contractor)' in edits 
+                                or 'Address 2 (Contractor)' in edits
+                                or 'City (Contractor)' in edits
+                                or 'State (Contractor)' in edits
+                                or 'Zip (Contractor)' in edits %}
                             <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
                                 <div class="fw-bold">Update</div>
                                 <div class="text-end">
-                                    {{edits['Address (Contractor)'] or data['Address (Contractor)']}}<br>
-                                    {% if edits['Address 2 (Contractor)'] or data['Address 2 (Contractor)'] %}
-                                        {{edits['Address 2 (Contractor)'] or data['Address 2 (Contractor)']}}<br>
-                                    {% endif %}
-                                    {{edits['City (Contractor)'] or data['City (Contractor)']}}, {{edits['State (Contractor)'] or data['State (Contractor)']}}<br>
-                                    {{edits['Zip (Contractor)'] or data['Zip (Contractor)']}}
+                                    {% if 'Address (Contractor)' in edits %}{{edits['Address (Contractor)']}}<br>{% else %}{{data['Address (Contractor)']}}<br>{% endif %}
+                                    {% if 'Address 2 (Contractor)' in edits %}{{edits['Address 2 (Contractor)']}}<br>{% elif 'Address 2 (Contractor)' in data %}{{data['Address 2 (Contractor)']}}<br>{% endif %}
+                                    {% if 'City (Contractor)' in edits %}{{edits['City (Contractor)']}}, {% else %}{{data['City (Contractor)']}}, {% endif %}
+                                    {% if 'State (Contractor)' in edits %}{{edits['State (Contractor)']}}{% else %}{{data['State (Contractor)']}}{% endif %}<br>
+                                    {% if 'Zip (Contractor)' in edits%}{{edits['Zip (Contractor)']}}{% else %}{{data['Zip (Contractor)']}}{% endif %}
                                 </div>
                             </div>
                             {% endif %}
@@ -369,7 +387,7 @@
 
                         <li class="list-group-item p-0">
                             <div class="d-flex justify-content-between align-items-center py-2 px-3">
-                                <div class="fw-bold">Installer Certificate Docket Number</div>
+                                <div class="fw-bold">Docket Number</div>
                                 <div class="text-end">{{data['Docket Number']}}</div>
                             </div>
                             {% if 'Docket Number' in edits %}
@@ -430,16 +448,19 @@
                                     {{data['Zip (Electrician)']}}
                                 </div>
                             </div>
-                            {% if 'City (Electrician)' in edits %}
+                            {% if 'Address (Electrician)' in edits 
+                                or 'Address 2 (Electrician)' in edits
+                                or 'City (Electrician)' in edits
+                                or 'State (Electrician)' in edits
+                                or 'Zip (Electrician)' in edits %}
                             <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
                                 <div class="fw-bold">Update</div>
                                 <div class="text-end">
-                                    {{edits['Address (Electrician)'] or data['Address (Electrician)']}}<br>
-                                    {% if edits['Address 2 (Electrician)'] or data['Address 2 (Electrician)'] %}
-                                        {{edits['Address 2 (Electrician)'] or data['Address 2 (Electrician)']}}<br>
-                                    {% endif %}
-                                    {{edits['City (Electrician)'] or data['City (Electrician)']}}, {{edits['State (Electrician)'] or data['State (Electrician)']}}<br>
-                                    {{edits['Zip (Electrician)'] or data['Zip (Electrician)']}}
+                                    {% if 'Address (Electrician)' in edits %}{{edits['Address (Electrician)']}}<br>{% else %}{{data['Address (Electrician)']}}<br>{% endif %}
+                                    {% if 'Address 2 (Electrician)' in edits %}{{edits['Address 2 (Electrician)']}}<br>{% elif 'Address 2 (Electrician)' in data %}{{data['Address 2 (Electrician)']}}<br>{% endif %}
+                                    {% if 'City (Electrician)' in edits %}{{edits['City (Electrician)']}}, {% else %}{{data['City (Electrician)']}}, {% endif %}
+                                    {% if 'State (Electrician)' in edits %}{{edits['State (Electrician)']}}{% else %}{{data['State (Electrician)']}}{% endif %}<br>
+                                    {% if 'Zip (Electrician)' in edits%}{{edits['Zip (Electrician)']}}{% else %}{{data['Zip (Electrician)']}}{% endif %}
                                 </div>
                             </div>
                             {% endif %}
@@ -573,16 +594,19 @@
                                     {{data['Zip (Service)']}}
                                 </div>
                             </div>
-                            {% if 'City (Service)' in edits %}
+                            {% if 'Address (Service)' in edits 
+                                or 'Address 2 (Service)' in edits
+                                or 'City (Service)' in edits
+                                or 'State (Service)' in edits
+                                or 'Zip (Service)' in edits %}
                             <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
                                 <div class="fw-bold">Update</div>
                                 <div class="text-end">
-                                    {{edits['Address (Service)'] or data['Address (Service)']}}<br>
-                                    {% if edits['Address 2 (Service)'] or data['Address 2 (Service)'] %}
-                                        {{edits['Address 2 (Service)'] or data['Address 2 (Service)']}}<br>
-                                    {% endif %}
-                                    {{edits['City (Service)'] or data['City (Service)']}}, {{edits['State (Service)'] or data['State (Service)']}}<br>
-                                    {{edits['Zip (Service)'] or data['Zip (Service)']}}
+                                    {% if 'Address (Service)' in edits %}{{edits['Address (Service)']}}<br>{% else %}{{data['Address (Service)']}}<br>{% endif %}
+                                    {% if 'Address 2 (Service)' in edits %}{{edits['Address 2 (Service)']}}<br>{% elif 'Address 2 (Service)' in data %}{{data['Address 2 (Service)']}}<br>{% endif %}
+                                    {% if 'City (Service)' in edits %}{{edits['City (Service)']}}, {% else %}{{data['City (Service)']}}, {% endif %}
+                                    {% if 'State (Service)' in edits %}{{edits['State (Service)']}}{% else %}{{data['State (Service)']}}{% endif %}<br>
+                                    {% if 'Zip (Service)' in edits%}{{edits['Zip (Service)']}}{% else %}{{data['Zip (Service)']}}{% endif %}
                                 </div>
                             </div>
                             {% endif %}
@@ -616,26 +640,19 @@
 
                         <li class="list-group-item p-0">
                             <div class="d-flex justify-content-between align-items-center py-2 px-3">
-                                <div class="fw-bold">Inverter Manufacturer</div>
-                                <div class="text-end">{{data['Inverter Manufacturer']}}</div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="fw-bold">Inverter</div>
+                                    <div class="text-start fw-bold ps-3">Manufacturer<br>Model</div>
+                                </div>
+                                <div class="text-end">{{data['Inverter Manufacturer']}}<br>{{data['Inverter Model']}}</div>
                             </div>
-                            {% if 'Inverter Manufacturer' in edits %}
+                            {% if 'Inverter Manufacturer' in edits or 'Inverter Model' in edits %}
                             <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
-                                <div class="fw-bold">Update</div>
-                                <div class="text-end">{{edits['Inverter Manufacturer']}}</div>
-                            </div>
-                            {% endif %}
-                        </li>
-
-                        <li class="list-group-item p-0">
-                            <div class="d-flex justify-content-between align-items-center py-2 px-3">
-                                <div class="fw-bold">Inverter Model</div>
-                                <div class="text-end">{{data['Inverter Model']}}</div>
-                            </div>
-                            {% if 'Inverter Model' in edits %}
-                            <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
-                                <div class="fw-bold">Update</div>
-                                <div class="text-end">{{edits['Inverter Model']}}</div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="fw-bold">Update</div>
+                                    <div class="text-start fw-bold ps-3">{% if 'Inverter Manufacturer' in edits %}Manufacturer<br>{% endif %}{% if 'Inverter Model' in edits %}Model{% endif %}</div>
+                                </div>
+                                <div class="text-end">{% if 'Inverter Manufacturer' in edits %}{{edits['Inverter Manufacturer']}}<br>{% endif %}{% if 'Inverter Model' in edits %}{{edits['Inverter Model']}}{% endif %}</div>
                             </div>
                             {% endif %}
                         </li>
@@ -645,14 +662,16 @@
                                 <div class="fw-bold">Nameplate Ratings</div>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div class="text-end">{{data['Nameplate Rating (kW)']}}<br>{{data['Nameplate Rating (V)']}}</div>
-                                    <div class="fw-bold ps-2">kW-AC<br>V-AC</div>
+                                    <div class="text-start fw-bold ps-2">kW-AC<br>V-AC</div>
                                 </div>
                             </div>
                             {% if 'Nameplate Rating (kW)' in edits or 'Nameplate Rating (V)' in edits %}
                             <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
                                 <div class="fw-bold">Update</div>
-                                <div class="text-end">
-                                    {{edits['Nameplate Rating (kW)']}} <span class="fw-bold">kW-AC</span><br>{{edits['Nameplate Rating (V)']}} <span class="fw-bold">V-AC</span></div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="text-end">{% if 'Nameplate Rating (kW)' in edits %}{{edits['Nameplate Rating (kW)']}}<br>{% endif %}{% if 'Nameplate Rating (V)' in edits %}{{edits['Nameplate Rating (V)']}}{% endif %}</div>
+                                    <div class="text-start fw-bold ps-2">{% if 'Nameplate Rating (kW)' in edits %}kW-AC<br>{% endif %}{% if 'Nameplate Rating (V)' in edits %}V-AC{% endif %}</div>
+                                </div>
                             </div>
                             {% endif %}
                         </li>
@@ -749,19 +768,6 @@
 
                         <li class="list-group-item p-0">
                             <div class="d-flex justify-content-between align-items-center py-2 px-3">
-                                <div class="fw-bold">Status</div>
-                                <div class="text-end">{{data['Status']}}</div>
-                            </div>
-                            {% if 'Status' in edits %}
-                            <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
-                                <div class="fw-bold">Update</div>
-                                <div class="text-end">{{edits['Status']}}</div>
-                            </div>
-                            {% endif %}
-                        </li>
-                        
-                        <li class="list-group-item p-0">
-                            <div class="d-flex justify-content-between align-items-center py-2 px-3">
                                 <div class="fw-bold">ID</div>
                                 <div class="text-end">{{data['ID']}}</div>
                             </div>
@@ -775,6 +781,20 @@
 
                         <li class="list-group-item p-0">
                             <div class="d-flex justify-content-between align-items-center py-2 px-3">
+                                <div class="fw-bold">Status</div>
+                                <div class="text-end">{{data['Status']}}</div>
+                            </div>
+                            {% if 'Status' in edits %}
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3 pending-update">
+                                <div class="fw-bold">Update</div>
+                                <div class="text-end">{{edits['Status']}}</div>
+                            </div>
+                            {% endif %}
+                        </li>
+
+                        {% if 'Previous Status' in data %}
+                        <li class="list-group-item p-0">
+                            <div class="d-flex justify-content-between align-items-center py-2 px-3">
                                 <div class="fw-bold">Previous Status</div>
                                 <div class="text-end">{{data['Previous Status']}}</div>
                             </div>
@@ -785,6 +805,7 @@
                             </div>
                             {% endif %}
                         </li>
+                        {% endif %}
 
                         <li class="list-group-item p-0"></li>
                     </ul>
@@ -839,7 +860,7 @@
     {% if (data['Status'] in ['Payment Required', 'Delegation Required', 'Application Submitted', 'Engineering Review']) %}
 
         {% if (current_user.roles == []) and current_user.is_authenticated %}
-            <div class="row my-4 justify-content-md-center">
+            <div class="row my-5 justify-content-md-center">
                 <div class="col-md-6">
                     <a class="btn btn-dark w-100" id="editDetails" href="{{'/edit/' + data['ID'] }}" role="button">
                         <!-- <span class="spinner-border spinner-border-sm me-2" id="editSpinner" role="status" aria-hidden="true" hidden></span> -->
@@ -918,14 +939,12 @@
             </script>
 
             <!-- Accept/reject buttons -->
-            <div class="row my-5 justify-content-md-center">
-                <div class="col-md-8 row g-3">
-                    <div class="col-6">
-                        <button type="button" class="btn btn-danger w-100" data-bs-toggle="modal" data-bs-target="#rejectEditsModal">Reject Application Changes</button>
-                    </div>
-                    <div class="col-6">
-                        <button type="button" class="btn btn-success w-100" data-bs-toggle="modal" data-bs-target="#acceptEditsModal">Accept Application Changes</button>
-                    </div>
+            <div class="row my-5 gap-3 gap-sm-0 justify-content-center">
+                <div class="col-8 col-sm-6 col-md-5 col-lg-4">
+                    <button type="button" class="btn btn-danger w-100" data-bs-toggle="modal" data-bs-target="#rejectEditsModal">Reject Application Changes</button>
+                </div>
+                <div class="col-8 col-sm-6 col-md-5 col-lg-4">
+                    <button type="button" class="btn btn-success w-100" data-bs-toggle="modal" data-bs-target="#acceptEditsModal">Accept Application Changes</button>
                 </div>
             </div>
         {% endif %}
@@ -1108,33 +1127,50 @@
     {% endif %}
 
 
-    <h3>Status</h3>
+    <h2 class="my-4">Application Status</h2>
 
     <!-- Bootstrap update buttons -->
-    {% for update in updates %}
-    <form action="{{'/update-status/' + data['ID'] + '/' + update}}">
-        <div class="form-group">
-            <button type="submit" class="btn btn-dark" value="{{'Update status to ' + update}}">
-                {{'Update status to '}}
-                <span class="font-italic">{{update}}</span>
-            </button>
-        </div>
-    </form>
-    {% endfor %}
+    {% if updates|length > 0 %}
+    <div class="row mb-5 gap-4 justify-content-center">
+        {% for update in updates %}
+        <!-- <div class="row my-4"> -->
+            <div class="col-12 col-md-8 col-lg-7">
+                <form action="{{'/update-status/' + data['ID'] + '/' + update}}">
+                    <button type="submit" class="btn btn-dark w-100" value="{{'Update status to ' + update}}">
+                        {{'Update status to '}}
+                        <span class="fst-italic fw-bold">{{update}}</span>
+                    </button>
+                </form>
+            </div>
+        <!-- </div> -->
+        {% endfor %}
+    </div>
+    {% endif %}
 
-    <hr>
+    <!-- <div class="my-5"></div> -->
 
 {% endblock %}
 
 {% block member %}
+<div class="row mb-5 gap-4 justify-content-center">
     
     <!-- Bootstrap payment button -->
     {% if data['Status'] == 'Payment Required' %}
-        <h5>Payment required</h5>
-        <a href="{{'/payment/' + data['ID']}}">
-            <button class="btn btn-dark" id="pay">Pay Application Fee</button>
-        </a>
+    <div class="row justify-content-center alert alert-warning text-center mb-0 px-0">
+        <h4 class="mb-3 alert-heading">Payment Required</h4>
+        <div class="col-12 col-md-6">
+            <a class="btn btn-warning w-100" href="{{'/payment/' + data['ID']}}" role="button">
+                Pay Application Fee
+            </a>
+        </div>
+    </div>
     {% endif %}
+
+    <!-- Bootstrap withdraw button -->
+    <div class="col-12 col-md-6">
+        <!-- <h5>Click below to Withdraw Interconnection Application</h5> -->
+        <button type="button" class="btn btn-danger w-100" data-bs-toggle="modal" data-bs-target="#withdrawModal">Withdraw Application</button>    
+    </div>
     
     <!-- Bootstrap withdraw modal -->
     <div class="modal fade" id="withdrawModal" tabindex="-1" aria-labelledby="withdrawModalTitle" aria-hidden="true">
@@ -1170,11 +1206,9 @@
         })
     </script>
 
-    <!-- Bootstrap withdraw button -->
-    <h5>Click below to Withdraw Interconnection Application</h5>
-    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#withdrawModal">Withdraw Application</button>    
-    <hr>
+    <!-- <hr> -->
 
+</div>
 {% endblock %}
 
 {% block ms %}
@@ -1600,18 +1634,20 @@
 <!-- Bootstrap notes block -->
 {% macro notes() %}
 <div>
-    <h3>Notes Log:</h3>
-    <div class="form-group">
-        <label for="notesDisplay" class="sr-only"></label>
-        <textarea class="form-control" id="notesDisplay" rows="10" disabled="True" placeholder="There are no notes for this application at the current time.">{{data['Notes']}}</textarea>
+    <h2 class="my-4">Notes Log</h2>
+    <div class="my-3">
+        <textarea class="form-control" id="notesDisplay" rows="10" disabled="True" readonly placeholder="There are no notes for this application at the current time." aria-label="notes log">{{data['Notes']}}</textarea>
     </div>
     <form id="notes" action="{{'/save-notes/' + data['ID']}}" method="post">
-        <div class="form-group">
-            <label for="noteInput" class="sr-only"></label>
-            <textarea class="form-control" name="notesText" id="noteInput" rows="3" placeholder="Enter note text here and click save to add a note."></textarea>
+        <div class="my-4">
+            <textarea class="form-control" id="noteInput" name="notesText" rows="3" placeholder="Enter note text here and click save to add a note." aria-label="new note"></textarea>
         </div>
-        <button type="submit" class="btn btn-dark" name="save" id="notesSave">Save</button>
+        <div class="row my-4 justify-content-md-center">
+            <div class="col-md-5 col-lg-4">
+                <button type="submit" class="btn btn-dark w-100" name="save" id="notesSave">Save Note</button>
+            </div>
+        </div>
     </form>
-    <hr>
+    <hr class="my-4">
 </div>
 {% endmacro %}
