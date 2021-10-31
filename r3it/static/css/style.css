@@ -7,7 +7,7 @@ html, body {
 }
 
 #title {
-    background-color: rgba(255,255,255, 0.3);
+    background-color: rgba(255,255,255, 0.6);
     border-radius: 0.25rem;
 }
 
@@ -23,6 +23,7 @@ html, body {
     background-size: cover;
     background-position-x: center;
     background-position-y: top;
+    background-attachment: fixed;
     width: 100%;
 }
 
@@ -59,11 +60,13 @@ html, body {
     color: #212529;
 }
 
+/* For manually triggering display block/none for 
+ * .invalid-feedback elements which are not input siblings */
 .show-feedback {
     display: block;
 }
 
-/* Delegation needed alert on report page button */
+/* Delegation/payment needed alert on report page button */
 .alert-warning a.btn-warning {
     background-color: #664d03; 
     color: #fff3cd;
@@ -88,6 +91,7 @@ html, body {
 tbody tr {
     transform: rotate(0);
 }
+/* Removes link styling from queue # fields */
 tbody th a {
     color:inherit;
     text-decoration: none;
