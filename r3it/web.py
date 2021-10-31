@@ -305,7 +305,7 @@ def add_to_appQueue():
     '''Adds an interconnection application to the queue'''
     
     app = {key:item for key, item in request.form.items()}
-    app['Time of Request'] = str(datetime.now())
+    app['Time of Request'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     app['Status'] = 'Payment Required'
     app['ID'] = str(int(datetime.timestamp(datetime.now()) * 10**7) + 
         random.choice(range(999)))
@@ -538,7 +538,7 @@ def save_notes(id):
     app = appDict(id)
     oldNotes = app.get('Notes', '')
     
-    now = datetime.now().strftime('%Y-%m-%d %H:%M:%S %Z')
+    now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     newNote = request.form['notesText'].strip()
     newEntry = f"{now} {currentUser()}: \n{newNote}"
     notes = f"{oldNotes}\n\n{newEntry}" if oldNotes else newEntry
