@@ -4,16 +4,19 @@
 
     <script src="https://polyfill.io/v3/polyfill.min.js?version=3.52.1&features=fetch"></script>
     <script src="https://js.stripe.com/v3/"></script>
-    <script src="https://unpkg.com/vanilla-masker@1.1.1/lib/vanilla-masker.js"></script>
     <script src="/static/js/validate.js" defer></script>
     <script src="/static/js/application.js" defer></script>
     
     <meta id="dataTariff" data-tariff="{{default['Tariff']}}">
 
     <!-- Bootstrap application form -->
+    {% if 'application' in request.path %}
     <h1 class="my-4">New Interconnection Application</h1>
+    {% elif 'edit' in request.path %}
+    <h1 class="my-4">Edit Interconnection Application</h1>
+    {% endif %}
+    
     <form id="application" action="{{formAction}}" method="post" class="needs-validation" novalidate>
-
         <hr class="my-4">
 
         <!-- Member Block -->
