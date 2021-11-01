@@ -1,130 +1,21 @@
-/*----------------------------------------------------------------------------*/
-
 html, body { 
     margin: 0px;
     height: 100%;
     width: 100%;
-    /* font-family: sans-serif;  */
-    /* background-color: #eee; */
-    /* word-wrap: break-word; */
     position: absolute;
     z-index: 0;
 }
 
-/* table {
-    border-collapse: collapse;
-    margin: 25px 0;
-    font-size: 0.9em;
-    font-family: sans-serif;
-    min-width: 400px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-    width: 100%;
-    word-wrap: anywhere;
-} th, td {
-    padding: 12px 15px;
-    border-style: solid;
-    border-width: 0px 1px 0px 1px;
-} tr {
-    border-bottom: 1px solid #dddddd;
-} tr:nth-of-type(even) {
-    background-color: #f3f3f3;
-} tr:nth-of-type(odd) {
-    background-color: #fff;
-} tr:last-of-type {
-    border-bottom: 1px solid #000;
-} tr:first-of-type {
-    border-top: 1px solid #000;
-}  */
-
-/* table.sortable th {
-    cursor: pointer;
-
-} table.sortable th:not(.sorttable_sorted):not(.sorttable_sorted_reverse):not(.sorttable_nosort):after {
-    content: " \25B4\25BE"  
-} */
-
-/*----------------------------------------------------------------------------*/
-
-/* .content {
-    width: 90%;
-    max-width: 80%;
-    display: block;
-    margin: 0 auto;
-    height: 100%;
-    background-color: #fff;
-    padding: 2rem;
-} */
-
-/* .tableContainer {
-    max-height: 80vh;
-    overflow-y: scroll;
-    margin: 0px;
-    margin-bottom: 0px;
-    margin-bottom: 25px;
+#title {
+    background-color: rgba(255,255,255, 0.6);
+    border-radius: 0.25rem;
 }
 
-.reportTitle {
-    font-size: 1.2em;
-    page-break-before:always;
-    margin: 0px;
-} */
-
-/* .card {
-    margin: 0 auto 2em auto;
-    background-color: #fff;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-    padding: 2em;
-    display: flex;
-    align-items: flex-start;
-    flex-wrap: wrap;
-} .card h1 {padding-bottom: 0px;
-} .card p {width: 100%;} */
-
-/* .leftForm {
-    float: left;
-    width: 50%;
-}
-.rightForm {
-    float: right;
-    width: 50%;
-} */
-
-/* .tooltip {
-    position: relative;
-    display: inline-block;
-}.tooltipText {
+#login {
     position: absolute;
-    visibility: hidden;
-    text-align: center;
-    margin-top: 0.1em;
-    padding: 0.5em;
-    border-radius: 0.5em;
-    background-color: black;
-    color: #fff;
-    z-index: 1;
-    top: 100%;
-    left: 0;
-} .tooltip:hover .tooltipText {
-    visibility: visible;
-} .tooltipText::after { 
-    adds arrow
-    content: " ";
-    position: absolute;
-    bottom: 100%;
-    left: 20%;
-    border-width: 0.5em;
-    border-style: solid;
-    border-color: transparent transparent black transparent;
-} */
-
-/*----------------------------------------------------------------------------*/
-
-#notification{
-    padding: 1em;
-    border-width: 1px;
-    border-style: solid;
-    background-color: #edd63b;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 #bg {
@@ -132,188 +23,79 @@ html, body {
     background-size: cover;
     background-position-x: center;
     background-position-y: top;
+    background-attachment: fixed;
     width: 100%;
-    height: 75%;
-    z-index: -1;
-    position: absolute;
 }
 
-#page {
-    min-height: 100%;
-    margin-bottom: -2em;
+.container-xl {
+    max-width: 1000px;
 }
 
-/* #logo {
-    height: 3em;
-    margin: 0.5em;
-    float: left;
-} */
+/* These neutralize the valid feeback styling for checkboxes marked 
+ * .no-validation and used for form control rather than value collection 
+ */
+.no-validation.form-check-input.is-valid:checked, 
+.no-validation.form-check-input.is-invalid:checked, 
+.was-validated .no-validation.form-check-input:valid:checked, 
+.was-validated .no-validation.form-check-input:invalid:checked {
+    background-color: #0d6efd;
+    border-color: rgb(13, 110, 253);
+}
+.no-validation.form-check-input.is-valid, 
+.no-validation.form-check-input.is-invalid, 
+.was-validated .no-validation.form-check-input:valid, 
+.was-validated .no-validation.form-check-input:invalid {
+    border-color: rgba(0, 0, 0, 0.25);
+}
+.no-validation.form-check-input.is-valid:focus, 
+.no-validation.form-check-input.is-invalid:focus, 
+.was-validated .no-validation.form-check-input:valid:focus,
+.was-validated .no-validation.form-check-input:invalid:focus {
+    box-shadow: 0 0 0 0.25rem rgb(13 110 253 / 25%);
+}
+.no-validation.form-check-input.is-valid~.form-check-label, 
+.no-validation.form-check-input.is-invalid~.form-check-label, 
+.was-validated .no-validation.form-check-input:valid~.form-check-label, 
+.was-validated .no-validation.form-check-input:invalid~.form-check-label {
+    color: #212529;
+}
 
-/* #menuBar {        
-    z-index: 1;
-    position: fixed;
-    top: 0;
-    width: 100%;
-    background-color: #fff;
-    box-shadow: 0 0 40px rgba(0, 0, 0, 0.15);
-} #menu {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    display: none;
-    float: right;
-    line-height: 4em;
-} #menu li {
-    float: right;
-    height: inherit;
-    line-height: inherit;
-} #menu a {
+/* For manually triggering display block/none for 
+ * .invalid-feedback elements which are not input siblings */
+.show-feedback {
     display: block;
-    padding: 0 1em;
-    text-decoration: none;
-    color: #000
-} #menu a:hover {
-    background-color: #000;
-    color:#fff;
-} #menuButton {
-    cursor: pointer;
-    float: right;
-    height: 2em;
-    padding: 1em;
-} #menuButton div {
-  width: 35px;
-  height: 5px;
-  background-color: black;
-  margin: 6px 0;
-} #menuToggle {
-    display: none;
-} #menuToggle:checked + #menu {
-    display: inline-block;
-} #menuSpacer {
-    height: 4em;
-}  */
-
-#title {
-    background-color: rgba(255,255,255, 0.3);
-    border-radius: 0.25rem;
-    /* font-size: 2em; */
-    /* max-width: 60%; */
-    /* padding: 50px; */
-    /* color: white; */
-    /* font-weight: lighter; */
-    /* text-shadow: 1px 1px 3px #fff; */
-    /* margin: 0px; */
 }
 
-#bannerButtons {
-    margin: 50px;
-    margin-top: 0px;
-} #bannerButtons a {
-    display: inline-block;
-    padding: 1em;
-    text-decoration: none;
-    background-color: #000;
-    color: #fff;
-    box-shadow:  2px 2px 3px #000; 
-    margin: 0.5em 0em;  
-} #bannerButtons a:hover {
-    background-color: #fff;
-    color:#000;
-    box-shadow: none;
+/* Delegation/payment needed alert on report page button */
+.alert-warning a.btn-warning {
+    background-color: #664d03; 
+    color: #fff3cd;
+    border-color: #fff3cd;
 }
 
-#login {
-    /* background-color: #fff; */
-    /* min-width: 300px; */
-    /* max-width: 500px; */
-    /* width: 50%; */
-    /* margin: auto; */
-    /* padding: 1em; */
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    /* box-shadow: 0px 5px 10px #aaa; */
-    /* text-align: center; */
-} 
-/* #login input, #login button {
-    width: 100%;
-    height: 2em;
-    border-width: 0;
-    margin: 0.5em 0;
-    padding: 0;
-} #login input {
-    border-width: 1px;
-    border-color: #eee;
-    border-style: solid;
-    border-radius: 4px;
-    padding-left: 1em;
-    box-sizing: border-box;
-} #login button {
-    background-color: #eee;
-} #login button:hover {
-    color: #fff;
-    background-color: #000;
-} */
-
-/* #progressBarBackground {
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-    background-color: #fff;
-    width: 100%;
-    height: 1.5em;
-} #progressBar {
-    background-color: #000;
-    height: 100%;
-} */
-
-/* #application {
-    font-size: 1.1em;
-} #application select, #application input {
-    font-size: 1.1em;
+/* Proposed updates on report page */
+.pending-update {
+    color: #664d03; 
+    background-color: #fff3cd;
+    border-top: 1px solid #ffecb5;
 }
 
-#notesContainer button {
-    margin: 10px 0px;
-} .notesText {
-    resize: none;
-    width: 100%;
-    box-sizing: border-box;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-    border: none;
-    background-color: #fff;
-    padding: 10px;
-}  */
-
-/* #pay, #withdraw, #editDetails, #acceptEdits, #rejectEdits, #sendDelegationEmail {
-    width: 100%;
-} */
-
-/* #attachments {
-    background: #fff;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-    padding: 2em;
-} */
-
-#footerSpacer {
-    height: 2em;
-}
-/* #footer {
-    padding-left: 0.5em;
-    color: #fff;
-    background-color: #000;
-    height: 2em;
-    line-height: 2em;
-} #footer a { color: #fff;} */
-
-
-/*----------------------------------------------------------------------------*/
-
-/* @media screen and (max-width: 600px) {
-    #menu { 
-        width: 100%; 
-        text-align: center;
-    } #menu li {
-        float: none;
-        border-top: 1px solid #eee;
+/* Hide extra border for collapsed stretch cells in report detail cards */
+@media (max-width: 991px) {
+    .card.h-100 li:nth-last-child(2) {
+        border: none;
     }
-} */
+}
+
+/* Makes table row stretched links work */
+tbody tr {
+    transform: rotate(0);
+}
+/* Removes link styling from queue # fields */
+tbody th a {
+    color:inherit;
+    text-decoration: none;
+}
+tbody th a:hover {
+    color: inherit;
+}

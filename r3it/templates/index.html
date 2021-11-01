@@ -1,57 +1,41 @@
 {% extends 'base.html' %}
 
 {% block banner %}
-<style type="text/css">#bg{background-image:url({{bg}})}</style>
-	<!-- <div id="titleContainer" class="content">
-		<p id="title">Rapid, Rural, and Resilient Interconnection Toolkit</p>
-		<div id="bannerButtons">
-			<a href="/login">LOGIN</a> <a href="/register">REGISTER</a>
-		</div>
-	</div> -->
-	<div class="row"> 
-		<!-- note: margin top on above row shows background image inside -->
-		<div class="col-sm-10 col-lg-9 row text-center text-md-end g-5 p-3 py-4 mx-auto my-4 mt-md-5" id="title">
-			<h1 class="col-md-6 m-auto py-4 me-md-2">Rapid, Rural, and Resilient Interconnection Toolkit</h1>
-			<div class="col-6 col-sm-5 col-md-4 col-lg-3 m-auto ms-md-2 row gap-3 text-center">
-				<a href="/login" class="btn btn-dark btn-lg" role="button">Log In</a>
-				<a href="/register" class="btn btn-dark btn-lg" role="button">Register</a>
-			</div>
+<div class="row">
+	<div class="col-sm-10 col-lg-9 row text-center text-md-end g-5 p-3 py-4 mx-auto my-4 mt-md-5" id="title">
+		<h1 class="col-md-6 m-auto py-4 me-md-2 display-6">Rapid, Rural, and Resilient Interconnection Toolkit</h1>
+		<div class="col-6 col-sm-5 col-md-4 col-lg-3 m-auto ms-md-2 row gap-3 text-center">
+			<a href="/login" class="btn btn-dark btn-lg fw-light" role="button">Log In</a>
+			<a href="/register" class="btn btn-dark btn-lg fw-light" role="button">Register</a>
 		</div>
 	</div>
-<!-- <div class='bg-image' style='
-		background-image:url({{bg}}); 
-		background-repeat: no-repeat;
-		background-size: cover;
-		width: 100vw;
-		height: 60vh;'>
-</div> -->
-<!-- <div class='container'>
-	<h1>Rapid, Rural, and Resilient Interconnection Toolkit</h1>
-	<a href='/login' class='btn btn-dark'>LOGIN</a>
-	<a href='/register' class='btn btn-dark'>REGISTER</a>
-</div> -->
+</div>
 {% endblock %}
 
 {% block engineer %}
-	{{progressBar()}}
-	{{ interconnectionTable('Action Needed', priorities)}}
-	{{ interconnectionTable('Interconnection Queue', data)}}
+	{{progressBar('engineer')}}
+	{{ interconnectionTable('Action Needed', priorities, priorities)}}
+	{{ interconnectionTable('Interconnection Queue', data, priorities)}}
 {% endblock %}
 
 {% block ms %}
-	{{progressBar()}}
-	{{ interconnectionTable('Action Needed', priorities)}}
-	{{ interconnectionTable('Interconnection Queue', data)}}
+	{{progressBar('ms')}}
+	{{ interconnectionTable('Action Needed', priorities, priorities)}}
+	{{ interconnectionTable('Interconnection Queue', data, priorities)}}
 {% endblock %}
 
 {% block member %}
-	<H1>Interconnecting Distributed Generation</H1>
+	<h1 class="my-4">Interconnecting Distributed Generation</h1>
 	<p>Welcome to NRECA's Interconnection tool! To learn more about...</p>
-	<a href="/application" class="btn btn-dark">Apply for Interconnection</a>
-	<p></p>
-	{{progressBar()}}
-	{{ interconnectionTable('Action Needed', priorities)}}
-	{{ interconnectionTable('My Interconnection Applications', data)}}
+	<div class="row my-5 justify-content-center">
+		<div class="col-sm-6">
+			<a class="btn btn-dark w-100" href="/application" role="button">Apply for Interconnection</a>
+		</div>
+	</div>
+	<hr class="my-4">
+	{{progressBar('member')}}
+	{{ interconnectionTable('Action Needed', priorities, priorities)}}
+	{{ interconnectionTable('My Interconnection Applications', data, priorities)}}
 {% endblock %}
 
 <!-- Bootstrap anonymous cards -->
@@ -86,52 +70,86 @@
 {% endblock %}
 
 <!-- Bootstrap interconnection table -->
-{% macro interconnectionTable(header, passedData) %}
-{% if passedData %}
-	<h3>{{ header }}</h3>
-	<table class="table table-bordered table-striped">
-		<thead class="thead-light">
-			<tr>
-				<th scope="col">Queue Position</th>
-				<th scope="col">Time of Request</th>
-				<th scope="col">Application ID</th>
-				<th scope="col">Address (Service)</th>
-				<th scope="col">Status</th>
-				<th scope="col">Report</th>
-			</tr>
-		</thead>
-		<tbody>
-			{% for row in passedData %}
+{% macro interconnectionTable(header, data, priorities) %}
+{% if data %}
+	<h2 class="my-4">{{ header }}</h2>
+	<div class="table-responsive  mb-5">
+		<table class="table table-hover table-bordered caption-top">
+			<caption class="pt-0">Click any row to view report</caption>
+			<thead class="table-light">
 				<tr>
-					<td>{{row[0]}}</td>
-					<td>{{row[1]}}</td>
-					<td>{{row[2]}}</td>
-					<td>{{row[3]}}</td>
-					<td>{{row[4]}}</td>
-					<td><a href="{{'report/' + row[2]}}" class="btn btn-dark btn-sm">See report</a></td>
+					<th scope="col">Queue&nbsp;#</th>
+					<th scope="col">Timestamp</th>
+					<th scope="col">ID</th>
+					<th scope="col">Service Address</th>
+					<th scope="col">Status</th>
 				</tr>
-			{% endfor %}
-		</tbody>
-	</table>
+			</thead>
+			<tbody>
+				{% for row in data %}
+					{% if row in priorities %}
+					<tr class="table-warning">
+					{% else %}
+					<tr>
+					{% endif %}
+						<th scope="row"><a href="{{'report/' + row[2]}}" class="stretched-link">{{row[0]}}</a></th>
+						<td>{{row[1]}}</td>
+						<td>{{row[2]}}</td>
+						<td>{{row[3]}}</td>
+						<td>{{row[4]}}</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
 {% endif %}
 {% endmacro %}
 
 
-{% macro progressBar() %}
+{% macro progressBar(userType) %}
 {% if netMeteringUsed['used'] > 0 %}
-<H3>Net Metering Capacity Used: {{netMeteringUsed['used']}} kW of {{netMeteringUsed['available']}} kW ( {{netMeteringUsed['percent']}}% )</H3>
-<div id="progressBarBackground" class="tooltip">
-	
-	{% if netMeteringUsed['percent'] < 0.5 %}
-		<div id="progressBar" style="width:0.5%"></div>
-	{% else %}
-		<div id="progressBar" style="width:{{netMeteringUsed['percent']}}%"></div>
-	{% endif %}
-	
-	<span class="tooltipText">
-		This is the capacity available to all consumers applying for interconnection with your facility. The capacity is made available on a first come first serve basis.
-	</span>
+<h3 class="my-4">Net Metering Capacity Used: {{netMeteringUsed['used']}} kW of {{netMeteringUsed['available']}} kW ( {{netMeteringUsed['percent']}}% )</h3>
 
+<div class="progress my-4" style="height: 1.5rem;" role="">
+	{% if netMeteringUsed['percent'] < 0.5 %}
+		<div class="progress-bar bg-dark" role="progressbar" style="width: 0.5%" aria-valuenow="{{netMeteringUsed['percent']}}" aria-valuemin="0" aria-valuemax="100"></div>
+	{% else %}
+		<div class="progress-bar bg-dark" 
+			role="progressbar" 
+			style="width: {{netMeteringUsed['otherUsersPercent']}}%" 
+			aria-valuenow="{{netMeteringUsed['otherUsersPercent']}}" 
+			aria-valuemin="0" 
+			aria-valuemax="100"
+			data-bs-toggle="tooltip" 
+			data-bs-placement="bottom"
+			data-bs-html="true" 
+			{% if userType == 'member' %}
+				title="<b>All other users:</b> <u>{{netMeteringUsed['otherUsersPercent']}}%</u> of total capacity"
+			{% else %}
+				title="<b>All users:</b> <u>{{netMeteringUsed['otherUsersPercent']}}%</u> of total capacity"
+			{% endif %}
+		>{% if netMeteringUsed['otherUsersPercent'] >= 5 %}{{netMeteringUsed['otherUsersPercent']}}%{% endif %}</div>
+
+		<div class="progress-bar bg-danger" 
+			role="progressbar" 
+			style="width: {{netMeteringUsed['currentUserPercent']}}%" 
+			aria-valuenow="{{netMeteringUsed['currentUserPercent']}}" 
+			aria-valuemin="0" 
+			aria-valuemax="100" 
+			data-bs-toggle="tooltip" 
+			data-bs-placement="bottom"
+			data-bs-html="true" 
+			title="<b>Your usage:</b> <u>{{netMeteringUsed['currentUserPercent']}}%</u> of total capacity"
+		>{% if netMeteringUsed['currentUserPercent'] >= 5 %}{{netMeteringUsed['currentUserPercent']}}%{% endif %}</div>
+
+		<script>
+			const tooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+			Array.prototype.map.call(tooltips, (tooltip) => new bootstrap.Tooltip(tooltip))
+		</script>
+	{% endif %}
 </div>
+
+<p>This is the capacity available to all consumers applying for interconnection with your facility. The capacity is made available on a first come first serve basis.{% if userType == 'member' %} Your usage is represented in red, all others' usage is represented in black.{% endif %}</p>
+<hr class="my-4">
 {% endif %}
 {% endmacro %}

@@ -10,7 +10,7 @@ import config, mailer
 if config.enableAutomaticScreening:
     import interconnection
 else:
-    from interconnection import calcCapacityUsed, processQueue, withdraw
+    from interconnection import calcCapacityUsed, calcCapacityByUser, processQueue, withdraw
     from appQueue import *
 
 
@@ -210,6 +210,12 @@ def index():
     netMeteringUsed['available'] = config.netMeteringCapacity
     netMeteringUsed['percent'] = 100 * \
     	netMeteringUsed['used'] / netMeteringUsed['available']
+    netMeteringUsed['currentUser'] = calcCapacityByUser(currentUser())
+    netMeteringUsed['otherUsers'] = netMeteringUsed['used'] - netMeteringUsed['currentUser']
+    netMeteringUsed['currentUserPercent'] = 100 * \
+    	netMeteringUsed['currentUser'] / netMeteringUsed['available']
+    netMeteringUsed['otherUsersPercent'] = 100 * \
+    	netMeteringUsed['otherUsers'] / netMeteringUsed['available']
     return render_template('index.html', data=data, \
                                          priorities=priorities, \
                                          notification=notification, \
@@ -299,7 +305,7 @@ def add_to_appQueue():
     '''Adds an interconnection application to the queue'''
     
     app = {key:item for key, item in request.form.items()}
-    app['Time of Request'] = str(datetime.now())
+    app['Time of Request'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     app['Status'] = 'Payment Required'
     app['ID'] = str(int(datetime.timestamp(datetime.now()) * 10**7) + 
         random.choice(range(999)))
@@ -532,8 +538,8 @@ def save_notes(id):
     app = appDict(id)
     oldNotes = app.get('Notes', '')
     
-    now = datetime.now().strftime('%Y-%m-%d %H:%M:%S:%f %Z')
-    newNote = request.form['notesText']
+    now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    newNote = request.form['notesText'].strip()
     newEntry = f"{now} {currentUser()}: \n{newNote}"
     notes = f"{oldNotes}\n\n{newEntry}" if oldNotes else newEntry
 
