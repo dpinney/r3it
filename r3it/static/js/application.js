@@ -6,6 +6,12 @@ function setupForm() {
     
         function linkUseAltContact() {
             fields.forEach((field) => field.removeAttribute("disabled"))
+            if (document.querySelectorAll(".was-validated").length > 0) {
+                validateField("nameAltContact", { valueMissing: "Name is required" })
+                validateAddress(document.querySelector("#altContact fieldset.addressBlock"))
+                validateEmail("emailAltContact")
+                document.querySelectorAll("#altContact input[type='tel']").forEach((tel) => validatePhone(tel))
+            }
         }
     
         function unlinkUseAltContact() {
@@ -13,6 +19,7 @@ function setupForm() {
                 field.value = ""
                 field.setAttribute("disabled", "true")
             })
+            document.querySelector("#altContact fieldset.addressBlock .invalid-feedback").classList.remove("show-feedback")
         }
     
         // initial link after check
@@ -55,6 +62,7 @@ function setupForm() {
             fieldPairs.forEach((pair) => pair[0].setAttribute("disabled", "true"))
             // disable contractorIsElectrician checkbox
             contractorIsElectrician.setAttribute("disabled", "true")
+            document.querySelector("#contractor fieldset.addressBlock .invalid-feedback").classList.remove("show-feedback")
         }
     
         function unlinkMemberIsSelfContractor() {
@@ -68,6 +76,13 @@ function setupForm() {
             // enable contractorIsElectrician checkbox
             if (!memberIsSelfElectrician.checked) {
                 contractorIsElectrician.removeAttribute("disabled")
+            }
+            if (document.querySelectorAll(".was-validated").length > 0) {
+                validateField("nameContractor", { valueMissing: "Name is required" })
+                validateField("contactContractor", { valueMissing: "Contact person is required" })
+                validateAddress(document.querySelector("#contractor fieldset.addressBlock"))
+                validateEmail("emailContractor")
+                document.querySelectorAll("#contractor input[type='tel']").forEach((tel) => validatePhone(tel))
             }
         }
     
@@ -109,6 +124,7 @@ function setupForm() {
             fieldPairs.forEach((pair) => pair[0].setAttribute("disabled", "true"))
             // disable contractorIsElectrician checkbox
             contractorIsElectrician.setAttribute("disabled", "true")
+            document.querySelector("#electrician fieldset.addressBlock .invalid-feedback").classList.remove("show-feedback")
         }
         
         function unlinkMemberIsSelfElectrician() {
@@ -122,6 +138,13 @@ function setupForm() {
             // enable contractorIsElectrician checkbox
             if (!memberIsSelfContractor.checked) {
                 contractorIsElectrician.removeAttribute("disabled")
+            }
+            if (document.querySelectorAll(".was-validated").length > 0) {
+                validateField("nameElectrician", { valueMissing: "Name is required" })
+                validateField("contactElectrician", { valueMissing: "Contact person is required" })
+                validateAddress(document.querySelector("#electrician fieldset.addressBlock"))
+                validateEmail("emailElectrician")
+                document.querySelectorAll("#electrician input[type='tel']").forEach((tel) => validatePhone(tel))
             }
         }
     
@@ -160,6 +183,7 @@ function setupForm() {
             // disable memberIsSelfElectrician checkbox
             memberIsSelfContractor.setAttribute("disabled", "true")
             memberIsSelfElectrician.setAttribute("disabled", "true")
+            document.querySelector("#electrician fieldset.addressBlock .invalid-feedback").classList.remove("show-feedback")
         }
     
         function unlinkContractorIsElectrician() {
@@ -172,8 +196,16 @@ function setupForm() {
             // enable memberIsSelfElectrician checkbox
             memberIsSelfContractor.removeAttribute("disabled")
             memberIsSelfElectrician.removeAttribute("disabled")
+            if (document.querySelectorAll(".was-validated").length > 0) {
+                validateField("nameElectrician", { valueMissing: "Name is required" })
+                validateField("contactElectrician", { valueMissing: "Contact person is required" })
+                validateAddress(document.querySelector("#electrician fieldset.addressBlock"))
+                validateEmail("emailElectrician")
+                document.querySelectorAll("#electrician input[type='tel']").forEach((tel) => validatePhone(tel))
+            }
         }
         
+        // initial link
         if (!memberIsSelfContractor.checked && 
             !memberIsSelfElectrician.checked && 
             fieldPairs.every((pair) => pair[0].value == pair[1].value && pair[0].value != "")
@@ -207,6 +239,9 @@ function setupForm() {
             nameMember.removeEventListener("input", handleMemberInput)
             owner.value = ""
             owner.removeAttribute("disabled")
+            if (document.querySelectorAll(".was-validated").length > 0) {
+                validateField("nameOwner", { valueMissing: "Name is required" } )
+            }
         }
     
         // initial link after check
@@ -236,12 +271,16 @@ function setupForm() {
             fieldPairs.forEach((pair, i) => inputHandlers[i]())
             fieldPairs.forEach((pair, i) => pair[1].addEventListener("input", inputHandlers[i]))
             fieldPairs.forEach((pair) => pair[0].setAttribute("disabled", "true"))
+            document.querySelector("#service fieldset.addressBlock .invalid-feedback").classList.remove("show-feedback")
         }
     
         function unlinkServiceAddrIsMemberAddr() {
             fieldPairs.forEach((pair, i) => pair[1].removeEventListener("input", inputHandlers[i]))
             fieldPairs.forEach((pair) => pair[0].value = "")
             fieldPairs.forEach((pair) => pair[0].removeAttribute("disabled"))
+            if (document.querySelectorAll(".was-validated").length > 0) {
+                validateAddress(document.querySelector("#service fieldset.addressBlock"))
+            }
         }
     
         // initial link after check
@@ -541,7 +580,7 @@ function setupForm() {
     setupContractorIsElectrician()
     setupMemberIsOwner()
     setupServiceAddrIsMemberAddr()
-    setDatesMinMax(0, 6) // min will be 0 months past today, max will be 6 months past
+    setDatesMinMax(0, 18) // min will be 0 months past today, max will be 18 months past
     linkInverterManufacturerModel()
     setupNetMeteringResetMonth()
     maskTels()
