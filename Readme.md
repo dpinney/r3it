@@ -4,7 +4,10 @@ R3IT is a free and open-source web application that allows utilities to automate
 
 It handles request submission, request review workflows, payment collection, signature collection, email notifications for any status changes, and optionally an automated engineering screening and approval process.
 
-For full details on the application, please see our [presentation on automated interconnection screening](https://drive.google.com/file/d/1zsBoV4a9BIVMQWoLtOgYsDeK3V_T8Y7-/view?usp=sharing) or try out the app on our [R3IT public demonstration server](https://demo.r3it.ghw.io).
+For full details on the application:
+* see our [presentation on automated interconnection screening](https://drive.google.com/file/d/1zsBoV4a9BIVMQWoLtOgYsDeK3V_T8Y7-/view?usp=sharing),
+* try out the app on our [R3IT public demonstration server](https://demo.r3it.ghw.io), or
+* read our [guidebook on best practices in rapid solar interconnection analysis](https://www.cooperative.com/programs-services/bts/Documents/Reports/Guidebook-for-Rapid-Solar-Interconnection-June-2021.pdf). 
 
 ## Application Deployment
 
