@@ -9,6 +9,8 @@ For full details on the application:
 * try out the app on our [R3IT public demonstration server](https://demo.r3it.ghw.io), or
 * read our [guidebook on best practices in rapid solar interconnection analysis](https://www.cooperative.com/programs-services/bts/Documents/Reports/Guidebook-for-Rapid-Solar-Interconnection-June-2021.pdf). 
 
+<img width="691" alt="Screen Shot 2022-03-12 at 1 03 20 PM" src="https://user-images.githubusercontent.com/2131438/158029413-f7e62afa-3793-4232-ac19-b8ee7c2a9fec.png">
+
 ## Application Deployment
 
 #### Installation
