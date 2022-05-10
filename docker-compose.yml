@@ -1,10 +1,9 @@
 services:
-  web:
+  r3it:
     container_name: r3it
     build:
-      context: .
+      context: "."
       dockerfile: ./Dockerfile
     image: r3it
     ports:
-      - "5000:80"
-      - "5001:443"
+      - 5000:5000

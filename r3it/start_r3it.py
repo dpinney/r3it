@@ -22,7 +22,6 @@ def before_request():
 		return redirect(url, code=code)
 
 if __name__ == "__main__":
-	print('jellybeans')
 	# Start redirector:
 	redirProc = Popen(['gunicorn', '-w', '1', '-b', '0.0.0.0:80', 'start_r3it:reApp'])
 	# Start application:
