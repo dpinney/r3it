@@ -5,7 +5,6 @@ RUN pip install -r requirements.txt
 COPY . .
 RUN python install.py
 EXPOSE 5000
-VOLUME /usr/src/app/data
-WORKDIR ./r3it
+WORKDIR /usr/src/app/r3it
 ENTRYPOINT ["python3"]
 CMD ["web.py"]

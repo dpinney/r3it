@@ -551,6 +551,6 @@ def save_notes(id):
 
 if __name__ == '__main__':
     # app.run(debug=True, host= '0.0.0.0')
-    appProc = Popen(['gunicorn', '-w', '2', '-b', '0.0.0.0:5000', '--preload', 'web:app','--worker-class=sync', '--access-logfile', 'r3it.access.log', '--error-logfile', 'r3it.error.log', '--capture-output'])
-    print('r3it started on port 5000; console output going to r3it.acces.log and r3it.error.log')
+    appProc = Popen(['gunicorn', '-w', '2', '-b', '0.0.0.0:5000', '--preload', 'web:app','--worker-class=sync', '--access-logfile', './data/r3it.access.log', '--error-logfile', './data/r3it.error.log', '--capture-output'])
+    print('r3it started on port 5000; console output going to data/r3it.acces.log and data/r3it.error.log')
     appProc.wait()

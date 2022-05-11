@@ -1,10 +1,7 @@
 #!/bin/sh
 
-# build image
-docker-compose build
-
-# start container
-# docker-compose up -d
+# re-build and start container
+# docker-compose up --build -d
 
 # stop and delete container
 docker-compose down

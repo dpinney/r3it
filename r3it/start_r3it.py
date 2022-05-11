@@ -25,5 +25,5 @@ if __name__ == "__main__":
 	# Start redirector:
 	redirProc = Popen(['gunicorn', '-w', '1', '-b', '0.0.0.0:80', 'start_r3it:reApp'])
 	# Start application:
-	appProc = Popen(['gunicorn', '-w', '2', '-b', '0.0.0.0:443', '--certfile=' + config.certDir + '/cert.pem', '--ca-certs=' + config.certDir + '/fullchain.pem', '--keyfile=' + config.certDir + '/privkey.pem', '--preload', 'web:app','--worker-class=sync', '--access-logfile', 'r3it.access.log', '--error-logfile', 'r3it.error.log', '--capture-output'])
+	appProc = Popen(['gunicorn', '-w', '2', '-b', '0.0.0.0:443', '--certfile=' + config.certDir + '/cert.pem', '--ca-certs=' + config.certDir + '/fullchain.pem', '--keyfile=' + config.certDir + '/privkey.pem', '--preload', 'web:app','--worker-class=sync', '--access-logfile', './data/r3it.access.log', '--error-logfile', './data/r3it.error.log', '--capture-output'])
 	appProc.wait()
