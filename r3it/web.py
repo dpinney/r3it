@@ -7,13 +7,12 @@ from multiprocessing import Process, Lock
 from urllib.parse import urlencode
 from logger import log
 import config, mailer
+from subprocess import Popen
 if config.enableAutomaticScreening:
     import interconnection
 else:
     from interconnection import calcCapacityUsed, calcCapacityByUser, processQueue, withdraw
     from appQueue import *
-
-
 
 # Instantiate app
 app = Flask(__name__)
@@ -551,4 +550,7 @@ def save_notes(id):
     return redirect(f"/report/{id}")
 
 if __name__ == '__main__':
-    app.run(debug=True, host= '0.0.0.0')
+    # app.run(debug=True, host= '0.0.0.0')
+    appProc = Popen(['gunicorn', '-w', '2', '-b', '0.0.0.0:5000', '--preload', 'web:app','--worker-class=sync', '--access-logfile', 'r3it.access.log', '--error-logfile', 'r3it.error.log', '--capture-output'])
+    print('r3it started on port 5000; console output going to r3it.acces.log and r3it.error.log')
+    appProc.wait()

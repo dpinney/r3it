@@ -131,6 +131,7 @@ dmypy.json
 # VSCode
 .vscode
 
+# Custom
 r3it/flask_sessionstore/
 r3it/flask_session/
 flask_session/
@@ -140,3 +141,4 @@ r3it/config.py
 *config.py
 Icon
 r3it/Icon
+*.sublime-project
